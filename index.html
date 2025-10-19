@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farcaster Futbol Oyunu</title>
+    
+    <!-- Farcaster Mini App Meta Tags -->
+    <meta property="og:title" content="Farcaster Futbol Oyunu">
+    <meta property="og:description" content="Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!">
+    <meta property="og:image" content="https://bouncingballsfarcaster.netlify.app/app-icon-512.svg">
+    <meta property="og:url" content="https://bouncingballsfarcaster.netlify.app">
+    <meta property="og:type" content="website">
+    
+    <!-- Basic Frame Meta Tags -->
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="https://bouncingballsfarcaster.netlify.app/app-icon-512.svg" />
+    <meta property="fc:frame:button:1" content="Play Game" />
+    <meta property="fc:frame:button:1:action" content="link" />
+    <meta property="fc:frame:button:1:target" content="https://bouncingballsfarcaster.netlify.app" />
+    
+    <!-- Additional Meta Tags -->
+    <meta name="description" content="Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!" />
+    <meta name="keywords" content="farcaster, futbol, oyun, mini app, game" />
+    <meta name="author" content="Farcaster Futbol Oyunu" />
+    
+    <!-- Mini App Specific Meta Tags -->
+    <meta name="farcaster:mini-app" content="true">
+    <meta name="farcaster:app-name" content="Futbol Oyunu">
+    <meta name="farcaster:app-description" content="Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!">
+    <meta name="farcaster:app-icon" content="https://bouncingballsfarcaster.netlify.app/app-icon-512.svg">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00ff00">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Futbol Oyunu">
+    
+    <!-- Farcaster Hosted Manifest -->
+    <meta name="farcaster:manifest" content="https://bouncingballsfarcaster.netlify.app/manifest.json">
+    <meta name="farcaster:app-version" content="1.0.0">
+    <meta name="farcaster:app-category" content="games">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/app-icon-192.svg">
+    
+    <style>
+        :root {
+            --neon-color: #00ff00; /* Varsayılan neon renk */
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .game-container {
+            position: relative;
+            max-width: 500px;
+            width: 100%;
+        }
+        #gameCanvas {
+            border: 2px solid var(--neon-color);
+            border-radius: 10px;
+            background: #001100;
+            box-shadow: 0 0 20px var(--neon-color);
+            width: 400px;
+            height: 400px;
+            display: block;
+        }
+        .ui-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        .score-display {
+            color: var(--neon-color);
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 2px solid var(--neon-color);
+        }
+        .timer-display {
+            color: var(--neon-color);
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 2px solid var(--neon-color);
+        }
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--neon-color);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid var(--neon-color);
+            text-align: center;
+            display: none;
+        }
+        .game-over h2 {
+            margin: 0 0 15px 0;
+            font-size: 28px;
+            text-shadow: 0 0 15px var(--neon-color);
+        }
+        .restart-btn {
+            background: var(--neon-color);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .restart-btn:hover {
+            opacity: 0.8;
+            box-shadow: 0 0 15px var(--neon-color);
+        }
+        
+        /* Oyun Modu Seçimi Stilleri */
+        .game-mode-selection {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--neon-color);
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid var(--neon-color);
+            text-align: center;
+            z-index: 20;
+            box-shadow: 0 0 30px var(--neon-color);
+        }
+        
+        .game-mode-selection h2 {
+            margin: 0 0 30px 0;
+            font-size: 32px;
+            text-shadow: 0 0 15px var(--neon-color);
+        }
+        
+        .mode-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .mode-btn {
+            background: transparent;
+            border: 2px solid var(--neon-color);
+            color: var(--neon-color);
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .mode-btn:hover {
+            background: var(--neon-color);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-color);
+            transform: scale(1.05);
+        }
+        
+        .mode-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .mode-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .mode-desc {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Canvas'ı başlangıçta göster */
+        #gameCanvas {
+            display: block !important;
+        }
+        
+        /* Oyun modu seçimini başlangıçta göster */
+        .game-mode-selection {
+            display: block;
+        }
+        
+        /* Oyun başladığında mod seçimini gizle */
+        .game-started .game-mode-selection {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="ui-overlay">
+            <div class="score-display">
+                <span id="player1Name">Player 1</span>: <span id="score1">0</span> - <span id="player2Name">Player 2</span>: <span id="score2">0</span>
+            </div>
+            <div class="timer-display">
+                <span id="timer">1:00</span>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        
+        <!-- Oyun Modu Seçimi -->
+        <div class="game-mode-selection" id="gameModeSelection">
+            <h2>🎮 Oyun Modunu Seçin</h2>
+            <div class="mode-buttons">
+                <button class="mode-btn" onclick="startGameWithCPU()">
+                    <div class="mode-icon">🤖</div>
+                    <div class="mode-title">Random Maç</div>
+                    <div class="mode-desc">Rastgele maç izle</div>
+                </button>
+                <button class="mode-btn" onclick="startMultiplayerGame()">
+                    <div class="mode-icon">👥</div>
+                    <div class="mode-title">Farcaster Maçı</div>
+                    <div class="mode-desc">Farcaster kullanıcısı ile</div>
+                </button>
+            </div>
+        </div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>Oyun Bitti!</h2>
+            <p><span id="finalScore1">0</span> - <span id="finalScore2">0</span></p>
+            <button class="restart-btn" onclick="restartGame()">Tekrar Oyna</button>
+            <button class="restart-btn" onclick="shareToFarcaster()">Paylaş</button>
+        </div>
+    </div>
+    
+    <!-- Farcaster Mini App SDK -->
+    <script type="module">
+        import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
+        
+        // Global değişkenleri tanımla
+        window.currentUser = null;
+        window.sdk = sdk;
+        
+        // SDK'yi başlat ama henüz ready() çağırma
+        try {
+            console.log('🔄 Farcaster SDK yüklendi, kullanıcı bilgileri alınıyor...');
+            
+            // Kullanıcı bilgilerini al
+            const user = await sdk.getUser();
+            console.log('Farcaster kullanıcısı:', user);
+            
+            if (user) {
+                window.currentUser = {
+                    username: user.username,
+                    displayName: user.displayName,
+                    profileImage: user.pfpUrl,
+                    verified: user.verified,
+                    fid: user.fid
+                };
+                
+                // Skorboard'u güncelle
+                document.getElementById('player1Name').textContent = window.currentUser.username;
+            } else {
+                initializeTestMode();
+            }
+            
+            // Oyun tamamen yüklendikten sonra ready() çağır
+            window.addEventListener('load', async () => {
+                try {
+                    await sdk.actions.ready();
+                    console.log('✅ Farcaster SDK ready! Splash screen gizlendi.');
+                } catch (error) {
+                    console.log('❌ SDK ready hatası:', error);
+                }
+            });
+            
+        } catch (error) {
+            console.log('Farcaster SDK hatası:', error);
+            initializeTestMode();
+            
+            // Test modunda da ready() çağır
+            window.addEventListener('load', async () => {
+                try {
+                    await sdk.actions.ready();
+                    console.log('✅ Test modunda SDK ready!');
+                } catch (error) {
+                    console.log('❌ Test modunda SDK ready hatası:', error);
+                }
+            });
+        }
+        
+        function initializeTestMode() {
+            console.log('Test modu başlatılıyor...');
+            window.currentUser = getTestUserData();
+        }
+    </script>
+    <script>
+        // Random neon renk sistemi
+        const neonColors = [
+            '#00ff00', // Yeşil
+            '#ff0080', // Pembe
+            '#0080ff', // Mavi
+            '#ff8000', // Turuncu
+            '#8000ff', // Mor
+            '#00ffff', // Cyan
+            '#ff4000', // Kırmızı-turuncu
+            '#40ff00', // Açık yeşil
+            '#ff00ff', // Magenta
+            '#00ff80', // Yeşil-mavi
+            '#ff8000', // Altın
+            '#8000ff'  // Koyu mor
+        ];
+        
+        let currentNeonColor = neonColors[Math.floor(Math.random() * neonColors.length)];
+        
+        function getRandomNeonColor() {
+            return neonColors[Math.floor(Math.random() * neonColors.length)];
+        }
+        
+        function applyNeonColor(color) {
+            // CSS değişkenlerini güncelle
+            document.documentElement.style.setProperty('--neon-color', color);
+            
+            // Canvas çizimlerinde kullanılacak renk
+            currentNeonColor = color;
+        }
+        let gameMode = 'cpu'; // 'cpu' veya 'multiplayer'
+        let cpuControlled = false; // CPU kontrolü aktif mi
+        // Canvas ve context değişkenleri
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false; // Oyun başlangıçta durmuş
+        let timeLeft = 60;
+        let score1 = 0;
+        let score2 = 0;
+        
+        // Farcaster API entegrasyonu
+        let currentUser = null;
+        let opponentUser = null;
+        
+        // Farcaster kullanıcı bilgilerini al
+        async function getFarcasterUserData() {
+            try {
+                // Farcaster Frame API'den kullanıcı bilgilerini al
+                const response = await fetch('/api/farcaster/user', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    const userData = await response.json();
+                    return userData;
+                } else {
+                    // Fallback: Test verileri
+                    return getTestUserData();
+                }
+            } catch (error) {
+                console.log('Farcaster API hatası, test verileri kullanılıyor:', error);
+                return getTestUserData();
+            }
+        }
+        
+        // Test verileri (geliştirme için)
+        function getTestUserData() {
+            return {
+                username: 'testuser',
+                displayName: 'Test User',
+                profileImage: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=T',
+                verified: false,
+                fid: Math.floor(Math.random() * 10000) // Random FID
+            };
+        }
+        
+        // CPU için rastgele kullanıcı oluştur
+        function getRandomCPUUser() {
+            const cpuNames = ['CPU Player', 'Bot User', 'AI Opponent', 'Random Bot'];
+            const randomName = cpuNames[Math.floor(Math.random() * cpuNames.length)];
+            
+            return {
+                username: randomName.toLowerCase().replace(' ', ''),
+                displayName: randomName,
+                profileImage: `https://via.placeholder.com/40x40/${getRandomColor()}/ffffff?text=${randomName[0]}`,
+                verified: false,
+                fid: Math.floor(Math.random() * 10000)
+            };
+        }
+        
+        // Rastgele renk oluştur
+        function getRandomColor() {
+            const colors = ['ff0080', '0080ff', 'ff8000', '8000ff', '00ff80'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // Oyuncu bilgilerini güncelle
+        async function updatePlayerInfo() {
+            window.currentUser = await getFarcasterUserData();
+            
+            // Oyuncu bilgilerini güncelle
+            document.getElementById('player1Name').textContent = window.currentUser.username;
+            
+            // CPU için rastgele kullanıcı
+            if (gameMode === 'cpu') {
+                opponentUser = getRandomCPUUser();
+                document.getElementById('player2Name').textContent = opponentUser.username;
+            }
+            
+            console.log('👤 Oyuncu bilgileri güncellendi:', window.currentUser);
+            if (opponentUser) {
+                console.log('🤖 Rakip bilgileri:', opponentUser);
+            }
+        }
+        
+        // Oyun modu fonksiyonları
+        function startGameWithCPU() {
+            gameMode = 'cpu';
+            cpuControlled = true;
+            updatePlayerInfo(); // Farcaster bilgilerini güncelle
+            startGame();
+        }
+        
+        function startMultiplayerGame() {
+            gameMode = 'multiplayer';
+            cpuControlled = false;
+            document.getElementById('player1Name').textContent = 'Player 1';
+            document.getElementById('player2Name').textContent = 'Player 2';
+            // TODO: Farcaster eşleşme sistemi
+            startGame();
+        }
+        
+        function startGame() {
+            console.log('🎮 Oyun başlatılıyor...');
+            
+            // Oyun modu seçimini gizle
+            document.getElementById('gameModeSelection').style.display = 'none';
+            
+            document.querySelector('.game-container').classList.add('game-started');
+            gameRunning = true;
+            timeLeft = 60; // Zamanı sıfırla
+            
+            // Yeni random neon renk seç
+            const newColor = getRandomNeonColor();
+            applyNeonColor(newColor);
+            console.log('🎨 Yeni neon renk:', newColor);
+            
+            // Timer stilini sıfırla
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
+            
+            // Oyun başlayınca hakem düdüğü çal
+            setTimeout(() => {
+                playRefereeWhistle();
+            }, 500);
+            
+            updateTimer();
+            gameLoop();
+            
+            console.log('✅ Oyun başlatıldı!');
+        }
+        const balls = [
+            {x: 150, y: 200, vx: 3, vy: -2, radius: 20, team: 'juventus', color: '#ffffff'},
+            {x: 250, y: 200, vx: -3, vy: 2, radius: 20, team: 'atalanta', color: '#0066cc'}
+        ];
+        const circle = {x: 200, y: 200, radius: 150};
+        let circleAngle = 0;
+        const friction = 0.99;
+        const bounce = 0.8;
+        const gravity = 0.1;
+        const wallBounce = 1.2;
+        const maxSpeed = 8;
+        
+        // Titreme efekti için değişkenler
+        let screenShake = 0;
+        let goalText = '';
+        let goalTextTimer = 0;
+        
+        // Ses efekti için AudioContext
+        let audioContext = null;
+        let soundEnabled = false;
+        const minSpeed = 0.5;
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            // Titreme efekti
+            if (screenShake > 0) {
+                ctx.save();
+                const shakeX = (Math.random() - 0.5) * screenShake;
+                const shakeY = (Math.random() - 0.5) * screenShake;
+                ctx.translate(shakeX, shakeY);
+                screenShake *= 0.9; // Titreme azalıyor
+            }
+            
+            ctx.fillStyle = '#001a00';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawCircle();
+            drawGoal();
+            updateBalls();
+            drawBalls();
+            checkCollisions();
+            checkGoals();
+            
+            // Gol yazısı
+            if (goalTextTimer > 0) {
+                drawGoalText();
+                goalTextTimer--;
+            }
+            
+            // Titreme efekti bitir
+            if (screenShake > 0) {
+                ctx.restore();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function drawCircle() {
+            circleAngle += 0.015;
+            ctx.strokeStyle = currentNeonColor;
+            ctx.lineWidth = 3;
+            ctx.shadowColor = currentNeonColor;
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        
+        function drawGoal() {
+            // Kale çembere yapışık - çember dönerken kale de beraber dönüyor
+            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // Çembere yapışık
+            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // Çembere yapışık
+            
+            const goalWidth = 60; // Küçülttük: 80 → 60
+            const goalHeight = 40; // Küçülttük: 50 → 40
+            const postWidth = 6;
+            
+            // Kale çembere yapışık - çember dönerken kale de beraber dönüyor
+            // Kale açık kısmı sürekli merkeze bakacak şekilde döndürülüyor
+            ctx.save();
+            ctx.translate(goalX, goalY);
+            ctx.rotate(circleAngle + Math.PI/2); // Kale açık kısmı çemberin dışına bakar
+            
+            // Kale çerçevesi - Neon beyaz efekt
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = postWidth;
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 25;
+            
+            // Sol direk - çembere yapışık
+            ctx.beginPath();
+            ctx.moveTo(-goalWidth/2, -goalHeight/2);
+            ctx.lineTo(-goalWidth/2, goalHeight/2);
+            ctx.stroke();
+            
+            // Sağ direk - çembere yapışık
+            ctx.beginPath();
+            ctx.moveTo(goalWidth/2, -goalHeight/2);
+            ctx.lineTo(goalWidth/2, goalHeight/2);
+            ctx.stroke();
+            
+            // Üst direk - çembere yapışık
+            ctx.beginPath();
+            ctx.moveTo(-goalWidth/2, -goalHeight/2);
+            ctx.lineTo(goalWidth/2, -goalHeight/2);
+            ctx.stroke();
+            
+            // Gol çizgisi fiziken yok - boşluk veya fileler görünüyor
+            ctx.shadowBlur = 0;
+            
+            // Kale filesi - Neon beyaz kareli desen (İNCE)
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1; // İncelttik: 2 → 1
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 10; // İncelttik: 15 → 10
+            
+            // Dikey file çizgileri
+            for (let i = 1; i < 6; i++) {
+                const x = -goalWidth/2 + (goalWidth / 6) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, -goalHeight/2);
+                ctx.lineTo(x, goalHeight/2);
+                ctx.stroke();
+            }
+            
+            // Yatay file çizgileri
+            for (let i = 1; i < 4; i++) {
+                const y = -goalHeight/2 + (goalHeight / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(-goalWidth/2, y);
+                ctx.lineTo(goalWidth/2, y);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+        
+        function playRefereeWhistle() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Gerçek hakem düdüğü sesi - metalik ve keskin
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                const distortion = audioContext.createWaveShaper();
+                
+                oscillator.connect(distortion);
+                distortion.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Hakem düdüğü frekansı (çok yüksek ve keskin)
+                oscillator.frequency.setValueAtTime(2000, audioContext.currentTime);
+                oscillator.frequency.linearRampToValueAtTime(3000, audioContext.currentTime + 0.05);
+                oscillator.frequency.linearRampToValueAtTime(2500, audioContext.currentTime + 0.2);
+                oscillator.frequency.linearRampToValueAtTime(1800, audioContext.currentTime + 0.6);
+                
+                // Ses şekli (metalik düdük gibi)
+                oscillator.type = 'sawtooth';
+                
+                // Distortion (metalik ses için)
+                const distortionAmount = 50;
+                const samples = 44100;
+                const curve = new Float32Array(samples);
+                for (let i = 0; i < samples; i++) {
+                    const x = (i * 2) / samples - 1;
+                    curve[i] = Math.tanh(x * distortionAmount);
+                }
+                distortion.curve = curve;
+                distortion.oversample = '4x';
+                
+                // Filtre (keskin düdük karakteristiği)
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(2500, audioContext.currentTime);
+                filter.Q.setValueAtTime(5, audioContext.currentTime);
+                
+                // Ses seviyesi
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.02);
+                gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.3);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.8);
+                
+                console.log('Gerçek hakem düdüğü çalındı!');
+                
+            } catch (error) {
+                console.log('Hakem düdüğü çalınamadı:', error);
+            }
+        }
+        
+        function playGoalSound() {
+            console.log('🎯 Gol sesi çalma fonksiyonu çağrıldı!');
+            
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Fallback synthesized crowd sound
+                const createCrowdVoice = (baseFreq, delay, duration, voiceType) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        const filter = audioContext.createBiquadFilter();
+                        
+                        oscillator.connect(filter);
+                        filter.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        // İnsan sesi gibi frekans değişimi
+                        oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 1.5, audioContext.currentTime + 0.1);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 1.2, audioContext.currentTime + 0.3);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 0.8, audioContext.currentTime + duration * 0.7);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 0.6, audioContext.currentTime + duration);
+                        
+                        // Ses şekli (insan sesi gibi)
+                        oscillator.type = 'triangle';
+                        
+                        // Filtre (insan sesi karakteristiği)
+                        filter.type = 'bandpass';
+                        filter.frequency.setValueAtTime(baseFreq * 2, audioContext.currentTime);
+                        filter.Q.setValueAtTime(1.5, audioContext.currentTime);
+                        
+                        // Ses seviyesi (kalabalık gibi)
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.05);
+                        gainNode.gain.linearRampToValueAtTime(0.6, audioContext.currentTime + 0.2);
+                        gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + duration * 0.5);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + duration);
+                    }, delay);
+                };
+                
+                // Gerçekçi taraftar sesi katmanı
+                createCrowdVoice(60, 0, 2.5, 'deep_male');      // Derin erkek sesi
+                createCrowdVoice(80, 50, 2.2, 'male');          // Orta erkek sesi
+                createCrowdVoice(100, 100, 2.0, 'high_male');   // Yüksek erkek sesi
+                createCrowdVoice(120, 150, 1.8, 'female');      // Kadın sesi
+                createCrowdVoice(140, 200, 1.6, 'high_female'); // Yüksek kadın sesi
+                createCrowdVoice(160, 250, 1.4, 'child');       // Çocuk sesi
+                createCrowdVoice(180, 300, 1.2, 'high_child');  // Yüksek çocuk sesi
+                
+                // Ek ses katmanları (daha kalabalık)
+                createCrowdVoice(70, 400, 1.8, 'extra_male');  // Ek erkek sesi
+                createCrowdVoice(110, 450, 1.6, 'extra_female'); // Ek kadın sesi
+                createCrowdVoice(130, 500, 1.4, 'extra_high');  // Ek yüksek ses
+                
+                console.log('Sentezlenmiş taraftar sesi çalındı!');
+                
+            } catch (error) {
+                console.log('Ses efekti çalınamadı:', error);
+                console.log('🎉 GOOOAAAL!!! 🎉');
+            }
+        }
+        
+        function drawGoalText() {
+            // Titreyerek patlayarak çıkma efekti
+            const shakeIntensity = Math.max(0, 60 - goalTextTimer) * 2;
+            const shakeX = (Math.random() - 0.5) * shakeIntensity;
+            const shakeY = (Math.random() - 0.5) * shakeIntensity;
+            
+            // Büyüme efekti
+            const scale = 1 + (60 - goalTextTimer) * 0.02;
+            
+            ctx.save();
+            ctx.translate(canvas.width/2 + shakeX, canvas.height/2 - 100 + shakeY);
+            ctx.scale(scale, scale);
+            
+            // Havalı font ve renkler
+            ctx.fillStyle = '#ff0000';
+            ctx.font = 'bold 64px Impact, Arial Black, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.strokeStyle = '#ffff00';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 30;
+            
+            // Yazıyı çiz
+            ctx.strokeText(goalText, 0, 0);
+            ctx.fillText(goalText, 0, 0);
+            
+            // Parlama efekti
+            ctx.shadowBlur = 50;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 72px Impact, Arial Black, sans-serif';
+            ctx.fillText(goalText, 0, 0);
+            
+            ctx.restore();
+        }
+        
+        // CPU kontrol algoritması - Basit ve çalışan versiyon
+        let cpuClickTimer = 0;
+        let cpuClickInterval = 60 + Math.random() * 120; // 1-3 saniye arası rastgele
+        
+        function updateCPUControl(cpuBall) {
+            // CPU tıklama mekaniği (oyuncu ile aynı)
+            cpuClickTimer++;
+            if (cpuClickTimer >= cpuClickInterval) {
+                // Rastgele bir noktaya tıklama simülasyonu
+                const randomX = circle.x + (Math.random() - 0.5) * circle.radius * 1.5;
+                const randomY = circle.y + (Math.random() - 0.5) * circle.radius * 1.5;
+                
+                // CPU topuna tıklama efekti (oyuncu ile aynı)
+                const dx = randomX - cpuBall.x;
+                const dy = randomY - cpuBall.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < cpuBall.radius * 2) { // CPU topuna yakınsa
+                    cpuBall.vx = (randomX - circle.x) * 0.1;
+                    cpuBall.vy = (randomY - circle.y) * 0.1;
+                }
+                
+                // Timer'ı sıfırla ve yeni rastgele interval ayarla
+                cpuClickTimer = 0;
+                cpuClickInterval = 60 + Math.random() * 120;
+            }
+            
+            // Normal fizik uygulanır (gravity, friction vs. updateBalls'da)
+        }
+        
+        function updateBalls() {
+            balls.forEach((ball, index) => {
+                // CPU kontrolü (sadece ikinci top için)
+                if (cpuControlled && index === 1) {
+                    updateCPUControl(ball);
+                }
+                
+                ball.vy += gravity;
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+                ball.vx *= friction;
+                
+                const dx = ball.x - circle.x;
+                const dy = ball.y - circle.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance + ball.radius > circle.radius) {
+                    const angle = Math.atan2(dy, dx);
+                    ball.x = circle.x + Math.cos(angle) * (circle.radius - ball.radius);
+                    ball.y = circle.y + Math.sin(angle) * (circle.radius - ball.radius);
+                    
+                    const normalX = dx / distance;
+                    const normalY = dy / distance;
+                    const dot = ball.vx * normalX + ball.vy * normalY;
+                    
+                    ball.vx -= 2 * dot * normalX * wallBounce;
+                    ball.vy -= 2 * dot * normalY * wallBounce;
+                    
+                    // Titreme efekti
+                    screenShake = 10;
+                }
+                
+                const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                if (speed < minSpeed) {
+                    ball.vx += (Math.random() - 0.5) * 0.5;
+                    ball.vy += (Math.random() - 0.5) * 0.5;
+                }
+            });
+        }
+        
+        function drawBalls() {
+            balls.forEach((ball, index) => {
+                // Profil fotoğrafı varsa çiz
+                const user = index === 0 ? window.currentUser : opponentUser;
+                if (user && user.profileImage) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                        ctx.clip();
+                        ctx.drawImage(img, ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
+                        ctx.restore();
+                    };
+                    img.src = user.profileImage;
+                } else {
+                    // Fallback: Renkli daire
+                    ctx.fillStyle = ball.color;
+                    ctx.shadowColor = ball.color;
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+                
+                // Top çerçevesi
+                ctx.strokeStyle = currentNeonColor;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Takım harfi
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(ball.team === 'juventus' ? 'J' : 'A', ball.x, ball.y);
+            });
+        }
+        
+        function checkCollisions() {
+            const ball1 = balls[0];
+            const ball2 = balls[1];
+            const dx = ball2.x - ball1.x;
+            const dy = ball2.y - ball1.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < ball1.radius + ball2.radius && distance > 0) {
+                // Topları ayır - daha güvenli yöntem
+                const overlap = (ball1.radius + ball2.radius) - distance;
+                const separationX = (dx / distance) * overlap * 0.5;
+                const separationY = (dy / distance) * overlap * 0.5;
+                
+                ball1.x -= separationX;
+                ball1.y -= separationY;
+                ball2.x += separationX;
+                ball2.y += separationY;
+                
+                const tempVx = ball1.vx;
+                const tempVy = ball1.vy;
+                ball1.vx = ball2.vx * bounce;
+                ball1.vy = ball2.vy * bounce;
+                ball2.vx = tempVx * bounce;
+                ball2.vy = tempVy * bounce;
+                
+                const speed1 = Math.sqrt(ball1.vx * ball1.vx + ball1.vy * ball1.vy);
+                const speed2 = Math.sqrt(ball2.vx * ball2.vx + ball2.vy * ball2.vy);
+                
+                if (speed1 > maxSpeed) {
+                    ball1.vx = (ball1.vx / speed1) * maxSpeed;
+                    ball1.vy = (ball1.vy / speed1) * maxSpeed;
+                }
+                
+                if (speed2 > maxSpeed) {
+                    ball2.vx = (ball2.vx / speed2) * maxSpeed;
+                    ball2.vy = (ball2.vy / speed2) * maxSpeed;
+                }
+            }
+        }
+        
+        function checkGoals() {
+            // Kale çemberin üzerinde - çember dönerken kale de beraber dönüyor
+            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // Çemberin üzerinde
+            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // Çemberin üzerinde
+            const goalWidth = 60; // Küçülttük: 80 → 60
+            const goalHeight = 40; // Küçülttük: 50 → 40
+            
+            balls.forEach(ball => {
+                const inGoalX = ball.x >= goalX - goalWidth/2 && ball.x <= goalX + goalWidth/2;
+                const inGoalY = ball.y >= goalY - goalHeight/2 && ball.y <= goalY + goalHeight/2;
+                
+                if (inGoalX && inGoalY) {
+                    if (ball.team === 'juventus') {
+                        score1++;
+                        document.getElementById('score1').textContent = score1;
+                    } else {
+                        score2++;
+                        document.getElementById('score2').textContent = score2;
+                    }
+                    
+                    // Gol yazısı göster
+                    goalText = 'GOOOAAAL!!!';
+                    goalTextTimer = 60; // 1 saniye göster
+                    
+                    // Ses efekti çal
+                    playGoalSound();
+                    
+                    ball.x = circle.x + (Math.random() - 0.5) * 100;
+                    ball.y = circle.y + (Math.random() - 0.5) * 100;
+                    ball.vx = (Math.random() - 0.5) * 6;
+                    ball.vy = (Math.random() - 0.5) * 6;
+                }
+            });
+        }
+        
+        function updateTimer() {
+            if (!gameRunning) return;
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            if (timeLeft <= 0) {
+                endGame();
+            } else {
+                setTimeout(updateTimer, 1000);
+            }
+        }
+        
+        function endGame() {
+            // Berabere durumunda ekstra zaman ver
+            if (score1 === score2) {
+                console.log('⚽ Berabere! Ekstra 15 saniye ekleniyor...');
+                timeLeft = 15; // 15 saniye ekstra zaman
+                document.getElementById('timer').textContent = '0:15';
+                document.getElementById('timer').style.color = '#ff6600'; // Turuncu renk
+                
+                // Ekstra zaman mesajı göster
+                const timerElement = document.getElementById('timer');
+                timerElement.style.fontSize = '20px';
+                timerElement.style.fontWeight = 'bold';
+                
+                // Timer'ı tekrar başlat
+                setTimeout(updateTimer, 1000);
+                return;
+            }
+            
+            // Normal oyun bitişi
+            gameRunning = false;
+            document.getElementById('finalScore1').textContent = score1;
+            document.getElementById('finalScore2').textContent = score2;
+            document.getElementById('gameOver').style.display = 'block';
+            
+            // Timer rengini normale döndür
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
+            
+            // Oyun bitince hakem düdüğü çal
+            setTimeout(() => {
+                playRefereeWhistle();
+            }, 500);
+        }
+        
+        function restartGame() {
+            // Oyun modu seçimine geri dön
+            document.querySelector('.game-container').classList.remove('game-started');
+            document.getElementById('gameModeSelection').style.display = 'block';
+            document.getElementById('gameOver').style.display = 'none';
+            
+            // Skorları sıfırla
+            score1 = 0;
+            score2 = 0;
+            document.getElementById('score1').textContent = '0';
+            document.getElementById('score2').textContent = '0';
+            document.getElementById('timer').textContent = '1:00';
+            
+            // Timer stilini sıfırla
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
+            
+            // Topları başlangıç pozisyonuna getir
+            balls[0].x = 150;
+            balls[0].y = 200;
+            balls[0].vx = 3;
+            balls[0].vy = -2;
+            balls[1].x = 250;
+            balls[1].y = 200;
+            balls[1].vx = -3;
+            balls[1].vy = 2;
+        }
+        
+        function shareToFarcaster() {
+            if (!window.currentUser) {
+                alert('Kullanıcı bilgileri yüklenemedi!');
+                return;
+            }
+            
+            const winner = score1 > score2 ? window.currentUser.username : (opponentUser ? opponentUser.username : 'CPU');
+            const message = `🏆 Farcaster Futbol Oyunu! ${window.currentUser.username} ${score1} - ${score2} ${opponentUser ? opponentUser.username : 'CPU'}`;
+            
+            // Farcaster Mini App SDK ile paylaş
+            if (window.sdk) {
+                try {
+                    window.sdk.share({
+                        text: message,
+                        embeds: [{
+                            url: window.location.href,
+                            title: 'Farcaster Futbol Oyunu',
+                            description: `${winner} kazandı!`,
+                            image: {
+                                url: 'https://bouncingballsfarcaster.netlify.app/app-icon-512.svg'
+                            }
+                        }]
+                    }).then(() => {
+                        console.log('✅ Farcaster\'a paylaşıldı!');
+                        alert('Maç sonucu Farcaster\'a paylaşıldı!');
+                    }).catch(error => {
+                        console.log('❌ Paylaşım hatası:', error);
+                        // Fallback: Warpcast link
+                        const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
+                        window.open(url, '_blank');
+                    });
+                } catch (error) {
+                    console.log('❌ SDK hatası:', error);
+                    // Fallback: Warpcast link
+                    const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
+                    window.open(url, '_blank');
+                }
+            } else {
+                // Fallback: Warpcast link
+                const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
+                window.open(url, '_blank');
+            }
+        }
+        
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            balls.forEach(ball => {
+                const dx = x - ball.x;
+                const dy = y - ball.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < ball.radius) {
+                    ball.vx = (x - circle.x) * 0.1;
+                    ball.vy = (y - circle.y) * 0.1;
+                }
+            });
+        });
+        
+        // Sayfa yüklendiğinde ilk random renk seç
+        const initialColor = getRandomNeonColor();
+        applyNeonColor(initialColor);
+        console.log('🎨 İlk neon renk:', initialColor);
+    </script>
+</body>
+</html>
