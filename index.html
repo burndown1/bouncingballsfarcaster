@@ -19,6 +19,10 @@
     <meta property="fc:frame:button:1:action" content="link" />
     <meta property="fc:frame:button:1:target" content="https://bouncingballsfarcaster.vercel.app" />
     
+    <!-- Additional Frame Meta Tags -->
+    <meta property="fc:frame:button:1:post_url" content="https://bouncingballsfarcaster.vercel.app" />
+    <meta property="fc:frame:post_url" content="https://bouncingballsfarcaster.vercel.app" />
+    
     <!-- Additional Meta Tags -->
     <meta name="description" content="Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!" />
     <meta name="keywords" content="farcaster, futbol, oyun, mini app, game" />
@@ -50,6 +54,20 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/app-icon-192.svg">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Farcaster Futbol Oyunu",
+      "description": "Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!",
+      "url": "https://bouncingballsfarcaster.vercel.app",
+      "image": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+      "applicationCategory": "Game",
+      "operatingSystem": "Web Browser"
+    }
+    </script>
     
     <style>
         :root {
