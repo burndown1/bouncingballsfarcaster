@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "Farcaster Futbol Oyunu",
   "description": "Farcaster kullanıcıları ile futbol maçı yap!",
-  "icon": "https://burndown1.github.io/bouncingballsfarcaster/app-icon-512.svg",
-  "splash": "https://burndown1.github.io/bouncingballsfarcaster/app-icon-512.svg",
+  "icon": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+  "splash": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
   "categories": ["games"],
   "permissions": [],
-  "url": "https://burndown1.github.io/bouncingballsfarcaster"
+  "url": "https://bouncingballsfarcaster.vercel.app"
 }
