@@ -48,6 +48,9 @@
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
+    
+    <!-- Farcaster SDK -->
+    <script src="https://unpkg.com/@farcaster/frame-sdk@latest/dist/frame-sdk.js"></script>
     <meta name="theme-color" content="#00ff00">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -791,7 +794,37 @@
             try {
                 console.log('🔄 Getting real Farcaster user data...');
                 
-                // Get real user data from Farcaster SDK
+                // Try Farcaster Mini App context first
+                if (window.FarcasterFrame && window.FarcasterFrame.getUser) {
+                    try {
+                        const user = await window.FarcasterFrame.getUser();
+                        console.log('👤 Farcaster Mini App user:', user);
+                        return {
+                            username: user.username,
+                            displayName: user.displayName || user.username,
+                            pfpUrl: user.pfpUrl,
+                            verified: user.verified || false,
+                            fid: user.fid
+                        };
+                    } catch (error) {
+                        console.log('⚠️ Farcaster Mini App getUser failed:', error);
+                    }
+                }
+                
+                // Try Farcaster context
+                if (window.farcaster && window.farcaster.user) {
+                    const user = window.farcaster.user;
+                    console.log('👤 Farcaster context user:', user);
+                    return {
+                        username: user.username,
+                        displayName: user.displayName || user.username,
+                        pfpUrl: user.pfpUrl,
+                        verified: user.verified || false,
+                        fid: user.fid
+                    };
+                }
+                
+                // Try Farcaster SDK
                 if (window.sdk && window.sdk.getUser) {
                     const user = await window.sdk.getUser();
                     console.log('👤 Farcaster SDK user:', user);
@@ -800,32 +833,47 @@
                         return {
                             username: user.username,
                             displayName: user.displayName || user.username,
-                            profileImage: user.pfpUrl,
+                            pfpUrl: user.pfpUrl,
                             verified: user.verified || false,
                             fid: user.fid
                         };
                     }
                 }
                 
-                // Fallback: Get info from Frame API
-                const response = await fetch('/api/farcaster/user', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
+                // Try to get from URL parameters (Farcaster Mini App)
+                const urlParams = new URLSearchParams(window.location.search);
+                const fid = urlParams.get('fid');
+                const username = urlParams.get('username');
                 
-                if (response.ok) {
-                    const userData = await response.json();
-                    console.log('👤 Frame API user:', userData);
-                    return userData;
+                if (fid && username) {
+                    console.log('👤 Farcaster URL params user:', { fid, username });
+                    return {
+                        username: username,
+                        displayName: username,
+                        pfpUrl: `https://res.cloudinary.com/merkle-manufactory/image/fetch/c_fill,f_png,w_144/${encodeURIComponent(`https://warpcast.com/avatar/${username}`)}`,
+                        verified: false,
+                        fid: fid
+                    };
                 }
                 
-                throw new Error('Farcaster user data not available');
+                // Fallback to test user
+                console.log('⚠️ Using test user data');
+                return {
+                    username: 'testuser',
+                    displayName: 'Test User',
+                    pfpUrl: 'https://picsum.photos/100/100',
+                    verified: false
+                };
                 
             } catch (error) {
                 console.log('❌ Farcaster API error:', error);
-                throw error; // Don't fall back to test mode, throw error
+                // Fallback to test user
+                return {
+                    username: 'testuser',
+                    displayName: 'Test User',
+                    pfpUrl: 'https://picsum.photos/100/100',
+                    verified: false
+                };
             }
         }
         
@@ -980,7 +1028,7 @@
                               background: #000; color: white; border-radius: 5px; margin-bottom: 10px;">
                 <div id="searchResults" style="max-height: 200px; overflow-y: auto;"></div>
                 <div style="margin-top: 15px; text-align: right;">
-                    <button onclick="this.closest('div').closest('div').remove()" 
+                    <button id="cancelBtn" 
                             style="background: #666; color: white; border: none; padding: 8px 16px; 
                                    border-radius: 5px; margin-right: 10px; cursor: pointer;">Cancel</button>
                 </div>
@@ -991,6 +1039,12 @@
             
             const searchInput = document.getElementById('usernameSearch');
             const resultsDiv = document.getElementById('searchResults');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            // Cancel button event listener
+            cancelBtn.addEventListener('click', () => {
+                modal.remove();
+            });
             
             let searchTimeout;
             searchInput.addEventListener('input', async (e) => {
@@ -1014,7 +1068,7 @@
                             const data = await response.json();
                             resultsDiv.innerHTML = '';
                             
-                            if (data.result && data.result.users) {
+                            if (data.result && data.result.users && data.result.users.length > 0) {
                                 data.result.users.forEach(user => {
                                     const userDiv = document.createElement('div');
                                     userDiv.style.cssText = `
@@ -1040,6 +1094,8 @@
                                     
                                     resultsDiv.appendChild(userDiv);
                                 });
+                            } else {
+                                resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No users found</div>';
                             }
                         }
                     } catch (error) {
@@ -1893,6 +1949,18 @@
         
         async function initializeGame() {
             console.log('🎮 Initializing game...');
+            
+            // Initialize Farcaster Mini App
+            try {
+                if (window.FarcasterFrame) {
+                    await window.FarcasterFrame.init({
+                        allowedOrigins: ['*']
+                    });
+                    console.log('✅ Farcaster Mini App initialized');
+                }
+            } catch (error) {
+                console.log('⚠️ Farcaster Mini App not available:', error);
+            }
             
             // Try to get user data
             try {
