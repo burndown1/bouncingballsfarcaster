@@ -551,6 +551,22 @@
         window.sdk = null;
         window.farcasterInitialized = false;
         
+        // Load Farcaster SDK dynamically
+        async function loadFarcasterSDK() {
+            try {
+                const { sdk } = await import('https://esm.sh/@farcaster/miniapp-sdk');
+                window.sdk = sdk;
+                console.log('✅ Farcaster SDK loaded:', sdk);
+                return sdk;
+            } catch (error) {
+                console.error('❌ Failed to load Farcaster SDK:', error);
+                return null;
+            }
+        }
+        
+        // Load SDK immediately
+        loadFarcasterSDK();
+        
         // Test function to verify script is loading
         window.testFunction = function() {
             console.log('✅ Script is loading correctly!');
@@ -604,10 +620,16 @@
                 
                 // Wait for SDK to be available
                 let attempts = 0;
-                while (!window.sdk && !window.FarcasterFrame && !window.FarcasterMiniApps && attempts < 10) {
+                while (!window.sdk && attempts < 20) {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     attempts++;
                     console.log(`⏳ Waiting for SDK... attempt ${attempts}`);
+                    
+                    // Try to load SDK if it's not available
+                    if (!window.sdk && attempts === 5) {
+                        console.log('🔄 Attempting to reload SDK...');
+                        await loadFarcasterSDK();
+                    }
                 }
                 
                 // Initialize SDK like the other AI's code
