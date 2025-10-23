@@ -566,18 +566,50 @@
                     console.log(`⏳ Waiting for SDK... attempt ${attempts}`);
                 }
                 
+                // Initialize SDK like the other AI's code
+                if (window.sdk && window.sdk.actions) {
+                    try {
+                        await window.sdk.actions.ready();
+                        console.log("✅ Farcaster SDK initialized successfully - app fully loaded");
+                    } catch (readyError) {
+                        console.error('Failed to initialize Farcaster SDK:', readyError);
+                        setTimeout(async () => {
+                            try {
+                                await window.sdk.actions.ready();
+                                console.log('✅ Farcaster SDK initialized on retry');
+                            } catch (retryError) {
+                                console.error('❌ Farcaster SDK retry failed:', retryError);
+                            }
+                        }, 1000);
+                    }
+                }
+                
                 // Try window.sdk first (the actual SDK that's loaded)
                 if (window.sdk) {
                     console.log('✅ window.sdk ready!');
                     try {
-                        // Try to get user from window.sdk
+                        // Try to get user from window.sdk - CORRECT WAY from other AI!
                         let user = null;
-                        if (window.sdk.getUser) {
-                            user = await window.sdk.getUser();
-                        } else if (window.sdk.user) {
-                            user = window.sdk.user;
-                        } else if (window.sdk.context && window.sdk.context.user) {
-                            user = window.sdk.context.user;
+                        if (window.sdk && window.sdk.context) {
+                            console.log('👤 Getting context from window.sdk...');
+                            try {
+                                const context = await window.sdk.context;
+                                console.log('✅ Context loaded:', context);
+                                
+                                if (context.user) {
+                                    user = {
+                                        fid: context.user.fid,
+                                        username: context.user.username,
+                                        displayName: context.user.displayName,
+                                        pfpUrl: context.user.pfpUrl,
+                                    };
+                                    console.log('👤 User data:', user);
+                                } else {
+                                    console.log('👤 No user data available in context');
+                                }
+                            } catch (e) {
+                                console.log('👤 Context access failed:', e);
+                            }
                         }
                         
                         if (user) {
@@ -585,21 +617,9 @@
                             console.log('👤 User type:', typeof user);
                             console.log('👤 User keys:', Object.keys(user));
                             
-                            // Handle different user data formats
-                            let userData = null;
-                            if (typeof user === 'function') {
-                                // If user is a function, try to call it or get its properties
-                                console.log('👤 User is a function, trying to extract data...');
-                                try {
-                                    const result = await user();
-                                    userData = result;
-                                } catch (e) {
-                                    console.log('👤 Function call failed, trying direct properties...');
-                                    userData = user;
-                                }
-                            } else {
-                                userData = user;
-                            }
+                            // User data should be a proper object now
+                            console.log('👤 User data received:', user);
+                            const userData = user;
                             
                             if (userData) {
                                 window.currentUser = {
@@ -640,15 +660,15 @@
                         
                         if (user) {
                             console.log('👤 Farcaster user from FarcasterFrame:', user);
-                            window.currentUser = {
-                                username: user.username,
-                                displayName: user.displayName || user.username,
+                    window.currentUser = {
+                        username: user.username,
+                        displayName: user.displayName || user.username,
                                 pfpUrl: user.pfpUrl || user.pfp,
-                                verified: user.verified || false,
-                                fid: user.fid
-                            };
-                            
-                            updateUserInterface();
+                        verified: user.verified || false,
+                        fid: user.fid
+                    };
+                    
+                    updateUserInterface();
                             return;
                         }
                     } catch (frameError) {
@@ -674,7 +694,7 @@
                         
                         if (user) {
                             console.log('👤 Farcaster user from FarcasterMiniApps:', user);
-                            window.currentUser = {
+            window.currentUser = {
                                 username: user.username,
                                 displayName: user.displayName || user.username,
                                 pfpUrl: user.pfpUrl || user.pfp,
@@ -682,7 +702,7 @@
                                 fid: user.fid
                             };
                             
-                            updateUserInterface();
+            updateUserInterface();
                             return;
                         }
                     } catch (miniAppsError) {
@@ -929,13 +949,13 @@
                         
                         if (user) {
                             console.log('👤 Farcaster Mini Apps user:', user);
-                            return {
-                                username: user.username,
-                                displayName: user.displayName || user.username,
+                        return {
+                            username: user.username,
+                            displayName: user.displayName || user.username,
                                 pfpUrl: user.pfpUrl || user.pfp,
-                                verified: user.verified || false,
-                                fid: user.fid
-                            };
+                            verified: user.verified || false,
+                            fid: user.fid
+                        };
                         }
                     } catch (error) {
                         console.log('⚠️ Farcaster Mini Apps SDK failed:', error);
@@ -977,32 +997,35 @@
                 if (window.sdk) {
                     try {
                         let user = null;
-                        if (window.sdk.getUser) {
-                            user = await window.sdk.getUser();
-                        } else if (window.sdk.user) {
-                            user = window.sdk.user;
-                        } else if (window.sdk.context && window.sdk.context.user) {
-                            user = window.sdk.context.user;
+                        if (window.sdk && window.sdk.context) {
+                            console.log('👤 Getting context from window.sdk...');
+                            try {
+                                const context = await window.sdk.context;
+                                console.log('✅ Context loaded:', context);
+                                
+                                if (context.user) {
+                                    user = {
+                                        fid: context.user.fid,
+                                        username: context.user.username,
+                                        displayName: context.user.displayName,
+                                        pfpUrl: context.user.pfpUrl,
+                                    };
+                                    console.log('👤 User data:', user);
+                                } else {
+                                    console.log('👤 No user data available in context');
+                                }
+                            } catch (e) {
+                                console.log('👤 Context access failed:', e);
+                            }
                         }
                         
                         if (user) {
                             console.log('👤 Farcaster SDK user:', user);
                             console.log('👤 User type:', typeof user);
                             
-                            // Handle different user data formats
-                            let userData = null;
-                            if (typeof user === 'function') {
-                                console.log('👤 User is a function, trying to extract data...');
-                                try {
-                                    const result = await user();
-                                    userData = result;
-                                } catch (e) {
-                                    console.log('👤 Function call failed, trying direct properties...');
-                                    userData = user;
-                                }
-                            } else {
-                                userData = user;
-                            }
+                            // User data should be a proper object now
+                            console.log('👤 User data received:', user);
+                            const userData = user;
                             
                             if (userData) {
                                 return {
@@ -1918,13 +1941,13 @@
                     img.src = user.pfpUrl;
                 } else {
                     // Fallback: Colored circle
-                    ctx.fillStyle = ball.color;
-                    ctx.shadowColor = ball.color;
-                    ctx.shadowBlur = 15;
-                    ctx.beginPath();
-                    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
+                ctx.fillStyle = ball.color;
+                ctx.shadowColor = ball.color;
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
                 }
                 
                 // Ball frame - each player has different color
@@ -2196,7 +2219,7 @@
                 document.getElementById('userStatus').textContent = '🎮 Ready to play!';
             }
         }
-
+        
         // Select first random color when page loads
         const initialColor = getRandomNeonColor();
         applyNeonColor(initialColor);
