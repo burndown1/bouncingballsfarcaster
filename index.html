@@ -545,16 +545,26 @@
     </div>
     
     <!-- Farcaster Mini App SDK -->
-    <script type="module">
-        import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
-        
+    <script>
         // Global variables
         window.currentUser = null;
-        window.sdk = sdk;
+        window.sdk = null;
         window.farcasterInitialized = false;
         
+        // Test function to verify script is loading
+        window.testFunction = function() {
+            console.log('✅ Script is loading correctly!');
+            return true;
+        };
+        
+        console.log('✅ Script loaded, functions available:', {
+            startRandomFarcasterMatch: typeof window.startRandomFarcasterMatch,
+            startFarcasterDuel: typeof window.startFarcasterDuel,
+            testFunction: typeof window.testFunction
+        });
+        
         // Initialize SDK - IMMEDIATELY!
-        async function initializeFarcasterSDK() {
+        window.initializeFarcasterSDK = async function initializeFarcasterSDK() {
             try {
                 console.log('🔄 Initializing Farcaster SDK...');
                 
