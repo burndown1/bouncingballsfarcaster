@@ -135,13 +135,14 @@
             align-items: center;
         }
         #gameCanvas {
-            border: 2px solid var(--neon-color);
-            border-radius: 10px;
+            border: 3px solid var(--neon-color);
+            border-radius: 15px;
             background: #001100;
-            box-shadow: 0 0 20px var(--neon-color);
-            width: min(90vw, 90vh, 400px);
-            height: min(90vw, 90vh, 400px);
+            box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
+            width: min(85vw, 85vh, 400px);
+            height: min(85vw, 85vh, 400px);
             display: block;
+            margin: 20px;
         }
         .ui-overlay {
             position: absolute;
@@ -374,47 +375,96 @@
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             .game-container {
-                padding: 10px;
+                padding: 5px;
+            }
+            
+            #gameCanvas {
+                width: min(90vw, 90vh, 350px);
+                height: min(90vw, 90vh, 350px);
+                margin: 10px;
+                border-width: 2px;
             }
             
             .ui-overlay {
-                top: 10px;
-                left: 10px;
-                right: 10px;
+                top: 5px;
+                left: 5px;
+                right: 5px;
             }
             
             .score-display {
-                font-size: 14px;
-                padding: 8px 12px;
-                min-width: 160px;
+                font-size: 12px;
+                padding: 6px 10px;
+                min-width: 140px;
             }
             
             .player-name {
-                font-size: 12px;
-                min-width: 50px;
+                font-size: 10px;
+                min-width: 40px;
+            }
+            
+            .player-score {
+                font-size: 14px;
             }
             
             .timer-display {
-                font-size: 18px;
-                padding: 8px 12px;
+                font-size: 16px;
+                padding: 6px 10px;
             }
             
             .game-mode-selection {
-                padding: 30px 20px;
-                margin: 20px;
+                padding: 20px 15px;
+                margin: 10px;
             }
             
             .game-mode-selection h2 {
-                font-size: 24px;
+                font-size: 20px;
             }
             
             .mode-buttons {
                 flex-direction: column;
-                gap: 15px;
+                gap: 12px;
             }
             
             .mode-btn {
-                min-width: 200px;
+                min-width: 180px;
+                padding: 15px;
+            }
+            
+            .mode-icon {
+                font-size: 36px;
+            }
+            
+            .mode-title {
+                font-size: 16px;
+            }
+            
+            .mode-desc {
+                font-size: 12px;
+            }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            #gameCanvas {
+                width: min(95vw, 95vh, 300px);
+                height: min(95vw, 95vh, 300px);
+                margin: 5px;
+            }
+            
+            .score-display {
+                font-size: 10px;
+                padding: 4px 8px;
+                min-width: 120px;
+            }
+            
+            .player-name {
+                font-size: 9px;
+                min-width: 35px;
+            }
+            
+            .timer-display {
+                font-size: 14px;
+                padding: 4px 8px;
             }
         }
     </style>
@@ -629,6 +679,10 @@
         ];
         
         let currentNeonColor = neonColors[Math.floor(Math.random() * neonColors.length)];
+        
+        // Player ball colors - different for each player
+        let player1BallColor = '#00ff00'; // Green for player 1
+        let player2BallColor = '#ff0080'; // Pink for player 2
         
         function getRandomNeonColor() {
             return neonColors[Math.floor(Math.random() * neonColors.length)];
@@ -845,11 +899,20 @@
             gameRunning = true;
             timeLeft = 60; // Reset time
             
+            // Select different colors for each player
+            player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
+            do {
+                player2BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
+            } while (player2BallColor === player1BallColor); // Ensure different colors
+            
+            console.log('🎨 Player 1 ball color:', player1BallColor);
+            console.log('🎨 Player 2 ball color:', player2BallColor);
+            
             // Recreate balls with user data
             balls = createBalls();
             console.log('⚽ Balls created:', balls);
             
-            // Select new random neon color
+            // Select new random neon color for circle
             const newColor = getRandomNeonColor();
             applyNeonColor(newColor);
             console.log('🎨 New neon color:', newColor);
@@ -892,12 +955,14 @@
                 {
                     x: 150, y: 200, vx: 3, vy: -2, radius: 20, 
                     team: 'juventus', color: '#ffffff',
-                    user: player1
+                    user: player1,
+                    ballColor: player1BallColor // Player 1's unique ball color
                 },
                 {
                     x: 250, y: 200, vx: -3, vy: 2, radius: 20, 
                     team: 'atalanta', color: '#0066cc',
-                    user: player2
+                    user: player2,
+                    ballColor: player2BallColor // Player 2's unique ball color
                 }
             ];
         }
@@ -1291,12 +1356,15 @@
                 ctx.shadowBlur = 0;
                 }
                 
-                // Ball frame
-                ctx.strokeStyle = currentNeonColor;
-                ctx.lineWidth = 2;
+                // Ball frame - each player has different color
+                ctx.strokeStyle = ball.ballColor || currentNeonColor;
+                ctx.lineWidth = 3;
+                ctx.shadowColor = ball.ballColor || currentNeonColor;
+                ctx.shadowBlur = 20;
                 ctx.beginPath();
                 ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                 ctx.stroke();
+                ctx.shadowBlur = 0;
                 
                 // Team letter
                 ctx.fillStyle = '#000';
