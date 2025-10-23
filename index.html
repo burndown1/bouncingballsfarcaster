@@ -1134,14 +1134,14 @@
                 // Try to get from URL parameters (Farcaster Mini App context)
                 const urlParams2 = new URLSearchParams(window.location.search);
                 const fid2 = urlParams2.get('fid');
-                const username = urlParams2.get('username');
+                const username2 = urlParams2.get('username');
                 const pfp = urlParams2.get('pfp');
                 
-                if (fid2 && username) {
-                    console.log('👤 Found user in URL params:', { fid: fid2, username, pfp });
+                if (fid2 && username2) {
+                    console.log('👤 Found user in URL params:', { fid: fid2, username: username2, pfp });
                     return {
-                        username: username,
-                        displayName: username,
+                        username: username2,
+                        displayName: username2,
                         pfpUrl: pfp || null,
                         verified: false,
                         fid: parseInt(fid2)
