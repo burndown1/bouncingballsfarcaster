@@ -1431,6 +1431,7 @@ UK                // Try to get random Farcaster user
                 
                 if (trendingUsers.length > 0) {
                     const randomUser = trendingUsers[Math.floor(Math.random() * trendingUsers.length)];
+                    console.log('🎲 Selected random user:', randomUser);
                     opponentUser = {
                         username: randomUser.username,
                         displayName: randomUser.display_name || randomUser.username,
@@ -1439,7 +1440,9 @@ UK                // Try to get random Farcaster user
                         verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
                         powerBadge: randomUser.power_badge
                     };
+                    console.log('🎲 Opponent user set:', opponentUser);
                 } else {
+                    console.log('⚠️ No trending users, using CPU');
                     opponentUser = {
                         username: 'CPU',
                         displayName: 'CPU Player',
