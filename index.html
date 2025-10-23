@@ -985,23 +985,60 @@
         }
 
         window.getRealFarcasterUsers = async function getRealFarcasterUsers() {
+            // Fallback users when Neynar API is not available
+            const fallbackUsers = [
+                {
+                    username: 'vitalik',
+                    display_name: 'Vitalik Buterin',
+                    pfp_url: 'https://picsum.photos/100/100?random=1',
+                    follower_count: 500000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'dwr',
+                    display_name: 'Dan Romero',
+                    pfp_url: 'https://picsum.photos/100/100?random=2',
+                    follower_count: 100000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'jessepollak',
+                    display_name: 'Jesse Pollak',
+                    pfp_url: 'https://picsum.photos/100/100?random=3',
+                    follower_count: 50000,
+                    verified_addresses: [],
+                    power_badge: false
+                },
+                {
+                    username: 'dankrad',
+                    display_name: 'Dankrad Feist',
+                    pfp_url: 'https://picsum.photos/100/100?random=4',
+                    follower_count: 25000,
+                    verified_addresses: [],
+                    power_badge: false
+                }
+            ];
+            
             try {
-                // ChatGPT önerisi: Random user API
+                // Try Neynar API first
                 const response = await fetch(`${NEYNAR_BASE_URL}/user/random?api_key=${NEYNAR_API_KEY}`, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
                 
-                        if (response.ok) {
-                            const data = await response.json();
-                            return [data.user] || [];
-                        } else {
-                            console.error('❌ Neynar API error:', response.status, response.statusText);
-                            if (response.status === 402) {
-                                console.error('💳 Neynar API: Payment Required - Check your API key or billing');
-                            }
-                        }
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Neynar API success:', data);
+                    return [data.user] || [];
+                } else {
+                    console.log('⚠️ Neynar API failed:', response.status, response.statusText);
+                    if (response.status === 402) {
+                        console.log('💳 Neynar API: Payment Required - Using fallback users');
+                    }
+                }
                 
                 // Fallback to trending users
                 const trendingResponse = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20&api_key=${NEYNAR_API_KEY}`, {
@@ -1012,17 +1049,22 @@
                 
                 if (trendingResponse.ok) {
                     const trendingData = await trendingResponse.json();
+                    console.log('✅ Neynar trending API success:', trendingData.users?.length);
                     return trendingData.users || [];
                 } else {
-                    console.error('❌ Neynar trending API error:', trendingResponse.status, trendingResponse.statusText);
+                    console.log('⚠️ Neynar trending API failed:', trendingResponse.status, trendingResponse.statusText);
                     if (trendingResponse.status === 402) {
-                        console.error('💳 Neynar API: Payment Required - Check your API key or billing');
+                        console.log('💳 Neynar API: Payment Required - Using fallback users');
                     }
                 }
-                return [];
+                
+                // Return fallback users
+                console.log('🎲 Using fallback users:', fallbackUsers.length);
+                return fallbackUsers;
+                
             } catch (error) {
-                console.error('Error fetching random users:', error);
-                return [];
+                console.log('⚠️ Neynar API error, using fallback users:', error);
+                return fallbackUsers;
             }
         }
 
@@ -1342,13 +1384,49 @@
                     };
                 }
                 
-                // Try to get random Farcaster user
+UK                // Try to get random Farcaster user
                 let trendingUsers = [];
                 try {
                     trendingUsers = await getRealFarcasterUsers();
                     console.log('🎲 Trending users from Neynar:', trendingUsers.length);
                 } catch (error) {
-                    console.log('⚠️ Neynar API failed, using CPU opponent:', error);
+                    console.log('⚠️ Neynar API failed, using fallback users:', error);
+                    // Use fallback users directly
+                    trendingUsers = [
+                        {
+                            username: 'vitalik',
+                            display_name: 'Vitalik Buterin',
+                            pfp_url: 'https://picsum.photos/100/100?random=1',
+                            follower_count: 500000,
+                            verified_addresses: [],
+                            power_badge: true
+                        },
+                        {
+                            username: 'dwr',
+                            display_name: 'Dan Romero',
+                            pfp_url: 'https://picsum.photos/100/100?random=2',
+                            follower_count: 100000,
+                            verified_addresses: [],
+                            power_badge: true
+                        },
+                        {
+                            username: 'jessepollak',
+                            display_name: 'Jesse Pollak',
+                            pfp_url: 'https://picsum.photos/100/100?random=3',
+                            follower_count: 50000,
+                            verified_addresses: [],
+                            power_badge: false
+                        },
+                        {
+                            username: 'dankrad',
+                            display_name: 'Dankrad Feist',
+                            pfp_url: 'https://picsum.photos/100/100?random=4',
+                            follower_count: 25000,
+                            verified_addresses: [],
+                            power_badge: false
+                        }
+                    ];
+                    console.log('🎲 Using fallback users:', trendingUsers.length);
                 }
                 
                 if (trendingUsers.length > 0) {
