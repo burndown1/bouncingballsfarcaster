@@ -572,7 +572,7 @@
                     
                 } else {
                     console.log('⚠️ Farcaster user data not available, using test mode');
-                    initializeTestMode();
+                    console.log('⚠️ Farcaster SDK not available');
                 }
                 
             } catch (error) {
@@ -587,23 +587,10 @@
                     console.log('❌ Ready call failed:', readyError);
                 }
                 
-                initializeTestMode();
+                console.log('⚠️ Farcaster SDK not available');
             }
         }
         
-        function initializeTestMode() {
-            console.log('🧪 Starting test mode...');
-            window.currentUser = {
-                username: 'testuser',
-                displayName: 'Test User',
-                profileImage: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=T',
-                verified: false,
-                fid: Math.floor(Math.random() * 10000)
-            };
-            
-            // Update UI in test mode too
-            updateUserInterface();
-        }
         
         function updateUserInterface() {
             // Show user information in UI
@@ -1996,6 +1983,10 @@
             } catch (error) {
                 console.log('⚠️ Farcaster Mini App SDK not available:', error);
             }
+            
+            // Wait a bit for Farcaster context to load
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('🔍 After wait - window.farcaster:', window.farcaster);
             
             // Get user data automatically (ChatGPT önerisi)
             try {
