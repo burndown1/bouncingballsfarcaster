@@ -784,6 +784,9 @@
         async function getFarcasterUserData() {
             try {
                 console.log('🔄 Getting real Farcaster user data...');
+                console.log('🔍 window.farcaster:', window.farcaster);
+                console.log('🔍 window.FarcasterFrame:', window.FarcasterFrame);
+                console.log('🔍 window.FarcasterMiniApps:', window.FarcasterMiniApps);
                 
                 // Try Farcaster Mini App context (doğru method)
                 if (window.farcaster && window.farcaster.user) {
@@ -880,25 +883,52 @@
                     };
                 }
                 
-                // Mock user data for testing (ChatGPT önerisi)
-                console.log('⚠️ Using mock user data for testing');
+                // Try to get from window.farcaster (Farcaster Mini App context)
+                if (window.farcaster) {
+                    console.log('🔍 Checking window.farcaster:', window.farcaster);
+                    
+                    // Check if user data is available in different properties
+                    if (window.farcaster.user) {
+                        console.log('👤 Found user in window.farcaster.user:', window.farcaster.user);
+                        return {
+                            username: window.farcaster.user.username,
+                            displayName: window.farcaster.user.displayName || window.farcaster.user.username,
+                            pfpUrl: window.farcaster.user.pfpUrl || window.farcaster.user.pfp,
+                            verified: window.farcaster.user.verified || false,
+                            fid: window.farcaster.user.fid
+                        };
+                    }
+                    
+                    // Check if user data is in window.farcaster.data
+                    if (window.farcaster.data && window.farcaster.data.user) {
+                        console.log('👤 Found user in window.farcaster.data.user:', window.farcaster.data.user);
+                        return {
+                            username: window.farcaster.data.user.username,
+                            displayName: window.farcaster.data.user.displayName || window.farcaster.data.user.username,
+                            pfpUrl: window.farcaster.data.user.pfpUrl || window.farcaster.data.user.pfp,
+                            verified: window.farcaster.data.user.verified || false,
+                            fid: window.farcaster.data.user.fid
+                        };
+                    }
+                }
+                
+                // Fallback to test user
+                console.log('⚠️ No Farcaster user data found, using test user');
                 return {
-                    username: 'alitaskiran', // Senin gerçek username'in
-                    displayName: 'Ali Taskiran',
-                    pfpUrl: 'https://res.cloudinary.com/merkle-manufactory/image/fetch/c_fill,f_png,w_144/https://warpcast.com/avatar/alitaskiran',
-                    verified: false,
-                    fid: 12345
+                    username: 'testuser',
+                    displayName: 'Test User',
+                    pfpUrl: 'https://picsum.photos/100/100',
+                    verified: false
                 };
                 
             } catch (error) {
                 console.log('❌ Farcaster API error:', error);
-                // Fallback to mock user for testing
+                // Fallback to test user
                 return {
-                    username: 'alitaskiran', // Senin gerçek username'in
-                    displayName: 'Ali Taskiran',
-                    pfpUrl: 'https://res.cloudinary.com/merkle-manufactory/image/fetch/c_fill,f_png,w_144/https://warpcast.com/avatar/alitaskiran',
-                    verified: false,
-                    fid: 12345
+                    username: 'testuser',
+                    displayName: 'Test User',
+                    pfpUrl: 'https://picsum.photos/100/100',
+                    verified: false
                 };
             }
         }
