@@ -300,6 +300,7 @@
     <script>
         // Global değişkenleri tanımla
         window.currentUser = null;
+        window.sdkReady = false;
         
         // SDK'yi başlat
         async function initializeFarcasterSDK() {
@@ -308,6 +309,12 @@
                 
                 // SDK'yi global olarak tanımla
                 window.sdk = window.FarcasterSDK;
+                
+                if (!window.sdk) {
+                    console.log('❌ SDK bulunamadı, test moduna geçiliyor...');
+                    initializeTestMode();
+                    return;
+                }
                 
                 // Kullanıcı bilgilerini al
                 const user = await window.sdk.getUser();
@@ -328,8 +335,9 @@
                     initializeTestMode();
                 }
                 
-                // Hemen ready() çağır
+                // SDK ready() çağır
                 await window.sdk.actions.ready();
+                window.sdkReady = true;
                 console.log('✅ Farcaster SDK ready!');
                 
             } catch (error) {
@@ -338,8 +346,11 @@
                 
                 // Test modunda da ready() çağır
                 try {
-                    await window.sdk.actions.ready();
-                    console.log('✅ Test modunda SDK ready!');
+                    if (window.sdk && window.sdk.actions) {
+                        await window.sdk.actions.ready();
+                        window.sdkReady = true;
+                        console.log('✅ Test modunda SDK ready!');
+                    }
                 } catch (readyError) {
                     console.log('❌ Test modunda SDK ready hatası:', readyError);
                 }
@@ -351,19 +362,39 @@
             window.currentUser = getTestUserData();
         }
         
-        // SDK'yi yükle ve başlat
-        if (window.FarcasterSDK) {
-            initializeFarcasterSDK();
-        } else {
-            // SDK henüz yüklenmediyse bekle
-            window.addEventListener('load', () => {
+        // SDK'yi yükle ve başlat - DOM hazır olduğunda
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🔄 DOM hazır, SDK başlatılıyor...');
+            
+            // SDK'nin yüklenmesini bekle
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            while (attempts < maxAttempts) {
                 if (window.FarcasterSDK) {
-                    initializeFarcasterSDK();
-                } else {
-                    initializeTestMode();
+                    console.log('✅ SDK bulundu, başlatılıyor...');
+                    await initializeFarcasterSDK();
+                    break;
                 }
-            });
-        }
+                
+                console.log(`⏳ SDK bekleniyor... (${attempts + 1}/${maxAttempts})`);
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (attempts >= maxAttempts) {
+                console.log('❌ SDK yüklenemedi, test moduna geçiliyor...');
+                initializeTestMode();
+            }
+        });
+        
+        // Alternatif olarak window load event'i de ekle
+        window.addEventListener('load', async () => {
+            if (!window.sdkReady) {
+                console.log('🔄 Window load - SDK tekrar deneniyor...');
+                await initializeFarcasterSDK();
+            }
+        });
     </script>
     <script>
         // Random neon renk sistemi
