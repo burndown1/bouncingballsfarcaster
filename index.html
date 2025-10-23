@@ -1384,50 +1384,43 @@
                     };
                 }
                 
-                // Try to get random Farcaster user
-                let trendingUsers = [];
-                try {
-                    trendingUsers = await getRealFarcasterUsers();
-                    console.log('🎲 Trending users from Neynar:', trendingUsers.length);
-                } catch (error) {
-                    console.log('⚠️ Neynar API failed, using fallback users:', error);
-                    // Use fallback users directly
-                    trendingUsers = [
-                        {
-                            username: 'vitalik',
-                            display_name: 'Vitalik Buterin',
-                            pfp_url: 'https://picsum.photos/100/100?random=1',
-                            follower_count: 500000,
-                            verified_addresses: [],
-                            power_badge: true
-                        },
-                        {
-                            username: 'dwr',
-                            display_name: 'Dan Romero',
-                            pfp_url: 'https://picsum.photos/100/100?random=2',
-                            follower_count: 100000,
-                            verified_addresses: [],
-                            power_badge: true
-                        },
-                        {
-                            username: 'jessepollak',
-                            display_name: 'Jesse Pollak',
-                            pfp_url: 'https://picsum.photos/100/100?random=3',
-                            follower_count: 50000,
-                            verified_addresses: [],
-                            power_badge: false
-                        },
-                        {
-                            username: 'dankrad',
-                            display_name: 'Dankrad Feist',
-                            pfp_url: 'https://picsum.photos/100/100?random=4',
-                            follower_count: 25000,
-                            verified_addresses: [],
-                            power_badge: false
-                        }
-                    ];
-                    console.log('🎲 Using fallback users:', trendingUsers.length);
-                }
+                // Always use fallback users for Farcaster Mini App
+                console.log('🎲 Using fallback users for Farcaster Mini App');
+                const trendingUsers = [
+                    {
+                        username: 'vitalik',
+                        display_name: 'Vitalik Buterin',
+                        pfp_url: 'https://picsum.photos/100/100?random=1',
+                        follower_count: 500000,
+                        verified_addresses: [],
+                        power_badge: true
+                    },
+                    {
+                        username: 'dwr',
+                        display_name: 'Dan Romero',
+                        pfp_url: 'https://picsum.photos/100/100?random=2',
+                        follower_count: 100000,
+                        verified_addresses: [],
+                        power_badge: true
+                    },
+                    {
+                        username: 'jessepollak',
+                        display_name: 'Jesse Pollak',
+                        pfp_url: 'https://picsum.photos/100/100?random=3',
+                        follower_count: 50000,
+                        verified_addresses: [],
+                        power_badge: false
+                    },
+                    {
+                        username: 'dankrad',
+                        display_name: 'Dankrad Feist',
+                        pfp_url: 'https://picsum.photos/100/100?random=4',
+                        follower_count: 25000,
+                        verified_addresses: [],
+                        power_badge: false
+                    }
+                ];
+                console.log('🎲 Fallback users loaded:', trendingUsers.length);
                 
                 if (trendingUsers.length > 0) {
                     const randomUser = trendingUsers[Math.floor(Math.random() * trendingUsers.length)];
