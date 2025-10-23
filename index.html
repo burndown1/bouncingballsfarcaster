@@ -1384,7 +1384,7 @@
                     };
                 }
                 
-UK                // Try to get random Farcaster user
+                // Try to get random Farcaster user
                 let trendingUsers = [];
                 try {
                     trendingUsers = await getRealFarcasterUsers();
@@ -1440,7 +1440,9 @@ UK                // Try to get random Farcaster user
                         verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
                         powerBadge: randomUser.power_badge
                     };
-                    console.log('🎲 Opponent user set:', opponentUser);
+                    // Set globally
+                    window.opponentUser = opponentUser;
+                    console.log('🎲 Opponent user set globally:', window.opponentUser);
                 } else {
                     console.log('⚠️ No trending users, using CPU');
                     opponentUser = {
@@ -1448,6 +1450,7 @@ UK                // Try to get random Farcaster user
                         displayName: 'CPU Player',
                         pfpUrl: 'https://picsum.photos/100/100'
                     };
+                    window.opponentUser = opponentUser;
                 }
                 
                 console.log('👤 Current user:', currentUser);
@@ -1721,11 +1724,24 @@ UK                // Try to get random Farcaster user
                 document.getElementById('player1Name').textContent = 'You';
             }
             
-            if (opponentUser) {
-                document.getElementById('player2Name').textContent = opponentUser.username || 'Opponent';
-                if (opponentUser.pfpUrl) {
-                    document.getElementById('player2Avatar').src = opponentUser.pfpUrl;
+            // Set opponent user globally if not set
+            if (!window.opponentUser && opponentUser) {
+                window.opponentUser = opponentUser;
+            }
+            
+            // Use global opponentUser
+            const currentOpponent = window.opponentUser || opponentUser;
+            if (currentOpponent) {
+                console.log('🎯 Setting opponent name in scoreboard:', currentOpponent.username);
+                document.getElementById('player2Name').textContent = currentOpponent.username || 'Opponent';
+                if (currentOpponent.pfpUrl) {
+                    document.getElementById('player2Avatar').src = currentOpponent.pfpUrl;
                 }
+            } else {
+                console.log('⚠️ No opponentUser available in startGame()');
+                // Fallback to CPU
+                document.getElementById('player2Name').textContent = 'CPU';
+                document.getElementById('player2Avatar').src = 'https://picsum.photos/100/100';
             }
             
             // Recreate balls with user data
