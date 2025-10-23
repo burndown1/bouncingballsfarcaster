@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,7 +51,7 @@
     <meta name="theme-color" content="#00ff00">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Futbol Oyunu">
+    <meta name="apple-mobile-web-app-title" content="Bouncing Balls">
     
     <!-- Farcaster Hosted Manifest -->
     <meta name="farcaster:manifest" content="https://bouncingballsfarcaster.vercel.app/.well-known/farcaster.json">
@@ -66,8 +66,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "Farcaster Futbol Oyunu",
-      "description": "Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!",
+      "name": "Bouncing Balls",
+      "description": "Play football with Farcaster users! Balls bounce in circle, goal rotates, score goals!",
       "url": "https://bouncingballsfarcaster.vercel.app",
       "image": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
       "applicationCategory": "Game",
@@ -79,7 +79,7 @@
       },
       "author": {
         "@type": "Organization",
-        "name": "Farcaster Futbol Oyunu"
+        "name": "Bouncing Balls"
       },
       "screenshot": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
       "softwareVersion": "1.0.0"
@@ -114,54 +114,101 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, var(--dark-bg) 0%, #16213E 50%, var(--dark-bg) 100%);
             min-height: 100vh;
+            height: 100vh;
             color: var(--text-primary);
-            overflow-x: hidden;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 0;
+            padding: 0;
         }
         .game-container {
             position: relative;
-            max-width: 500px;
-            width: 100%;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         #gameCanvas {
             border: 2px solid var(--neon-color);
             border-radius: 10px;
             background: #001100;
             box-shadow: 0 0 20px var(--neon-color);
-            width: 400px;
-            height: 400px;
+            width: min(90vw, 90vh, 400px);
+            height: min(90vw, 90vh, 400px);
             display: block;
         }
         .ui-overlay {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
+            top: 20px;
+            left: 20px;
+            right: 20px;
             display: flex;
             justify-content: space-between;
             z-index: 10;
+            pointer-events: none;
         }
         .score-display {
             color: var(--neon-color);
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             text-shadow: 0 0 10px var(--neon-color);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 15px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
             border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+        }
+        
+        .player-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--neon-color);
+        }
+        
+        .player-name {
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 60px;
+        }
+        
+        .player-score {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .vs-divider {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 4px 0;
+            opacity: 0.8;
         }
         .timer-display {
             color: var(--neon-color);
             font-size: 20px;
             font-weight: bold;
             text-shadow: 0 0 10px var(--neon-color);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 15px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
             border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
         }
         .game-over {
             position: absolute;
@@ -170,34 +217,40 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.95);
             color: var(--neon-color);
-            padding: 30px;
-            border-radius: 15px;
+            padding: 40px;
+            border-radius: 20px;
             border: 3px solid var(--neon-color);
             text-align: center;
             display: none;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px var(--neon-color);
         }
         .game-over h2 {
-            margin: 0 0 15px 0;
-            font-size: 28px;
+            margin: 0 0 20px 0;
+            font-size: 32px;
             text-shadow: 0 0 15px var(--neon-color);
+            font-weight: 700;
         }
         .restart-btn {
             background: var(--neon-color);
             color: #000;
             border: none;
-            padding: 12px 25px;
+            padding: 14px 28px;
             font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
+            font-weight: 600;
+            border-radius: 12px;
             cursor: pointer;
-            margin: 5px;
+            margin: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         .restart-btn:hover {
-            opacity: 0.8;
-            box-shadow: 0 0 15px var(--neon-color);
+            opacity: 0.9;
+            box-shadow: 0 0 20px var(--neon-color);
+            transform: translateY(-2px);
         }
         
-        /* Oyun Modu Seçimi Stilleri */
+        /* Game Mode Selection Styles */
         .game-mode-selection {
             position: absolute;
             top: 50%;
@@ -211,18 +264,58 @@
             text-align: center;
             z-index: 20;
             box-shadow: 0 0 30px var(--neon-color);
+            backdrop-filter: blur(15px);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .game-mode-selection h2 {
             margin: 0 0 30px 0;
             font-size: 32px;
             text-shadow: 0 0 15px var(--neon-color);
+            font-weight: 700;
+        }
+        
+        .user-info-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .user-info-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-color);
+        }
+        
+        .user-details h3 {
+            margin: 0 0 5px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .user-status {
+            font-size: 14px;
+            opacity: 0.8;
         }
         
         .mode-buttons {
             display: flex;
             gap: 20px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         .mode-btn {
@@ -235,44 +328,94 @@
             transition: all 0.3s ease;
             min-width: 150px;
             text-align: center;
+            backdrop-filter: blur(10px);
         }
         
         .mode-btn:hover {
             background: var(--neon-color);
             color: #000;
-            box-shadow: 0 0 20px var(--neon-color);
-            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--neon-color);
+            transform: translateY(-3px);
         }
         
         .mode-icon {
             font-size: 48px;
             margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px var(--neon-color));
         }
         
         .mode-title {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 5px;
         }
         
         .mode-desc {
             font-size: 14px;
             opacity: 0.8;
+            line-height: 1.4;
         }
         
-        /* Canvas'ı başlangıçta göster */
+        /* Show canvas initially */
         #gameCanvas {
             display: block !important;
         }
         
-        /* Oyun modu seçimini başlangıçta göster */
+        /* Show game mode selection initially */
         .game-mode-selection {
             display: block;
         }
         
-        /* Oyun başladığında mod seçimini gizle */
+        /* Hide mode selection when game starts */
         .game-started .game-mode-selection {
             display: none !important;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 10px;
+            }
+            
+            .ui-overlay {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            
+            .score-display {
+                font-size: 14px;
+                padding: 8px 12px;
+                min-width: 160px;
+            }
+            
+            .player-name {
+                font-size: 12px;
+                min-width: 50px;
+            }
+            
+            .timer-display {
+                font-size: 18px;
+                padding: 8px 12px;
+            }
+            
+            .game-mode-selection {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .game-mode-selection h2 {
+                font-size: 24px;
+            }
+            
+            .mode-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .mode-btn {
+                min-width: 200px;
+            }
         }
     </style>
 </head>
@@ -298,17 +441,17 @@
         </div>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         
-        <!-- Oyun Modu Seçimi -->
+        <!-- Game Mode Selection -->
         <div class="game-mode-selection" id="gameModeSelection">
-            <h2>🎮 Oyun Modunu Seçin</h2>
+            <h2>🎮 Choose Game Mode</h2>
             
-            <!-- Farcaster Kullanıcı Bilgileri -->
+            <!-- Farcaster User Information -->
             <div class="user-info-card" id="userInfo">
                 <div class="user-info-content">
                     <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
                     <div class="user-details">
-                        <h3 id="userName">Yükleniyor...</h3>
-                        <div id="userStatus" class="user-status">Farcaster hesabınız bağlanıyor...</div>
+                        <h3 id="userName">Loading...</h3>
+                        <div id="userStatus" class="user-status">Connecting Farcaster account...</div>
                     </div>
                 </div>
             </div>
@@ -316,22 +459,22 @@
             <div class="mode-buttons">
                 <button class="mode-btn" onclick="startGameWithCPU()">
                     <div class="mode-icon">🤖</div>
-                    <div class="mode-title">Random Maç</div>
-                    <div class="mode-desc">Rastgele maç izle</div>
+                    <div class="mode-title">Random Match</div>
+                    <div class="mode-desc">Watch random match</div>
                 </button>
                 <button class="mode-btn" onclick="startMultiplayerGame()">
                     <div class="mode-icon">👥</div>
-                    <div class="mode-title">Farcaster Maçı</div>
-                    <div class="mode-desc">Farcaster kullanıcısı ile</div>
+                    <div class="mode-title">Farcaster Match</div>
+                    <div class="mode-desc">Play with Farcaster user</div>
                 </button>
             </div>
         </div>
         
         <div class="game-over" id="gameOver">
-            <h2>Oyun Bitti!</h2>
+            <h2>Game Over!</h2>
             <p><span id="finalScore1">0</span> - <span id="finalScore2">0</span></p>
-            <button class="restart-btn" onclick="restartGame()">Tekrar Oyna</button>
-            <button class="restart-btn" onclick="shareToFarcaster()">Paylaş</button>
+            <button class="restart-btn" onclick="restartGame()">Play Again</button>
+            <button class="restart-btn" onclick="shareToFarcaster()">Share</button>
         </div>
     </div>
     
@@ -339,24 +482,24 @@
     <script type="module">
         import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
         
-        // Global değişkenleri tanımla
+        // Global variables
         window.currentUser = null;
         window.sdk = sdk;
         window.farcasterInitialized = false;
         
-        // SDK'yi başlat - HEMEN!
+        // Initialize SDK - IMMEDIATELY!
         async function initializeFarcasterSDK() {
             try {
-                console.log('🔄 Farcaster SDK başlatılıyor...');
+                console.log('🔄 Initializing Farcaster SDK...');
                 
-                // Hemen ready() çağır - Mini App için kritik!
+                // Call ready() immediately - critical for Mini App!
                 await sdk.actions.ready();
                 console.log('✅ Farcaster SDK ready!');
                 window.farcasterInitialized = true;
                 
-                // Kullanıcı bilgilerini al
+                // Get user information
                 const user = await sdk.getUser();
-                console.log('👤 Farcaster kullanıcısı:', user);
+                console.log('👤 Farcaster user:', user);
                 
                 if (user && user.username) {
                     window.currentUser = {
@@ -367,26 +510,26 @@
                         fid: user.fid
                     };
                     
-                    console.log('✅ Farcaster kullanıcı bilgileri alındı:', window.currentUser);
+                    console.log('✅ Farcaster user data retrieved:', window.currentUser);
                     
-                    // UI'yi güncelle
+                    // Update UI
                     updateUserInterface();
                     
                 } else {
-                    console.log('⚠️ Farcaster kullanıcı bilgisi alınamadı, test modu kullanılıyor');
+                    console.log('⚠️ Farcaster user data not available, using test mode');
                     initializeTestMode();
                 }
                 
             } catch (error) {
-                console.log('❌ Farcaster SDK hatası:', error);
+                console.log('❌ Farcaster SDK error:', error);
                 
-                // Hata durumunda da ready() çağırmaya çalış
+                // Try to call ready() even in error case
                 try {
                     await sdk.actions.ready();
-                    console.log('✅ Hata durumunda SDK ready!');
+                    console.log('✅ SDK ready in error case!');
                     window.farcasterInitialized = true;
                 } catch (readyError) {
-                    console.log('❌ Ready çağırılamadı:', readyError);
+                    console.log('❌ Ready call failed:', readyError);
                 }
                 
                 initializeTestMode();
@@ -394,7 +537,7 @@
         }
         
         function initializeTestMode() {
-            console.log('🧪 Test modu başlatılıyor...');
+            console.log('🧪 Starting test mode...');
             window.currentUser = {
                 username: 'testuser',
                 displayName: 'Test User',
@@ -403,12 +546,12 @@
                 fid: Math.floor(Math.random() * 10000)
             };
             
-            // Test modunda da UI'yi güncelle
+            // Update UI in test mode too
             updateUserInterface();
         }
         
         function updateUserInterface() {
-            // Kullanıcı bilgilerini UI'da göster
+            // Show user information in UI
             const userNameEl = document.getElementById('userName');
             const userStatusEl = document.getElementById('userStatus');
             const userAvatarEl = document.getElementById('userAvatar');
@@ -425,63 +568,64 @@
                 userAvatarEl.src = window.currentUser.profileImage;
             }
             
-            // Skorboard'u güncelle
+            // Update scoreboard
             if (document.getElementById('player1Name')) {
                 document.getElementById('player1Name').textContent = window.currentUser.username;
+                document.getElementById('player1Avatar').src = window.currentUser.profileImage;
             }
             
-            // Oyun modu seçimi ekranını göster
+            // Show game mode selection screen
             const gameModeDiv = document.getElementById('gameModeSelection');
             if (gameModeDiv) {
                 gameModeDiv.style.display = 'block';
             }
             
-            console.log('🎨 UI güncellendi:', window.currentUser);
+            console.log('🎨 UI updated:', window.currentUser);
         }
         
         function updateGameModeDisplay() {
-            // Oyun modu seçimi ekranını güncelle
+            // Update game mode selection screen
             const gameModeDiv = document.getElementById('gameModeSelection');
             if (gameModeDiv) {
                 gameModeDiv.style.display = 'block';
             }
         }
         
-        // SDK'yi HEMEN başlat - Mini App için kritik!
-        console.log('🚀 Farcaster SDK hemen başlatılıyor...');
+        // Initialize SDK IMMEDIATELY - critical for Mini App!
+        console.log('🚀 Initializing Farcaster SDK immediately...');
         initializeFarcasterSDK();
         
-        // Alternatif olarak DOM hazır olduğunda da dene
+        // Alternative: try when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             if (!window.farcasterInitialized) {
-                console.log('🔄 DOM hazır, SDK tekrar deneniyor...');
+                console.log('🔄 DOM ready, retrying SDK initialization...');
                 initializeFarcasterSDK();
             }
         });
         
-        // Window load event'i de ekle
+        // Also try on window load event
         window.addEventListener('load', () => {
             if (!window.farcasterInitialized) {
-                console.log('🔄 Window load, SDK tekrar deneniyor...');
+                console.log('🔄 Window load, retrying SDK initialization...');
                 initializeFarcasterSDK();
             }
         });
     </script>
     <script>
-        // Random neon renk sistemi
+        // Random neon color system
         const neonColors = [
-            '#00ff00', // Yeşil
-            '#ff0080', // Pembe
-            '#0080ff', // Mavi
-            '#ff8000', // Turuncu
-            '#8000ff', // Mor
+            '#00ff00', // Green
+            '#ff0080', // Pink
+            '#0080ff', // Blue
+            '#ff8000', // Orange
+            '#8000ff', // Purple
             '#00ffff', // Cyan
-            '#ff4000', // Kırmızı-turuncu
-            '#40ff00', // Açık yeşil
+            '#ff4000', // Red-orange
+            '#40ff00', // Light green
             '#ff00ff', // Magenta
-            '#00ff80', // Yeşil-mavi
-            '#ff8000', // Altın
-            '#8000ff'  // Koyu mor
+            '#00ff80', // Green-blue
+            '#ff8000', // Gold
+            '#8000ff'  // Dark purple
         ];
         
         let currentNeonColor = neonColors[Math.floor(Math.random() * neonColors.length)];
@@ -491,36 +635,36 @@
         }
         
         function applyNeonColor(color) {
-            // CSS değişkenlerini güncelle
+            // Update CSS variables
             document.documentElement.style.setProperty('--neon-color', color);
             
-            // Canvas çizimlerinde kullanılacak renk
+            // Color for canvas drawing
             currentNeonColor = color;
         }
-        let gameMode = 'cpu'; // 'cpu' veya 'multiplayer'
-        let cpuControlled = false; // CPU kontrolü aktif mi
-        // Canvas ve context değişkenleri
+        let gameMode = 'cpu'; // 'cpu' or 'multiplayer'
+        let cpuControlled = false; // CPU control active
+        // Canvas and context variables
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
-        let gameRunning = false; // Oyun başlangıçta durmuş
+        let gameRunning = false; // Game starts paused
         let timeLeft = 60;
         let score1 = 0;
         let score2 = 0;
         
-        // Farcaster API entegrasyonu
+        // Farcaster API integration
         let currentUser = null;
         let opponentUser = null;
         
-        // Farcaster kullanıcı bilgilerini al - GERÇEK API
+        // Get Farcaster user data - REAL API
         async function getFarcasterUserData() {
             try {
-                console.log('🔄 Gerçek Farcaster kullanıcı bilgileri alınıyor...');
+                console.log('🔄 Getting real Farcaster user data...');
                 
-                // Farcaster SDK'dan gerçek kullanıcı bilgilerini al
+                // Get real user data from Farcaster SDK
                 if (window.sdk && window.sdk.getUser) {
                     const user = await window.sdk.getUser();
-                    console.log('👤 Farcaster SDK kullanıcısı:', user);
+                    console.log('👤 Farcaster SDK user:', user);
                     
                     if (user && user.username) {
                         return {
@@ -533,7 +677,7 @@
                     }
                 }
                 
-                // Fallback: Frame API'den bilgi al
+                // Fallback: Get info from Frame API
                 const response = await fetch('/api/farcaster/user', {
                     method: 'GET',
                     headers: {
@@ -543,19 +687,19 @@
                 
                 if (response.ok) {
                     const userData = await response.json();
-                    console.log('👤 Frame API kullanıcısı:', userData);
+                    console.log('👤 Frame API user:', userData);
                     return userData;
                 }
                 
-                throw new Error('Farcaster kullanıcı bilgisi alınamadı');
+                throw new Error('Farcaster user data not available');
                 
             } catch (error) {
-                console.log('❌ Farcaster API hatası:', error);
-                throw error; // Test moduna geçme, hata fırlat
+                console.log('❌ Farcaster API error:', error);
+                throw error; // Don't fall back to test mode, throw error
             }
         }
         
-        // Test verileri (geliştirme için)
+        // Test data (for development)
         function getTestUserData() {
             return {
                 username: 'testuser',
@@ -566,15 +710,15 @@
             };
         }
         
-        // Multiplayer Matching Sistemi
+        // Multiplayer Matching System
         let matchingInProgress = false;
         let matchmakingQueue = [];
         
-        // Basit Farcaster eşleşme sistemi
+        // Simple Farcaster matching system
         async function findFarcasterOpponent() {
-            console.log('🔍 Farcaster kullanıcısı aranıyor...');
+            console.log('🔍 Looking for Farcaster user...');
             
-            // Gerçek Farcaster kullanıcıları listesi (popüler kullanıcılar)
+            // Real Farcaster users list (popular users)
             const realFarcasterUsers = [
                 { username: 'dwr', displayName: 'Dan Romero', verified: true },
                 { username: 'vitalik', displayName: 'Vitalik Buterin', verified: true },
@@ -588,7 +732,7 @@
                 { username: 'eve', displayName: 'Eve', verified: true }
             ];
             
-            // Rastgele bir kullanıcı seç
+            // Select random user
             const randomUser = realFarcasterUsers[Math.floor(Math.random() * realFarcasterUsers.length)];
             
             return {
@@ -600,52 +744,53 @@
             };
         }
         
-        // Rastgele renk oluştur
+        // Generate random color
         function getRandomColor() {
             const colors = ['ff0080', '0080ff', 'ff8000', '8000ff', '00ff80'];
             return colors[Math.floor(Math.random() * colors.length)];
         }
         
-        // Oyuncu bilgilerini güncelle - GERÇEK Farcaster verileri
+        // Update player info - REAL Farcaster data
         async function updatePlayerInfo() {
             try {
-                // Gerçek Farcaster kullanıcı bilgilerini al
+                // Get real Farcaster user data
                 window.currentUser = await getFarcasterUserData();
-                console.log('✅ Gerçek Farcaster kullanıcısı:', window.currentUser);
+                console.log('✅ Real Farcaster user:', window.currentUser);
                 
-                // Oyuncu bilgilerini güncelle
+                // Update player info
                 if (document.getElementById('player1Name')) {
                     document.getElementById('player1Name').textContent = window.currentUser.username;
                 }
                 
-                // UI'yi güncelle
+                // Update UI
                 updateUserInterface();
                 
             } catch (error) {
-                console.log('❌ Gerçek Farcaster kullanıcı bilgisi alınamadı:', error);
+                console.log('❌ Real Farcaster user data not available:', error);
                 
-                // Hata durumunda kullanıcıya bilgi ver
+                // Show error info to user
                 if (document.getElementById('userStatus')) {
-                    document.getElementById('userStatus').textContent = '❌ Farcaster hesabı bağlanamadı';
+                    document.getElementById('userStatus').textContent = '❌ Farcaster account connection failed';
                 }
             }
         }
         
-        // Oyun modu fonksiyonları
+        // Game mode functions
         function startGameWithCPU() {
             gameMode = 'cpu';
             cpuControlled = true;
             
-            // CPU için rastgele Farcaster kullanıcısı bul
+            // Find random Farcaster user for CPU
             findFarcasterOpponent().then(opponent => {
                 opponentUser = opponent;
-                console.log('🤖 CPU rakibi:', opponentUser);
+                console.log('🤖 CPU opponent:', opponentUser);
                 
                 if (document.getElementById('player2Name')) {
                     document.getElementById('player2Name').textContent = opponentUser.username;
+                    document.getElementById('player2Avatar').src = opponentUser.profileImage;
                 }
                 
-                // Oyunu hemen başlat
+                // Start game immediately
                 setTimeout(() => {
                     startGame();
                 }, 500);
@@ -656,64 +801,65 @@
             gameMode = 'multiplayer';
             cpuControlled = false;
             
-            // Matching başlat
+            // Start matching
             startMatchmaking();
         }
         
-        // Basit Farcaster eşleşme sistemi
+        // Simple Farcaster matching system
         async function startMatchmaking() {
-            console.log('🔍 Farcaster eşleşme başlatılıyor...');
+            console.log('🔍 Starting Farcaster matching...');
             
-            // UI'yi güncelle
+            // Update UI
             if (document.getElementById('userStatus')) {
-                document.getElementById('userStatus').textContent = '🔍 Farcaster kullanıcısı aranıyor...';
+                document.getElementById('userStatus').textContent = '🔍 Looking for Farcaster user...';
             }
             
-            // Gerçek Farcaster kullanıcısı bul
+            // Find real Farcaster user
             opponentUser = await findFarcasterOpponent();
-            console.log('✅ Farcaster rakibi bulundu:', opponentUser);
+            console.log('✅ Farcaster opponent found:', opponentUser);
             
-            // Rakip bilgilerini güncelle
+            // Update opponent info
             if (document.getElementById('player2Name')) {
                 document.getElementById('player2Name').textContent = opponentUser.username;
+                document.getElementById('player2Avatar').src = opponentUser.profileImage;
             }
             
-            // UI'yi güncelle
+            // Update UI
             if (document.getElementById('userStatus')) {
-                document.getElementById('userStatus').textContent = `✅ ${opponentUser.username} ile eşleşildi!`;
+                document.getElementById('userStatus').textContent = `✅ Matched with ${opponentUser.username}!`;
             }
             
-            // Oyunu başlat
+            // Start game
             setTimeout(() => {
                 startGame();
             }, 1000);
         }
         
         function startGame() {
-            console.log('🎮 Oyun başlatılıyor...');
+            console.log('🎮 Starting game...');
             
-            // Oyun modu seçimini gizle
+            // Hide game mode selection
             document.getElementById('gameModeSelection').style.display = 'none';
             
             document.querySelector('.game-container').classList.add('game-started');
             gameRunning = true;
-            timeLeft = 60; // Zamanı sıfırla
+            timeLeft = 60; // Reset time
             
-            // Topları kullanıcı bilgileriyle yeniden oluştur
+            // Recreate balls with user data
             balls = createBalls();
-            console.log('⚽ Toplar oluşturuldu:', balls);
+            console.log('⚽ Balls created:', balls);
             
-            // Yeni random neon renk seç
+            // Select new random neon color
             const newColor = getRandomNeonColor();
             applyNeonColor(newColor);
-            console.log('🎨 Yeni neon renk:', newColor);
+            console.log('🎨 New neon color:', newColor);
             
-            // Timer stilini sıfırla
+            // Reset timer style
             document.getElementById('timer').style.color = currentNeonColor;
             document.getElementById('timer').style.fontSize = '18px';
             document.getElementById('timer').style.fontWeight = 'normal';
             
-            // Oyun başlayınca hakem düdüğü çal
+            // Play referee whistle when game starts
             setTimeout(() => {
                 playRefereeWhistle();
             }, 500);
@@ -721,11 +867,11 @@
             updateTimer();
             gameLoop();
             
-            console.log('✅ Oyun başlatıldı!');
+            console.log('✅ Game started!');
         }
-        // Topları kullanıcı bilgileriyle oluştur
+        // Create balls with user data
         function createBalls() {
-            // Güvenli kullanıcı bilgileri
+            // Safe user data
             const player1 = window.currentUser || {
                 username: 'Player 1',
                 displayName: 'Player 1',
@@ -803,7 +949,7 @@
                 goalTextTimer--;
             }
             
-            // Titreme efekti bitir
+            // End screen shake effect
             if (screenShake > 0) {
                 ctx.restore();
             }
@@ -824,54 +970,54 @@
         }
         
         function drawGoal() {
-            // Kale çembere yapışık - çember dönerken kale de beraber dönüyor
-            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // Çembere yapışık
-            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // Çembere yapışık
+            // Goal attached to circle - goal rotates with circle
+            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // Attached to circle
+            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // Attached to circle
             
-            const goalWidth = 60; // Küçülttük: 80 → 60
-            const goalHeight = 40; // Küçülttük: 50 → 40
+            const goalWidth = 60; // Reduced: 80 → 60
+            const goalHeight = 40; // Reduced: 50 → 40
             const postWidth = 6;
             
-            // Kale çembere yapışık - çember dönerken kale de beraber dönüyor
-            // Kale açık kısmı sürekli merkeze bakacak şekilde döndürülüyor
+            // Goal attached to circle - goal rotates with circle
+            // Goal opening always faces outward from center
             ctx.save();
             ctx.translate(goalX, goalY);
-            ctx.rotate(circleAngle + Math.PI/2); // Kale açık kısmı çemberin dışına bakar
+            ctx.rotate(circleAngle + Math.PI/2); // Goal opening faces outside circle
             
-            // Kale çerçevesi - Neon beyaz efekt
+            // Goal frame - Neon white effect
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = postWidth;
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 25;
             
-            // Sol direk - çembere yapışık
+            // Left post - attached to circle
             ctx.beginPath();
             ctx.moveTo(-goalWidth/2, -goalHeight/2);
             ctx.lineTo(-goalWidth/2, goalHeight/2);
             ctx.stroke();
             
-            // Sağ direk - çembere yapışık
+            // Right post - attached to circle
             ctx.beginPath();
             ctx.moveTo(goalWidth/2, -goalHeight/2);
             ctx.lineTo(goalWidth/2, goalHeight/2);
             ctx.stroke();
             
-            // Üst direk - çembere yapışık
+            // Top post - attached to circle
             ctx.beginPath();
             ctx.moveTo(-goalWidth/2, -goalHeight/2);
             ctx.lineTo(goalWidth/2, -goalHeight/2);
             ctx.stroke();
             
-            // Gol çizgisi fiziken yok - boşluk veya fileler görünüyor
+            // Goal line physically absent - empty space or net visible
             ctx.shadowBlur = 0;
             
-            // Kale filesi - Neon beyaz kareli desen (İNCE)
+            // Goal net - Neon white grid pattern (THIN)
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1; // İncelttik: 2 → 1
+            ctx.lineWidth = 1; // Thinned: 2 → 1
             ctx.shadowColor = '#ffffff';
-            ctx.shadowBlur = 10; // İncelttik: 15 → 10
+            ctx.shadowBlur = 10; // Thinned: 15 → 10
             
-            // Dikey file çizgileri
+            // Vertical net lines
             for (let i = 1; i < 6; i++) {
                 const x = -goalWidth/2 + (goalWidth / 6) * i;
             ctx.beginPath();
@@ -880,7 +1026,7 @@
             ctx.stroke();
             }
             
-            // Yatay file çizgileri
+            // Horizontal net lines
             for (let i = 1; i < 4; i++) {
                 const y = -goalHeight/2 + (goalHeight / 4) * i;
                 ctx.beginPath();
@@ -896,7 +1042,7 @@
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Gerçek hakem düdüğü sesi - metalik ve keskin
+                // Real referee whistle sound - metallic and sharp
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 const filter = audioContext.createBiquadFilter();
@@ -907,16 +1053,16 @@
                 filter.connect(gainNode);
                 gainNode.connect(audioContext.destination);
                 
-                // Hakem düdüğü frekansı (çok yüksek ve keskin)
+                // Referee whistle frequency (very high and sharp)
                 oscillator.frequency.setValueAtTime(2000, audioContext.currentTime);
                 oscillator.frequency.linearRampToValueAtTime(3000, audioContext.currentTime + 0.05);
                 oscillator.frequency.linearRampToValueAtTime(2500, audioContext.currentTime + 0.2);
                 oscillator.frequency.linearRampToValueAtTime(1800, audioContext.currentTime + 0.6);
                 
-                // Ses şekli (metalik düdük gibi)
+                // Sound shape (like metallic whistle)
                 oscillator.type = 'sawtooth';
                 
-                // Distortion (metalik ses için)
+                // Distortion (for metallic sound)
                 const distortionAmount = 50;
                 const samples = 44100;
                 const curve = new Float32Array(samples);
@@ -927,12 +1073,12 @@
                 distortion.curve = curve;
                 distortion.oversample = '4x';
                 
-                // Filtre (keskin düdük karakteristiği)
+                // Filter (sharp whistle characteristic)
                 filter.type = 'bandpass';
                 filter.frequency.setValueAtTime(2500, audioContext.currentTime);
                 filter.Q.setValueAtTime(5, audioContext.currentTime);
                 
-                // Ses seviyesi
+                // Sound level
                 gainNode.gain.setValueAtTime(0, audioContext.currentTime);
                 gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.02);
                 gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.3);
@@ -941,15 +1087,15 @@
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.8);
                 
-                console.log('Gerçek hakem düdüğü çalındı!');
+                console.log('Real referee whistle played!');
                 
             } catch (error) {
-                console.log('Hakem düdüğü çalınamadı:', error);
+                console.log('Referee whistle could not be played:', error);
             }
         }
         
         function playGoalSound() {
-            console.log('🎯 Gol sesi çalma fonksiyonu çağrıldı!');
+            console.log('🎯 Goal sound function called!');
             
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -965,22 +1111,22 @@
                         filter.connect(gainNode);
                         gainNode.connect(audioContext.destination);
                         
-                        // İnsan sesi gibi frekans değişimi
+                        // Human-like frequency variation
                         oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
                         oscillator.frequency.linearRampToValueAtTime(baseFreq * 1.5, audioContext.currentTime + 0.1);
                         oscillator.frequency.linearRampToValueAtTime(baseFreq * 1.2, audioContext.currentTime + 0.3);
                         oscillator.frequency.linearRampToValueAtTime(baseFreq * 0.8, audioContext.currentTime + duration * 0.7);
                         oscillator.frequency.linearRampToValueAtTime(baseFreq * 0.6, audioContext.currentTime + duration);
                         
-                        // Ses şekli (insan sesi gibi)
+                        // Sound shape (human-like)
                         oscillator.type = 'triangle';
                         
-                        // Filtre (insan sesi karakteristiği)
+                        // Filter (human voice characteristic)
                         filter.type = 'bandpass';
                         filter.frequency.setValueAtTime(baseFreq * 2, audioContext.currentTime);
                         filter.Q.setValueAtTime(1.5, audioContext.currentTime);
                         
-                        // Ses seviyesi (kalabalık gibi)
+                        // Sound level (like crowd)
                         gainNode.gain.setValueAtTime(0, audioContext.currentTime);
                         gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.05);
                         gainNode.gain.linearRampToValueAtTime(0.6, audioContext.currentTime + 0.2);
@@ -992,42 +1138,42 @@
                     }, delay);
                 };
                 
-                // Gerçekçi taraftar sesi katmanı
-                createCrowdVoice(60, 0, 2.5, 'deep_male');      // Derin erkek sesi
-                createCrowdVoice(80, 50, 2.2, 'male');          // Orta erkek sesi
-                createCrowdVoice(100, 100, 2.0, 'high_male');   // Yüksek erkek sesi
-                createCrowdVoice(120, 150, 1.8, 'female');      // Kadın sesi
-                createCrowdVoice(140, 200, 1.6, 'high_female'); // Yüksek kadın sesi
-                createCrowdVoice(160, 250, 1.4, 'child');       // Çocuk sesi
-                createCrowdVoice(180, 300, 1.2, 'high_child');  // Yüksek çocuk sesi
+                // Realistic crowd sound layers
+                createCrowdVoice(60, 0, 2.5, 'deep_male');      // Deep male voice
+                createCrowdVoice(80, 50, 2.2, 'male');          // Medium male voice
+                createCrowdVoice(100, 100, 2.0, 'high_male');   // High male voice
+                createCrowdVoice(120, 150, 1.8, 'female');      // Female voice
+                createCrowdVoice(140, 200, 1.6, 'high_female'); // High female voice
+                createCrowdVoice(160, 250, 1.4, 'child');       // Child voice
+                createCrowdVoice(180, 300, 1.2, 'high_child');  // High child voice
                 
-                // Ek ses katmanları (daha kalabalık)
-                createCrowdVoice(70, 400, 1.8, 'extra_male');  // Ek erkek sesi
-                createCrowdVoice(110, 450, 1.6, 'extra_female'); // Ek kadın sesi
-                createCrowdVoice(130, 500, 1.4, 'extra_high');  // Ek yüksek ses
+                // Additional sound layers (more crowd)
+                createCrowdVoice(70, 400, 1.8, 'extra_male');  // Extra male voice
+                createCrowdVoice(110, 450, 1.6, 'extra_female'); // Extra female voice
+                createCrowdVoice(130, 500, 1.4, 'extra_high');  // Extra high voice
                 
-                console.log('Sentezlenmiş taraftar sesi çalındı!');
+                console.log('Synthesized crowd sound played!');
                 
             } catch (error) {
-                console.log('Ses efekti çalınamadı:', error);
+                console.log('Sound effect could not be played:', error);
                 console.log('🎉 GOOOAAAL!!! 🎉');
             }
         }
         
         function drawGoalText() {
-            // Titreyerek patlayarak çıkma efekti
+            // Shaking explosion effect
             const shakeIntensity = Math.max(0, 60 - goalTextTimer) * 2;
             const shakeX = (Math.random() - 0.5) * shakeIntensity;
             const shakeY = (Math.random() - 0.5) * shakeIntensity;
             
-            // Büyüme efekti
+            // Growth effect
             const scale = 1 + (60 - goalTextTimer) * 0.02;
             
             ctx.save();
             ctx.translate(canvas.width/2 + shakeX, canvas.height/2 - 100 + shakeY);
             ctx.scale(scale, scale);
             
-            // Havalı font ve renkler
+            // Cool font and colors
             ctx.fillStyle = '#ff0000';
             ctx.font = 'bold 64px Impact, Arial Black, sans-serif';
             ctx.textAlign = 'center';
@@ -1036,11 +1182,11 @@
             ctx.shadowColor = '#ff0000';
             ctx.shadowBlur = 30;
             
-            // Yazıyı çiz
+            // Draw text
             ctx.strokeText(goalText, 0, 0);
             ctx.fillText(goalText, 0, 0);
             
-            // Parlama efekti
+            // Glow effect
             ctx.shadowBlur = 50;
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 72px Impact, Arial Black, sans-serif';
@@ -1049,39 +1195,39 @@
             ctx.restore();
         }
         
-        // CPU kontrol algoritması - Basit ve çalışan versiyon
+        // CPU control algorithm - Simple and working version
         let cpuClickTimer = 0;
-        let cpuClickInterval = 60 + Math.random() * 120; // 1-3 saniye arası rastgele
+        let cpuClickInterval = 60 + Math.random() * 120; // Random between 1-3 seconds
         
         function updateCPUControl(cpuBall) {
-            // CPU tıklama mekaniği (oyuncu ile aynı)
+            // CPU click mechanics (same as player)
             cpuClickTimer++;
             if (cpuClickTimer >= cpuClickInterval) {
-                // Rastgele bir noktaya tıklama simülasyonu
+                // Simulate click to random point
                 const randomX = circle.x + (Math.random() - 0.5) * circle.radius * 1.5;
                 const randomY = circle.y + (Math.random() - 0.5) * circle.radius * 1.5;
                 
-                // CPU topuna tıklama efekti (oyuncu ile aynı)
+                // CPU ball click effect (same as player)
                 const dx = randomX - cpuBall.x;
                 const dy = randomY - cpuBall.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
-                if (distance < cpuBall.radius * 2) { // CPU topuna yakınsa
+                if (distance < cpuBall.radius * 2) { // If close to CPU ball
                     cpuBall.vx = (randomX - circle.x) * 0.1;
                     cpuBall.vy = (randomY - circle.y) * 0.1;
                 }
                 
-                // Timer'ı sıfırla ve yeni rastgele interval ayarla
+                // Reset timer and set new random interval
                 cpuClickTimer = 0;
                 cpuClickInterval = 60 + Math.random() * 120;
             }
             
-            // Normal fizik uygulanır (gravity, friction vs. updateBalls'da)
+            // Normal physics applied (gravity, friction etc. in updateBalls)
         }
         
         function updateBalls() {
             balls.forEach((ball, index) => {
-                // CPU kontrolü (sadece ikinci top için)
+                // CPU control (only for second ball)
                 if (cpuControlled && index === 1) {
                     updateCPUControl(ball);
                 }
@@ -1107,7 +1253,7 @@
                     ball.vx -= 2 * dot * normalX * wallBounce;
                     ball.vy -= 2 * dot * normalY * wallBounce;
                     
-                    // Titreme efekti
+                    // Screen shake effect
                     screenShake = 10;
                 }
                 
@@ -1121,7 +1267,7 @@
         
         function drawBalls() {
             balls.forEach((ball, index) => {
-                // Profil fotoğrafı varsa çiz
+                // Draw profile picture if available
                 const user = index === 0 ? window.currentUser : opponentUser;
                 if (ball.user && ball.user.profileImage) {
                     const img = new Image();
@@ -1135,7 +1281,7 @@
                     };
                     img.src = ball.user.profileImage;
                 } else {
-                    // Fallback: Renkli daire
+                    // Fallback: Colored circle
                 ctx.fillStyle = ball.color;
                 ctx.shadowColor = ball.color;
                 ctx.shadowBlur = 15;
@@ -1145,14 +1291,14 @@
                 ctx.shadowBlur = 0;
                 }
                 
-                // Top çerçevesi
+                // Ball frame
                 ctx.strokeStyle = currentNeonColor;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                 ctx.stroke();
                 
-                // Takım harfi
+                // Team letter
                 ctx.fillStyle = '#000';
                 ctx.font = 'bold 18px Arial';
                 ctx.textAlign = 'center';
@@ -1169,7 +1315,7 @@
             const distance = Math.sqrt(dx * dx + dy * dy);
             
             if (distance < ball1.radius + ball2.radius && distance > 0) {
-                // Topları ayır - daha güvenli yöntem
+                // Separate balls - safer method
                 const overlap = (ball1.radius + ball2.radius) - distance;
                 const separationX = (dx / distance) * overlap * 0.5;
                 const separationY = (dy / distance) * overlap * 0.5;
@@ -1202,11 +1348,11 @@
         }
         
         function checkGoals() {
-            // Kale çemberin üzerinde - çember dönerken kale de beraber dönüyor
-            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // Çemberin üzerinde
-            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // Çemberin üzerinde
-            const goalWidth = 60; // Küçülttük: 80 → 60
-            const goalHeight = 40; // Küçülttük: 50 → 40
+            // Goal on circle - goal rotates with circle
+            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // On circle
+            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // On circle
+            const goalWidth = 60; // Reduced: 80 → 60
+            const goalHeight = 40; // Reduced: 50 → 40
             
             balls.forEach(ball => {
                 const inGoalX = ball.x >= goalX - goalWidth/2 && ball.x <= goalX + goalWidth/2;
@@ -1221,11 +1367,11 @@
                         document.getElementById('score2').textContent = score2;
                     }
                     
-                    // Gol yazısı göster
+                    // Show goal text
                     goalText = 'GOOOAAAL!!!';
-                    goalTextTimer = 60; // 1 saniye göster
+                    goalTextTimer = 60; // Show for 1 second
                     
-                    // Ses efekti çal
+                    // Play sound effect
                     playGoalSound();
                     
                     ball.x = circle.x + (Math.random() - 0.5) * 100;
@@ -1250,59 +1396,59 @@
         }
         
         function endGame() {
-            // Berabere durumunda ekstra zaman ver
+            // Give extra time in case of tie
             if (score1 === score2) {
-                console.log('⚽ Berabere! Ekstra 15 saniye ekleniyor...');
-                timeLeft = 15; // 15 saniye ekstra zaman
+                console.log('⚽ Tie! Adding extra 15 seconds...');
+                timeLeft = 15; // 15 seconds extra time
                 document.getElementById('timer').textContent = '0:15';
-                document.getElementById('timer').style.color = '#ff6600'; // Turuncu renk
+                document.getElementById('timer').style.color = '#ff6600'; // Orange color
                 
-                // Ekstra zaman mesajı göster
+                // Show extra time message
                 const timerElement = document.getElementById('timer');
                 timerElement.style.fontSize = '20px';
                 timerElement.style.fontWeight = 'bold';
                 
-                // Timer'ı tekrar başlat
+                // Restart timer
                 setTimeout(updateTimer, 1000);
                 return;
             }
             
-            // Normal oyun bitişi
+            // Normal game end
             gameRunning = false;
             document.getElementById('finalScore1').textContent = score1;
             document.getElementById('finalScore2').textContent = score2;
             document.getElementById('gameOver').style.display = 'block';
             
-            // Timer rengini normale döndür
+            // Reset timer color to normal
             document.getElementById('timer').style.color = currentNeonColor;
             document.getElementById('timer').style.fontSize = '18px';
             document.getElementById('timer').style.fontWeight = 'normal';
             
-            // Oyun bitince hakem düdüğü çal
+            // Play referee whistle when game ends
             setTimeout(() => {
                 playRefereeWhistle();
             }, 500);
         }
         
         function restartGame() {
-            // Oyun modu seçimine geri dön
+            // Return to game mode selection
             document.querySelector('.game-container').classList.remove('game-started');
             document.getElementById('gameModeSelection').style.display = 'block';
             document.getElementById('gameOver').style.display = 'none';
             
-            // Skorları sıfırla
+            // Reset scores
             score1 = 0;
             score2 = 0;
             document.getElementById('score1').textContent = '0';
             document.getElementById('score2').textContent = '0';
             document.getElementById('timer').textContent = '1:00';
             
-            // Timer stilini sıfırla
+            // Reset timer style
             document.getElementById('timer').style.color = currentNeonColor;
             document.getElementById('timer').style.fontSize = '18px';
             document.getElementById('timer').style.fontWeight = 'normal';
             
-            // Topları başlangıç pozisyonuna getir
+            // Return balls to starting position
             balls[0].x = 150;
             balls[0].y = 200;
             balls[0].vx = 3;
@@ -1315,37 +1461,37 @@
         
         function shareToFarcaster() {
             if (!window.currentUser) {
-                alert('Kullanıcı bilgileri yüklenemedi!');
+                alert('User information could not be loaded!');
                 return;
             }
             
             const winner = score1 > score2 ? window.currentUser.username : (opponentUser ? opponentUser.username : 'CPU');
-            const message = `🏆 Farcaster Futbol Oyunu! ${window.currentUser.username} ${score1} - ${score2} ${opponentUser ? opponentUser.username : 'CPU'}`;
+            const message = `🏆 Farcaster Football Game! ${window.currentUser.username} ${score1} - ${score2} ${opponentUser ? opponentUser.username : 'CPU'}`;
             
-            // Farcaster Mini App SDK ile paylaş
+            // Share with Farcaster Mini App SDK
             if (window.sdk) {
                 try {
                     window.sdk.share({
                         text: message,
                         embeds: [{
                             url: window.location.href,
-                            title: 'Farcaster Futbol Oyunu',
-                            description: `${winner} kazandı!`,
+                            title: 'Farcaster Football Game',
+                            description: `${winner} won!`,
                             image: {
                                 url: 'https://bouncingballsfarcaster.netlify.app/app-icon-512.svg'
                             }
                         }]
                     }).then(() => {
-                        console.log('✅ Farcaster\'a paylaşıldı!');
-                        alert('Maç sonucu Farcaster\'a paylaşıldı!');
+                        console.log('✅ Shared to Farcaster!');
+                        alert('Match result shared to Farcaster!');
                     }).catch(error => {
-                        console.log('❌ Paylaşım hatası:', error);
+                        console.log('❌ Share error:', error);
                         // Fallback: Warpcast link
                         const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
                         window.open(url, '_blank');
                     });
                 } catch (error) {
-                    console.log('❌ SDK hatası:', error);
+                    console.log('❌ SDK error:', error);
                     // Fallback: Warpcast link
             const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
             window.open(url, '_blank');
@@ -1372,10 +1518,10 @@
             });
         });
         
-        // Sayfa yüklendiğinde ilk random renk seç
+        // Select first random color when page loads
         const initialColor = getRandomNeonColor();
         applyNeonColor(initialColor);
-        console.log('🎨 İlk neon renk:', initialColor);
+        console.log('🎨 Initial neon color:', initialColor);
     </script>
 </body>
 </html>
