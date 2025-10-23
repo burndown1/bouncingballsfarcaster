@@ -5,10 +5,10 @@
     "signature": "atInxkPxb1uvg01NjEnqhNHIEinoPAoq9s9vftJ6MLBRgiWtwjHa6SLWdj/s/oxUPNKj0fXWDoGDVPt6ZGslrRs="
   },
   "baseBuilder": {
-    "version": "1.0.0"
+    "version": "vNext"
   },
   "frame": {
-    "version": "1.0.0",
+    "version": "vNext",
     "name": "Bouncing Balls",
     "iconUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.png",
     "splashImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.png",
