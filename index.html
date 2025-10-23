@@ -582,16 +582,38 @@
                         
                         if (user) {
                             console.log('👤 Farcaster user from window.sdk:', user);
-                            window.currentUser = {
-                                username: user.username,
-                                displayName: user.displayName || user.username,
-                                pfpUrl: user.pfpUrl || user.pfp,
-                                verified: user.verified || false,
-                                fid: user.fid
-                            };
+                            console.log('👤 User type:', typeof user);
+                            console.log('👤 User keys:', Object.keys(user));
                             
-                            updateUserInterface();
-                            return;
+                            // Handle different user data formats
+                            let userData = null;
+                            if (typeof user === 'function') {
+                                // If user is a function, try to call it or get its properties
+                                console.log('👤 User is a function, trying to extract data...');
+                                try {
+                                    const result = await user();
+                                    userData = result;
+                                } catch (e) {
+                                    console.log('👤 Function call failed, trying direct properties...');
+                                    userData = user;
+                                }
+                            } else {
+                                userData = user;
+                            }
+                            
+                            if (userData) {
+                                window.currentUser = {
+                                    username: userData.username || 'farcaster_user',
+                                    displayName: userData.displayName || userData.username || 'Farcaster User',
+                                    pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100',
+                                    verified: userData.verified || false,
+                                    fid: userData.fid || Math.floor(Math.random() * 10000)
+                                };
+                                
+                                console.log('✅ Current user set:', window.currentUser);
+                                updateUserInterface();
+                                return;
+                            }
                         }
                     } catch (sdkError) {
                         console.log('⚠️ window.sdk error:', sdkError);
@@ -963,15 +985,34 @@
                             user = window.sdk.context.user;
                         }
                         
-                        if (user && user.username) {
+                        if (user) {
                             console.log('👤 Farcaster SDK user:', user);
-                            return {
-                                username: user.username,
-                                displayName: user.displayName || user.username,
-                                pfpUrl: user.pfpUrl || user.pfp,
-                                verified: user.verified || false,
-                                fid: user.fid
-                            };
+                            console.log('👤 User type:', typeof user);
+                            
+                            // Handle different user data formats
+                            let userData = null;
+                            if (typeof user === 'function') {
+                                console.log('👤 User is a function, trying to extract data...');
+                                try {
+                                    const result = await user();
+                                    userData = result;
+                                } catch (e) {
+                                    console.log('👤 Function call failed, trying direct properties...');
+                                    userData = user;
+                                }
+                            } else {
+                                userData = user;
+                            }
+                            
+                            if (userData) {
+                                return {
+                                    username: userData.username || 'farcaster_user',
+                                    displayName: userData.displayName || userData.username || 'Farcaster User',
+                                    pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100',
+                                    verified: userData.verified || false,
+                                    fid: userData.fid || Math.floor(Math.random() * 10000)
+                                };
+                            }
                         }
                     } catch (error) {
                         console.log('⚠️ window.sdk error:', error);
