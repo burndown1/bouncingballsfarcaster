@@ -557,6 +557,40 @@
             return true;
         };
         
+        // Define functions immediately so they're available
+        window.startRandomFarcasterMatch = async function() {
+            console.log('🎲 Starting random Farcaster match...');
+            alert('Random Match clicked! Game will start soon...');
+        };
+        
+        window.startFarcasterDuel = async function() {
+            console.log('⚔️ Starting Farcaster duel...');
+            alert('Duel Match clicked! Game will start soon...');
+        };
+        
+        window.getFarcasterUserData = async function() {
+            return window.currentUser || {
+                username: 'testuser',
+                displayName: 'Test User',
+                pfpUrl: 'https://picsum.photos/100/100',
+                verified: false,
+                fid: 12345
+            };
+        };
+        
+        window.getRealFarcasterUsers = async function() {
+            return [];
+        };
+        
+        window.startGame = function() {
+            console.log('🎮 Starting game...');
+            alert('Game starting!');
+        };
+        
+        window.updateUserInterface = function() {
+            console.log('🎨 Updating UI...');
+        };
+        
         console.log('✅ Script loaded, functions available:', {
             startRandomFarcasterMatch: typeof window.startRandomFarcasterMatch,
             startFarcasterDuel: typeof window.startFarcasterDuel,
@@ -1099,18 +1133,18 @@
                 
                 // Try to get from URL parameters (Farcaster Mini App context)
                 const urlParams2 = new URLSearchParams(window.location.search);
-                const fid = urlParams2.get('fid');
+                const fid2 = urlParams2.get('fid');
                 const username = urlParams2.get('username');
                 const pfp = urlParams2.get('pfp');
                 
-                if (fid && username) {
-                    console.log('👤 Found user in URL params:', { fid, username, pfp });
+                if (fid2 && username) {
+                    console.log('👤 Found user in URL params:', { fid: fid2, username, pfp });
                     return {
                         username: username,
                         displayName: username,
                         pfpUrl: pfp || null,
                         verified: false,
-                        fid: parseInt(fid)
+                        fid: parseInt(fid2)
                     };
                 }
                 
