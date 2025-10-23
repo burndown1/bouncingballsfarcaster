@@ -17,7 +17,6 @@
     "ogDescription": "Play football on Farcaster! Bouncing balls score goals!",
     "ogImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
     "castShareUrl": "https://warpcast.com/~/compose?text=Check+out+this+amazing+football+game+on+Farcaster!",
-    "homeUrl": "https://bouncingballsfarcaster.vercel.app",
-    "webhookUrl": ""
+    "homeUrl": "https://bouncingballsfarcaster.vercel.app"
   }
 }
