@@ -49,8 +49,8 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     
-    <!-- Farcaster SDK -->
-    <script src="https://unpkg.com/@farcaster/frame-sdk@latest/dist/frame-sdk.js"></script>
+    <!-- Farcaster Mini Apps SDK -->
+    <script src="https://unpkg.com/@farcaster/miniapps@latest/dist/index.js"></script>
     <meta name="theme-color" content="#00ff00">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -751,7 +751,8 @@
 
         async function getRealFarcasterUsers() {
             try {
-                const response = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20`, {
+                // ChatGPT önerisi: Random user API
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/random`, {
                     headers: {
                         'api_key': NEYNAR_API_KEY
                     }
@@ -759,11 +760,23 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    return data.users || [];
+                    return [data.user] || [];
+                }
+                
+                // Fallback to trending users
+                const trendingResponse = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20`, {
+                    headers: {
+                        'api_key': NEYNAR_API_KEY
+                    }
+                });
+                
+                if (trendingResponse.ok) {
+                    const trendingData = await trendingResponse.json();
+                    return trendingData.users || [];
                 }
                 return [];
             } catch (error) {
-                console.error('Error fetching trending users:', error);
+                console.error('Error fetching random users:', error);
                 return [];
             }
         }
@@ -772,7 +785,26 @@
             try {
                 console.log('🔄 Getting real Farcaster user data...');
                 
-                // Try Farcaster Mini App context first
+                // Try Farcaster Mini Apps SDK (ChatGPT önerisi)
+                if (window.FarcasterMiniApps && window.FarcasterMiniApps.useFarcasterIdentity) {
+                    try {
+                        const { user } = window.FarcasterMiniApps.useFarcasterIdentity();
+                        if (user && user.username) {
+                            console.log('👤 Farcaster Mini Apps user:', user);
+                            return {
+                                username: user.username,
+                                displayName: user.displayName || user.username,
+                                pfpUrl: user.pfp,
+                                verified: user.verified || false,
+                                fid: user.fid
+                            };
+                        }
+                    } catch (error) {
+                        console.log('⚠️ Farcaster Mini Apps SDK failed:', error);
+                    }
+                }
+                
+                // Try Farcaster Mini App context
                 if (window.FarcasterFrame && window.FarcasterFrame.getUser) {
                     try {
                         const user = await window.FarcasterFrame.getUser();
@@ -789,7 +821,7 @@
                     }
                 }
                 
-                // Try Farcaster context (alternative)
+                // Try Farcaster context
                 if (window.farcaster && window.farcaster.user) {
                     const user = window.farcaster.user;
                     console.log('👤 Farcaster context user:', user);
@@ -1901,26 +1933,26 @@
         async function initializeGame() {
             console.log('🎮 Initializing game...');
             
-            // Initialize Farcaster Mini App
+            // ChatGPT önerisi: Farcaster Mini Apps SDK initialization
             try {
-                if (window.FarcasterFrame) {
-                    await window.FarcasterFrame.init({
-                        allowedOrigins: ['*']
-                    });
-                    console.log('✅ Farcaster Mini App initialized');
+                if (window.FarcasterMiniApps) {
+                    await window.FarcasterMiniApps.init();
+                    console.log('✅ Farcaster Mini Apps SDK initialized');
                 }
             } catch (error) {
-                console.log('⚠️ Farcaster Mini App not available:', error);
+                console.log('⚠️ Farcaster Mini Apps SDK not available:', error);
             }
             
-            // Get user data automatically
+            // Get user data automatically (ChatGPT önerisi)
             try {
                 const userData = await getFarcasterUserData();
                 window.currentUser = userData;
                 console.log('✅ User data loaded:', userData);
                 
-                if (userData && userData.username !== 'testuser') {
+                if (userData && userData.username && userData.username !== 'testuser') {
                     document.getElementById('userStatus').textContent = `✅ Playing as @${userData.username}`;
+                    console.log(`🎯 Takım adı = @${userData.username}`);
+                    console.log(`🖼️ Profil fotoğrafı = ${userData.pfpUrl}`);
                 } else {
                     document.getElementById('userStatus').textContent = '🎮 Ready to play!';
                 }
