@@ -704,6 +704,7 @@
         
         // Neynar API configuration
         const NEYNAR_API_KEY = '947A9234-D36B-4230-AB2D-3BE5987A8369';
+        console.log('🔑 Neynar API Key:', NEYNAR_API_KEY);
         const NEYNAR_BASE_URL = 'https://api.neynar.com/v2/farcaster';
         
         // Neynar API functions
@@ -741,25 +742,37 @@
                 // ChatGPT önerisi: Random user API
                 const response = await fetch(`${NEYNAR_BASE_URL}/user/random`, {
                     headers: {
-                        'api_key': NEYNAR_API_KEY
+                        'Authorization': `Bearer ${NEYNAR_API_KEY}`,
+                        'Content-Type': 'application/json'
                     }
                 });
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    return [data.user] || [];
-                }
+                        if (response.ok) {
+                            const data = await response.json();
+                            return [data.user] || [];
+                        } else {
+                            console.error('❌ Neynar API error:', response.status, response.statusText);
+                            if (response.status === 402) {
+                                console.error('💳 Neynar API: Payment Required - Check your API key or billing');
+                            }
+                        }
                 
                 // Fallback to trending users
                 const trendingResponse = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20`, {
                     headers: {
-                        'api_key': NEYNAR_API_KEY
+                        'Authorization': `Bearer ${NEYNAR_API_KEY}`,
+                        'Content-Type': 'application/json'
                     }
                 });
                 
                 if (trendingResponse.ok) {
                     const trendingData = await trendingResponse.json();
                     return trendingData.users || [];
+                } else {
+                    console.error('❌ Neynar trending API error:', trendingResponse.status, trendingResponse.statusText);
+                    if (trendingResponse.status === 402) {
+                        console.error('💳 Neynar API: Payment Required - Check your API key or billing');
+                    }
                 }
                 return [];
             } catch (error) {
@@ -1103,7 +1116,8 @@
                     try {
                         const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10`, {
                             headers: {
-                                'api_key': NEYNAR_API_KEY
+                                'Authorization': `Bearer ${NEYNAR_API_KEY}`,
+                                'Content-Type': 'application/json'
                             }
                         });
                         
