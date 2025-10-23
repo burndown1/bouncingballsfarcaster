@@ -1,23 +1,23 @@
 {
   "miniapp": {
     "version": "1",
-    "name": "Farcaster Futbol Oyunu",
-    "subtitle": "Toplar çemberde zıplıyor, kale dönüyor, gol at!",
-    "description": "Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!",
+    "name": "Bouncing Balls",
+    "subtitle": "Bouncing balls score goals!",
+    "description": "An arcade football game with bouncing balls",
     "primaryCategory": "games",
     "iconUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
     "imageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
     "heroImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
     "splashImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
     "splashBackgroundColor": "#000000",
-    "tags": ["futbol", "oyun", "farcaster", "mini-app", "game"],
-    "tagline": "Farcaster kullanıcıları ile futbol maçı yap!",
-    "buttonTitle": "Oyunu Oyna",
-    "ogTitle": "Farcaster Futbol Oyunu",
-    "ogDescription": "Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!",
+    "tags": ["football", "arcade", "bouncing", "balls"],
+    "tagline": "Play football on Farcaster!",
+    "buttonTitle": "Play Game",
+    "ogTitle": "Bouncing Balls",
+    "ogDescription": "Play football on Farcaster! Bouncing balls score goals!",
     "ogImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
     "castShareUrl": "https://warpcast.com/~/compose?text=Check+out+this+amazing+football+game+on+Farcaster!",
     "homeUrl": "https://bouncingballsfarcaster.vercel.app",
-    "webhookUrl": "https://bouncingballsfarcaster.vercel.app/api/webhook"
+    "webhookUrl": ""
   }
 }
