@@ -1,22 +1,15 @@
 {
-  "miniapp": {
-    "version": "1",
-    "name": "Bouncing Balls",
-    "subtitle": "Bouncing balls score goals!",
-    "description": "An arcade football game with bouncing balls",
-    "primaryCategory": "games",
-    "iconUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
-    "imageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
-    "heroImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
-    "splashImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
-    "splashBackgroundColor": "#000000",
-    "tags": ["football", "arcade", "bouncing", "balls"],
-    "tagline": "Play football on Farcaster!",
-    "buttonTitle": "Play Game",
-    "ogTitle": "Bouncing Balls",
-    "ogDescription": "Play football on Farcaster! Bouncing balls score goals!",
-    "ogImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
-    "castShareUrl": "https://warpcast.com/~/compose?text=Check+out+this+amazing+football+game+on+Farcaster!",
-    "homeUrl": "https://bouncingballsfarcaster.vercel.app"
+  "version": "1.0.0",
+  "name": "Bouncing Balls",
+  "description": "An arcade football game with bouncing balls",
+  "icon": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+  "splash": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+  "categories": ["games"],
+  "permissions": [],
+  "url": "https://bouncingballsfarcaster.vercel.app",
+  "accountAssociation": {
+    "header": "eyJmaWQiOjI4MjUwMywidHlwZSI6ImF1dGgiLCJrZXkiOiIweDI1RDA4NzcyRjI5MDc1MDY1NzBFRDRBY0ZlQkQ3OTIzYTQ5MUZjOUYifQ",
+    "payload": "eyJkb21haW4iOiJib3VuY2luZ2JhbGxzZmFyY2FzdGVyLnZlcmNlbC5hcHAifQ",
+    "signature": "atInxkPxb1uvg01NjEnqhNHIEinoPAoq9s9vftJ6MLBRgiWtwjHa6SLWdj/s/oxUPNKj0fXWDoGDVPt6ZGslrRs="
   }
 }
