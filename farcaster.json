@@ -1,12 +1,15 @@
 {
-  "version": "1.0.0",
-  "name": "Bouncing Balls",
-  "description": "An arcade football game with bouncing balls",
-  "icon": "https://bouncingballsfarcaster.vercel.app/app-icon-512.png",
-  "splash": "https://bouncingballsfarcaster.vercel.app/app-icon-512.png",
-  "categories": ["games"],
-  "permissions": [],
-  "url": "https://bouncingballsfarcaster.vercel.app",
+  "miniapp": {
+    "version": "1",
+    "name": "Bouncing Balls",
+    "homeUrl": "https://bouncingballsfarcaster.vercel.app",
+    "iconUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.png",
+    "splashImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.png",
+    "splashBackgroundColor": "#000000",
+    "description": "An arcade football game with bouncing balls",
+    "primaryCategory": "games",
+    "tags": ["football", "arcade", "bouncing", "balls", "game"]
+  },
   "accountAssociation": {
     "header": "eyJmaWQiOjI4MjUwMywidHlwZSI6ImF1dGgiLCJrZXkiOiIweDI1RDA4NzcyRjI5MDc1MDY1NzBFRDRBY0ZlQkQ3OTIzYTQ5MUZjOUYifQ",
     "payload": "eyJkb21haW4iOiJib3VuY2luZ2JhbGxzZmFyY2FzdGVyLnZlcmNlbC5hcHAifQ",
