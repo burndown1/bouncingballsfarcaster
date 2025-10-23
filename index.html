@@ -336,6 +336,14 @@
                 }
             });
             
+            // Hemen ready() çağır (Mini App için)
+            try {
+                await sdk.actions.ready();
+                console.log('✅ Farcaster SDK hemen ready!');
+            } catch (error) {
+                console.log('❌ Hemen SDK ready hatası:', error);
+            }
+            
         } catch (error) {
             console.log('Farcaster SDK hatası:', error);
             initializeTestMode();
@@ -349,6 +357,14 @@
                     console.log('❌ Test modunda SDK ready hatası:', error);
                 }
             });
+            
+            // Test modunda da hemen ready() çağır
+            try {
+                await sdk.actions.ready();
+                console.log('✅ Test modunda SDK hemen ready!');
+            } catch (error) {
+                console.log('❌ Test modunda hemen SDK ready hatası:', error);
+            }
         }
         
         function initializeTestMode() {
