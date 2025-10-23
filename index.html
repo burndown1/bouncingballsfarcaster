@@ -296,73 +296,80 @@
     </div>
     
     <!-- Farcaster Mini App SDK -->
-    <script src="https://unpkg.com/@farcaster/miniapp-sdk@latest/dist/index.js"></script>
-    <script>
+    <script type="module">
+        import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
+        
         // Global değişkenleri tanımla
         window.currentUser = null;
+        window.sdk = sdk;
         
-        // SDK'yi başlat
-        async function initializeFarcasterSDK() {
-            try {
-                console.log('🔄 Farcaster SDK yüklendi, kullanıcı bilgileri alınıyor...');
+        // SDK'yi başlat ama henüz ready() çağırma
+        try {
+            console.log('🔄 Farcaster SDK yüklendi, kullanıcı bilgileri alınıyor...');
+            
+            // Kullanıcı bilgilerini al
+            const user = await sdk.getUser();
+            console.log('Farcaster kullanıcısı:', user);
+            
+            if (user) {
+                window.currentUser = {
+                    username: user.username,
+                    displayName: user.displayName,
+                    profileImage: user.pfpUrl,
+                    verified: user.verified,
+                    fid: user.fid
+                };
                 
-                // SDK'yi global olarak tanımla
-                window.sdk = window.FarcasterSDK;
-                
-                // Kullanıcı bilgilerini al
-                const user = await window.sdk.getUser();
-                console.log('Farcaster kullanıcısı:', user);
-                
-                if (user) {
-                    window.currentUser = {
-                        username: user.username,
-                        displayName: user.displayName,
-                        profileImage: user.pfpUrl,
-                        verified: user.verified,
-                        fid: user.fid
-                    };
-                    
-                    // Skorboard'u güncelle
-                    document.getElementById('player1Name').textContent = window.currentUser.username;
-                } else {
-                    initializeTestMode();
-                }
-                
-                // Hemen ready() çağır
-                await window.sdk.actions.ready();
-                console.log('✅ Farcaster SDK ready!');
-                
-            } catch (error) {
-                console.log('Farcaster SDK hatası:', error);
+                // Skorboard'u güncelle
+                document.getElementById('player1Name').textContent = window.currentUser.username;
+            } else {
                 initializeTestMode();
-                
-                // Test modunda da ready() çağır
+            }
+            
+            // Oyun tamamen yüklendikten sonra ready() çağır
+            window.addEventListener('load', async () => {
                 try {
-                    await window.sdk.actions.ready();
-                    console.log('✅ Test modunda SDK ready!');
-                } catch (readyError) {
-                    console.log('❌ Test modunda SDK ready hatası:', readyError);
+                    await sdk.actions.ready();
+                    console.log('✅ Farcaster SDK ready! Splash screen gizlendi.');
+                } catch (error) {
+                    console.log('❌ SDK ready hatası:', error);
                 }
+            });
+            
+            // Hemen ready() çağır (Mini App için)
+            try {
+                await sdk.actions.ready();
+                console.log('✅ Farcaster SDK hemen ready!');
+            } catch (error) {
+                console.log('❌ Hemen SDK ready hatası:', error);
+            }
+            
+        } catch (error) {
+            console.log('Farcaster SDK hatası:', error);
+            initializeTestMode();
+            
+            // Test modunda da ready() çağır
+            window.addEventListener('load', async () => {
+                try {
+                    await sdk.actions.ready();
+                    console.log('✅ Test modunda SDK ready!');
+                } catch (error) {
+                    console.log('❌ Test modunda SDK ready hatası:', error);
+                }
+            });
+            
+            // Test modunda da hemen ready() çağır
+            try {
+                await sdk.actions.ready();
+                console.log('✅ Test modunda SDK hemen ready!');
+            } catch (error) {
+                console.log('❌ Test modunda hemen SDK ready hatası:', error);
             }
         }
         
         function initializeTestMode() {
             console.log('Test modu başlatılıyor...');
             window.currentUser = getTestUserData();
-        }
-        
-        // SDK'yi yükle ve başlat
-        if (window.FarcasterSDK) {
-            initializeFarcasterSDK();
-        } else {
-            // SDK henüz yüklenmediyse bekle
-            window.addEventListener('load', () => {
-                if (window.FarcasterSDK) {
-                    initializeFarcasterSDK();
-                } else {
-                    initializeTestMode();
-                }
-            });
         }
     </script>
     <script>
