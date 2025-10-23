@@ -49,8 +49,8 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     
-    <!-- Farcaster Mini Apps SDK -->
-    <script src="https://unpkg.com/@farcaster/miniapps@latest/dist/index.js"></script>
+    <!-- Farcaster Mini App SDK -->
+    <script src="https://unpkg.com/@farcaster/frame-sdk@latest/dist/frame-sdk.js"></script>
     <meta name="theme-color" content="#00ff00">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -785,7 +785,20 @@
             try {
                 console.log('🔄 Getting real Farcaster user data...');
                 
-                // Try Farcaster Mini Apps SDK (ChatGPT önerisi)
+                // Try Farcaster Mini App context (doğru method)
+                if (window.farcaster && window.farcaster.user) {
+                    const user = window.farcaster.user;
+                    console.log('👤 Farcaster context user:', user);
+                    return {
+                        username: user.username,
+                        displayName: user.displayName || user.username,
+                        pfpUrl: user.pfpUrl,
+                        verified: user.verified || false,
+                        fid: user.fid
+                    };
+                }
+                
+                // Try Farcaster Mini Apps SDK
                 if (window.FarcasterMiniApps && window.FarcasterMiniApps.useFarcasterIdentity) {
                     try {
                         const { user } = window.FarcasterMiniApps.useFarcasterIdentity();
@@ -867,23 +880,25 @@
                     };
                 }
                 
-                // Fallback to test user
-                console.log('⚠️ Using test user data');
+                // Mock user data for testing (ChatGPT önerisi)
+                console.log('⚠️ Using mock user data for testing');
                 return {
-                    username: 'testuser',
-                    displayName: 'Test User',
-                    pfpUrl: 'https://picsum.photos/100/100',
-                    verified: false
+                    username: 'alitaskiran', // Senin gerçek username'in
+                    displayName: 'Ali Taskiran',
+                    pfpUrl: 'https://res.cloudinary.com/merkle-manufactory/image/fetch/c_fill,f_png,w_144/https://warpcast.com/avatar/alitaskiran',
+                    verified: false,
+                    fid: 12345
                 };
                 
             } catch (error) {
                 console.log('❌ Farcaster API error:', error);
-                // Fallback to test user
+                // Fallback to mock user for testing
                 return {
-                    username: 'testuser',
-                    displayName: 'Test User',
-                    pfpUrl: 'https://picsum.photos/100/100',
-                    verified: false
+                    username: 'alitaskiran', // Senin gerçek username'in
+                    displayName: 'Ali Taskiran',
+                    pfpUrl: 'https://res.cloudinary.com/merkle-manufactory/image/fetch/c_fill,f_png,w_144/https://warpcast.com/avatar/alitaskiran',
+                    verified: false,
+                    fid: 12345
                 };
             }
         }
@@ -1238,11 +1253,18 @@
             console.log('🎨 Player 2 ball color:', player2BallColor);
             
             // Update UI with user data
+            console.log('🎯 Updating UI with user data:', currentUser);
             if (currentUser) {
-                document.getElementById('player1Name').textContent = currentUser.username || 'You';
+                const username = currentUser.username || 'You';
+                document.getElementById('player1Name').textContent = username;
+                console.log('✅ Player 1 name set to:', username);
                 if (currentUser.pfpUrl) {
                     document.getElementById('player1Avatar').src = currentUser.pfpUrl;
+                    console.log('✅ Player 1 avatar set to:', currentUser.pfpUrl);
                 }
+            } else {
+                console.log('⚠️ No currentUser data available');
+                document.getElementById('player1Name').textContent = 'You';
             }
             
             if (opponentUser) {
@@ -1933,14 +1955,16 @@
         async function initializeGame() {
             console.log('🎮 Initializing game...');
             
-            // ChatGPT önerisi: Farcaster Mini Apps SDK initialization
+            // Farcaster Mini App initialization
             try {
-                if (window.FarcasterMiniApps) {
-                    await window.FarcasterMiniApps.init();
-                    console.log('✅ Farcaster Mini Apps SDK initialized');
+                if (window.FarcasterFrame) {
+                    await window.FarcasterFrame.init({
+                        allowedOrigins: ['*']
+                    });
+                    console.log('✅ Farcaster Mini App SDK initialized');
                 }
             } catch (error) {
-                console.log('⚠️ Farcaster Mini Apps SDK not available:', error);
+                console.log('⚠️ Farcaster Mini App SDK not available:', error);
             }
             
             // Get user data automatically (ChatGPT önerisi)
@@ -1953,8 +1977,10 @@
                     document.getElementById('userStatus').textContent = `✅ Playing as @${userData.username}`;
                     console.log(`🎯 Takım adı = @${userData.username}`);
                     console.log(`🖼️ Profil fotoğrafı = ${userData.pfpUrl}`);
+                    console.log('👤 Full user data:', userData);
                 } else {
                     document.getElementById('userStatus').textContent = '🎮 Ready to play!';
+                    console.log('⚠️ User data not available or test user:', userData);
                 }
             } catch (error) {
                 console.error('Error initializing:', error);
