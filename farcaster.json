@@ -1,15 +1,23 @@
 {
-  "version": "1.0.0",
-  "name": "Farcaster Futbol Oyunu",
-  "description": "Farcaster kullanıcıları ile futbol maçı yap!",
-  "icon": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
-  "splash": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
-  "categories": ["games"],
-  "permissions": [],
-  "url": "https://bouncingballsfarcaster.vercel.app",
-  "accountAssociation": {
-    "header": "eyJmaWQiOjI4MjUwMywidHlwZSI6ImF1dGgiLCJrZXkiOiIweDI1RDA4NzcyRjI5MDc1MDY1NzBFRDRBY0ZlQkQ3OTIzYTQ5MUZjOUYifQ",
-    "payload": "eyJkb21haW4iOiJib3VuY2luZ2JhbGxzZmFyY2FzdGVyLnZlcmNlbC5hcHAifQ",
-    "signature": "atInxkPxb1uvg01NjEnqhNHIEinoPAoq9s9vftJ6MLBRgiWtwjHa6SLWdj/s/oxUPNKj0fXWDoGDVPt6ZGslrRs="
+  "miniapp": {
+    "version": "1",
+    "name": "Farcaster Futbol Oyunu",
+    "subtitle": "Toplar çemberde zıplıyor, kale dönüyor, gol at!",
+    "description": "Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!",
+    "primaryCategory": "games",
+    "iconUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+    "imageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+    "heroImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+    "splashImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+    "splashBackgroundColor": "#000000",
+    "tags": ["futbol", "oyun", "farcaster", "mini-app", "game"],
+    "tagline": "Farcaster kullanıcıları ile futbol maçı yap!",
+    "buttonTitle": "Oyunu Oyna",
+    "ogTitle": "Farcaster Futbol Oyunu",
+    "ogDescription": "Farcaster kullanıcıları ile futbol maçı yap! Toplar çemberde zıplıyor, kale dönüyor, gol at!",
+    "ogImageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+    "castShareUrl": "https://warpcast.com/~/compose?text=Check+out+this+amazing+football+game+on+Farcaster!",
+    "homeUrl": "https://bouncingballsfarcaster.vercel.app",
+    "webhookUrl": "https://bouncingballsfarcaster.vercel.app/api/webhook"
   }
 }
