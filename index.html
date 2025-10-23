@@ -560,10 +560,42 @@
                 
                 // Wait for SDK to be available
                 let attempts = 0;
-                while (!window.FarcasterFrame && !window.FarcasterMiniApps && attempts < 10) {
+                while (!window.sdk && !window.FarcasterFrame && !window.FarcasterMiniApps && attempts < 10) {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     attempts++;
                     console.log(`⏳ Waiting for SDK... attempt ${attempts}`);
+                }
+                
+                // Try window.sdk first (the actual SDK that's loaded)
+                if (window.sdk) {
+                    console.log('✅ window.sdk ready!');
+                    try {
+                        // Try to get user from window.sdk
+                        let user = null;
+                        if (window.sdk.getUser) {
+                            user = await window.sdk.getUser();
+                        } else if (window.sdk.user) {
+                            user = window.sdk.user;
+                        } else if (window.sdk.context && window.sdk.context.user) {
+                            user = window.sdk.context.user;
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster user from window.sdk:', user);
+                            window.currentUser = {
+                                username: user.username,
+                                displayName: user.displayName || user.username,
+                                pfpUrl: user.pfpUrl || user.pfp,
+                                verified: user.verified || false,
+                                fid: user.fid
+                            };
+                            
+                            updateUserInterface();
+                            return;
+                        }
+                    } catch (sdkError) {
+                        console.log('⚠️ window.sdk error:', sdkError);
+                    }
                 }
                 
                 // Try FarcasterFrame first
@@ -919,19 +951,30 @@
                 }
                 
                 
-                // Try Farcaster SDK
-                if (window.sdk && window.sdk.getUser) {
-                    const user = await window.sdk.getUser();
-                    console.log('👤 Farcaster SDK user:', user);
-                    
-                    if (user && user.username) {
-                        return {
-                            username: user.username,
-                            displayName: user.displayName || user.username,
-                            pfpUrl: user.pfpUrl,
-                            verified: user.verified || false,
-                            fid: user.fid
-                        };
+                // Try window.sdk (the actual SDK that's loaded)
+                if (window.sdk) {
+                    try {
+                        let user = null;
+                        if (window.sdk.getUser) {
+                            user = await window.sdk.getUser();
+                        } else if (window.sdk.user) {
+                            user = window.sdk.user;
+                        } else if (window.sdk.context && window.sdk.context.user) {
+                            user = window.sdk.context.user;
+                        }
+                        
+                        if (user && user.username) {
+                            console.log('👤 Farcaster SDK user:', user);
+                            return {
+                                username: user.username,
+                                displayName: user.displayName || user.username,
+                                pfpUrl: user.pfpUrl || user.pfp,
+                                verified: user.verified || false,
+                                fid: user.fid
+                            };
+                        }
+                    } catch (error) {
+                        console.log('⚠️ window.sdk error:', error);
                     }
                 }
                 
@@ -981,10 +1024,10 @@
                 }
                 
                 // Try to get from URL parameters (Farcaster Mini App context)
-                const urlParams = new URLSearchParams(window.location.search);
-                const fid = urlParams.get('fid');
-                const username = urlParams.get('username');
-                const pfp = urlParams.get('pfp');
+                const urlParams2 = new URLSearchParams(window.location.search);
+                const fid = urlParams2.get('fid');
+                const username = urlParams2.get('username');
+                const pfp = urlParams2.get('pfp');
                 
                 if (fid && username) {
                     console.log('👤 Found user in URL params:', { fid, username, pfp });
