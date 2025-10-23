@@ -357,6 +357,24 @@
             line-height: 1.4;
         }
         
+        .connect-wallet-btn {
+            background: linear-gradient(45deg, var(--neon-color), #00ff88);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px var(--neon-color);
+        }
+        
+        .connect-wallet-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--neon-color);
+        }
+        
         /* Show canvas initially */
         #gameCanvas {
             display: block !important;
@@ -516,6 +534,12 @@
                     <div class="mode-icon">⚔️</div>
                     <div class="mode-title">Farcaster Duel</div>
                     <div class="mode-desc">Challenge specific Farcaster user</div>
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button id="connectWalletBtn" class="connect-wallet-btn" onclick="connectWallet()" style="display: none;">
+                    🔗 Connect Wallet for Real Farcaster Data
                 </button>
             </div>
         </div>
@@ -922,10 +946,114 @@
         }
 
         async function startFarcasterDuel() {
-            const username = prompt('Enter Farcaster username to challenge:');
-            if (!username) return;
+            // Create search modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
             
-            console.log('⚔️ Starting Farcaster duel with:', username);
+            const searchBox = document.createElement('div');
+            searchBox.style.cssText = `
+                background: #001100;
+                border: 2px solid var(--neon-color);
+                border-radius: 15px;
+                padding: 20px;
+                max-width: 400px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            `;
+            
+            searchBox.innerHTML = `
+                <h3 style="color: var(--neon-color); margin-bottom: 15px;">Challenge Farcaster User</h3>
+                <input type="text" id="usernameSearch" placeholder="Search username..." 
+                       style="width: 100%; padding: 10px; border: 1px solid var(--neon-color); 
+                              background: #000; color: white; border-radius: 5px; margin-bottom: 10px;">
+                <div id="searchResults" style="max-height: 200px; overflow-y: auto;"></div>
+                <div style="margin-top: 15px; text-align: right;">
+                    <button onclick="this.closest('div').closest('div').remove()" 
+                            style="background: #666; color: white; border: none; padding: 8px 16px; 
+                                   border-radius: 5px; margin-right: 10px; cursor: pointer;">Cancel</button>
+                </div>
+            `;
+            
+            modal.appendChild(searchBox);
+            document.body.appendChild(modal);
+            
+            const searchInput = document.getElementById('usernameSearch');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            let searchTimeout;
+            searchInput.addEventListener('input', async (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    resultsDiv.innerHTML = '';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10`, {
+                            headers: {
+                                'api_key': NEYNAR_API_KEY
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            resultsDiv.innerHTML = '';
+                            
+                            if (data.result && data.result.users) {
+                                data.result.users.forEach(user => {
+                                    const userDiv = document.createElement('div');
+                                    userDiv.style.cssText = `
+                                        padding: 10px;
+                                        border-bottom: 1px solid #333;
+                                        cursor: pointer;
+                                        display: flex;
+                                        align-items: center;
+                                    `;
+                                    userDiv.innerHTML = `
+                                        <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
+                                             style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                                        <div>
+                                            <div style="color: white; font-weight: bold;">@${user.username}</div>
+                                            <div style="color: #888; font-size: 12px;">${user.display_name || user.username}</div>
+                                        </div>
+                                    `;
+                                    
+                                    userDiv.addEventListener('click', () => {
+                                        selectUser(user);
+                                        modal.remove();
+                                    });
+                                    
+                                    resultsDiv.appendChild(userDiv);
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Search error:', error);
+                    }
+                }, 300);
+            });
+            
+            // Focus on search input
+            searchInput.focus();
+        }
+        
+        async function selectUser(user) {
+            console.log('⚔️ Starting Farcaster duel with:', user.username);
             
             // Get current user data
             currentUser = await getFarcasterUserData();
@@ -937,44 +1065,49 @@
                 };
             }
             
-            // Get opponent user data by username
-            try {
-                const response = await fetch(`${NEYNAR_BASE_URL}/user/bulk?usernames=${username}`, {
-                    headers: {
-                        'api_key': NEYNAR_API_KEY
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.users && data.users.length > 0) {
-                        const user = data.users[0];
-                        opponentUser = {
-                            username: user.username,
-                            displayName: user.display_name,
-                            pfpUrl: user.pfp_url,
-                            followerCount: user.follower_count,
-                            verified: user.verified_addresses && user.verified_addresses.length > 0,
-                            powerBadge: user.power_badge
-                        };
-                    } else {
-                        alert('User not found!');
-                        return;
-                    }
-                } else {
-                    alert('Error fetching user data!');
-                    return;
-                }
-            } catch (error) {
-                console.error('Error fetching user:', error);
-                alert('Error fetching user data!');
-                return;
-            }
+            // Set opponent user
+            opponentUser = {
+                username: user.username,
+                displayName: user.display_name,
+                pfpUrl: user.pfp_url,
+                followerCount: user.follower_count,
+                verified: user.verified_addresses && user.verified_addresses.length > 0,
+                powerBadge: user.power_badge
+            };
             
             console.log('👤 Current user:', currentUser);
             console.log('👤 Opponent user:', opponentUser);
             
             startGame();
+        }
+
+        async function connectWallet() {
+            try {
+                if (window.ethereum) {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    if (accounts.length > 0) {
+                        const userData = await getFarcasterUserDataFromNeynar(accounts[0]);
+                        if (userData) {
+                            window.currentUser = userData;
+                            console.log('✅ Wallet connected, user data:', userData);
+                            document.getElementById('connectWalletBtn').style.display = 'none';
+                            document.getElementById('userStatus').textContent = `✅ Connected as @${userData.username}`;
+                        }
+                    }
+                } else {
+                    alert('Please install MetaMask or another wallet extension');
+                }
+            } catch (error) {
+                console.error('Wallet connection error:', error);
+                alert('Failed to connect wallet');
+            }
+        }
+
+        function showWalletConnectionOption() {
+            if (!window.currentUser || window.currentUser.username === 'testuser') {
+                document.getElementById('connectWalletBtn').style.display = 'block';
+                document.getElementById('userStatus').textContent = '⚠️ Connect wallet for real Farcaster data';
+            }
         }
 
         function startGameWithCPU() {
@@ -1758,10 +1891,34 @@
             });
         });
         
+        async function initializeGame() {
+            console.log('🎮 Initializing game...');
+            
+            // Try to get user data
+            try {
+                const userData = await getFarcasterUserData();
+                if (userData && userData.username !== 'testuser') {
+                    window.currentUser = userData;
+                    console.log('✅ User data loaded:', userData);
+                    document.getElementById('userStatus').textContent = `✅ Connected as @${userData.username}`;
+                } else {
+                    showWalletConnectionOption();
+                }
+            } catch (error) {
+                console.error('Error initializing:', error);
+                showWalletConnectionOption();
+            }
+        }
+
         // Select first random color when page loads
         const initialColor = getRandomNeonColor();
         applyNeonColor(initialColor);
         console.log('🎨 Initial neon color:', initialColor);
+        
+        // Initialize game when page loads
+        window.addEventListener('load', async () => {
+            await initializeGame();
+        });
     </script>
 </body>
 </html>
