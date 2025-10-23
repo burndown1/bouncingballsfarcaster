@@ -139,8 +139,8 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: min(85vw, 85vh, 400px);
-            height: min(85vw, 85vh, 400px);
+            width: min(85vw, 400px);
+            height: min(85vh, 600px);
             display: block;
             margin: 20px;
         }
@@ -379,8 +379,8 @@
             }
             
             #gameCanvas {
-                width: min(90vw, 90vh, 350px);
-                height: min(90vw, 90vh, 350px);
+                width: min(90vw, 350px);
+                height: min(90vh, 500px);
                 margin: 10px;
                 border-width: 2px;
             }
@@ -475,13 +475,13 @@
             <div class="score-display">
                 <div class="player-info">
                     <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
-                    <span id="player1Name" class="player-name">Player 1</span>
+                    <span id="player1Name" class="player-name">You</span>
                     <span id="score1" class="player-score">0</span>
                 </div>
                 <div class="vs-divider">VS</div>
                 <div class="player-info">
                     <span id="score2" class="player-score">0</span>
-                    <span id="player2Name" class="player-name">Player 2</span>
+                    <span id="player2Name" class="player-name">Opponent</span>
                     <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
                 </div>
             </div>
@@ -507,15 +507,15 @@
             </div>
             
             <div class="mode-buttons">
-                <button class="mode-btn" onclick="startGameWithCPU()">
-                    <div class="mode-icon">🤖</div>
-                    <div class="mode-title">Random Match</div>
-                    <div class="mode-desc">Watch random match</div>
+                <button class="mode-btn" onclick="startRandomFarcasterMatch()">
+                    <div class="mode-icon">🎲</div>
+                    <div class="mode-title">Random Farcaster Match</div>
+                    <div class="mode-desc">Play with random Farcaster user</div>
                 </button>
-                <button class="mode-btn" onclick="startMultiplayerGame()">
-                    <div class="mode-icon">👥</div>
-                    <div class="mode-title">Farcaster Match</div>
-                    <div class="mode-desc">Play with Farcaster user</div>
+                <button class="mode-btn" onclick="startFarcasterDuel()">
+                    <div class="mode-icon">⚔️</div>
+                    <div class="mode-title">Farcaster Duel</div>
+                    <div class="mode-desc">Challenge specific Farcaster user</div>
                 </button>
             </div>
         </div>
@@ -710,7 +710,59 @@
         let currentUser = null;
         let opponentUser = null;
         
-        // Get Farcaster user data - REAL API
+        // Neynar API configuration
+        const NEYNAR_API_KEY = '947A9234-D36B-4230-AB2D-3BE5987A8369';
+        const NEYNAR_BASE_URL = 'https://api.neynar.com/v2/farcaster';
+        
+        // Neynar API functions
+        async function getFarcasterUserDataFromNeynar(walletAddress) {
+            try {
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/bulk-by-address?addresses=${walletAddress}`, {
+                    headers: {
+                        'api_key': NEYNAR_API_KEY
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.users && data.users.length > 0) {
+                        const user = data.users[0];
+                        return {
+                            username: user.username,
+                            displayName: user.display_name,
+                            pfpUrl: user.pfp_url,
+                            followerCount: user.follower_count,
+                            verified: user.verified_addresses && user.verified_addresses.length > 0,
+                            powerBadge: user.power_badge
+                        };
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching user data from Neynar:', error);
+                return null;
+            }
+        }
+
+        async function getRealFarcasterUsers() {
+            try {
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20`, {
+                    headers: {
+                        'api_key': NEYNAR_API_KEY
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.users || [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Error fetching trending users:', error);
+                return [];
+            }
+        }
+
         async function getFarcasterUserData() {
             try {
                 console.log('🔄 Getting real Farcaster user data...');
@@ -830,6 +882,101 @@
         }
         
         // Game mode functions
+        async function startRandomFarcasterMatch() {
+            console.log('🎲 Starting random Farcaster match...');
+            
+            // Get current user data
+            currentUser = await getFarcasterUserData();
+            if (!currentUser) {
+                currentUser = {
+                    username: 'Guest',
+                    displayName: 'Guest Player',
+                    pfpUrl: null
+                };
+            }
+            
+            // Get random Farcaster user
+            const trendingUsers = await getRealFarcasterUsers();
+            if (trendingUsers.length > 0) {
+                const randomUser = trendingUsers[Math.floor(Math.random() * trendingUsers.length)];
+                opponentUser = {
+                    username: randomUser.username,
+                    displayName: randomUser.display_name,
+                    pfpUrl: randomUser.pfp_url,
+                    followerCount: randomUser.follower_count,
+                    verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
+                    powerBadge: randomUser.power_badge
+                };
+            } else {
+                opponentUser = {
+                    username: 'CPU',
+                    displayName: 'CPU Player',
+                    pfpUrl: null
+                };
+            }
+            
+            console.log('👤 Current user:', currentUser);
+            console.log('👤 Opponent user:', opponentUser);
+            
+            startGame();
+        }
+
+        async function startFarcasterDuel() {
+            const username = prompt('Enter Farcaster username to challenge:');
+            if (!username) return;
+            
+            console.log('⚔️ Starting Farcaster duel with:', username);
+            
+            // Get current user data
+            currentUser = await getFarcasterUserData();
+            if (!currentUser) {
+                currentUser = {
+                    username: 'Guest',
+                    displayName: 'Guest Player',
+                    pfpUrl: null
+                };
+            }
+            
+            // Get opponent user data by username
+            try {
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/bulk?usernames=${username}`, {
+                    headers: {
+                        'api_key': NEYNAR_API_KEY
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.users && data.users.length > 0) {
+                        const user = data.users[0];
+                        opponentUser = {
+                            username: user.username,
+                            displayName: user.display_name,
+                            pfpUrl: user.pfp_url,
+                            followerCount: user.follower_count,
+                            verified: user.verified_addresses && user.verified_addresses.length > 0,
+                            powerBadge: user.power_badge
+                        };
+                    } else {
+                        alert('User not found!');
+                        return;
+                    }
+                } else {
+                    alert('Error fetching user data!');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                alert('Error fetching user data!');
+                return;
+            }
+            
+            console.log('👤 Current user:', currentUser);
+            console.log('👤 Opponent user:', opponentUser);
+            
+            startGame();
+        }
+
         function startGameWithCPU() {
             gameMode = 'cpu';
             cpuControlled = true;
@@ -899,6 +1046,16 @@
             gameRunning = true;
             timeLeft = 60; // Reset time
             
+            // Update canvas size and circle position for rectangular canvas
+            const canvas = document.getElementById('gameCanvas');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // Update circle position to center of rectangular canvas
+            circle.x = canvas.width / 2;
+            circle.y = canvas.height / 2;
+            circle.radius = Math.min(canvas.width, canvas.height) * 0.42; // 42% of smaller dimension
+            
             // Select different colors for each player
             player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
             do {
@@ -907,6 +1064,21 @@
             
             console.log('🎨 Player 1 ball color:', player1BallColor);
             console.log('🎨 Player 2 ball color:', player2BallColor);
+            
+            // Update UI with user data
+            if (currentUser) {
+                document.getElementById('player1Name').textContent = currentUser.username || 'You';
+                if (currentUser.pfpUrl) {
+                    document.getElementById('player1Avatar').src = currentUser.pfpUrl;
+                }
+            }
+            
+            if (opponentUser) {
+                document.getElementById('player2Name').textContent = opponentUser.username || 'Opponent';
+                if (opponentUser.pfpUrl) {
+                    document.getElementById('player2Avatar').src = opponentUser.pfpUrl;
+                }
+            }
             
             // Recreate balls with user data
             balls = createBalls();
@@ -1333,8 +1505,8 @@
         function drawBalls() {
             balls.forEach((ball, index) => {
                 // Draw profile picture if available
-                const user = index === 0 ? window.currentUser : opponentUser;
-                if (ball.user && ball.user.profileImage) {
+                const user = index === 0 ? currentUser : opponentUser;
+                if (user && user.pfpUrl) {
                     const img = new Image();
                     img.onload = function() {
                         ctx.save();
@@ -1344,16 +1516,16 @@
                         ctx.drawImage(img, ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
                         ctx.restore();
                     };
-                    img.src = ball.user.profileImage;
+                    img.src = user.pfpUrl;
                 } else {
                     // Fallback: Colored circle
-                ctx.fillStyle = ball.color;
-                ctx.shadowColor = ball.color;
-                ctx.shadowBlur = 15;
-                ctx.beginPath();
-                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                    ctx.fillStyle = ball.color;
+                    ctx.shadowColor = ball.color;
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
                 }
                 
                 // Ball frame - each player has different color
