@@ -296,28 +296,20 @@
     </div>
     
     <!-- Farcaster Mini App SDK -->
-    <script src="https://unpkg.com/@farcaster/miniapp-sdk@latest/dist/index.js"></script>
-    <script>
+    <script type="module">
+        import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
+        
         // Global değişkenleri tanımla
         window.currentUser = null;
-        window.sdkReady = false;
+        window.sdk = sdk;
         
         // SDK'yi başlat
         async function initializeFarcasterSDK() {
             try {
                 console.log('🔄 Farcaster SDK yüklendi, kullanıcı bilgileri alınıyor...');
                 
-                // SDK'yi global olarak tanımla
-                window.sdk = window.FarcasterSDK;
-                
-                if (!window.sdk) {
-                    console.log('❌ SDK bulunamadı, test moduna geçiliyor...');
-                    initializeTestMode();
-                    return;
-                }
-                
                 // Kullanıcı bilgilerini al
-                const user = await window.sdk.getUser();
+                const user = await sdk.getUser();
                 console.log('Farcaster kullanıcısı:', user);
                 
                 if (user) {
@@ -335,9 +327,8 @@
                     initializeTestMode();
                 }
                 
-                // SDK ready() çağır
-                await window.sdk.actions.ready();
-                window.sdkReady = true;
+                // App tamamen yüklendikten sonra ready() çağır
+                await sdk.actions.ready();
                 console.log('✅ Farcaster SDK ready!');
                 
             } catch (error) {
@@ -346,11 +337,8 @@
                 
                 // Test modunda da ready() çağır
                 try {
-                    if (window.sdk && window.sdk.actions) {
-                        await window.sdk.actions.ready();
-                        window.sdkReady = true;
-                        console.log('✅ Test modunda SDK ready!');
-                    }
+                    await sdk.actions.ready();
+                    console.log('✅ Test modunda SDK ready!');
                 } catch (readyError) {
                     console.log('❌ Test modunda SDK ready hatası:', readyError);
                 }
@@ -362,38 +350,10 @@
             window.currentUser = getTestUserData();
         }
         
-        // SDK'yi yükle ve başlat - DOM hazır olduğunda
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🔄 DOM hazır, SDK başlatılıyor...');
-            
-            // SDK'nin yüklenmesini bekle
-            let attempts = 0;
-            const maxAttempts = 10;
-            
-            while (attempts < maxAttempts) {
-                if (window.FarcasterSDK) {
-                    console.log('✅ SDK bulundu, başlatılıyor...');
-                    await initializeFarcasterSDK();
-                    break;
-                }
-                
-                console.log(`⏳ SDK bekleniyor... (${attempts + 1}/${maxAttempts})`);
-                await new Promise(resolve => setTimeout(resolve, 100));
-                attempts++;
-            }
-            
-            if (attempts >= maxAttempts) {
-                console.log('❌ SDK yüklenemedi, test moduna geçiliyor...');
-                initializeTestMode();
-            }
-        });
-        
-        // Alternatif olarak window load event'i de ekle
+        // App tamamen yüklendikten sonra SDK'yi başlat
         window.addEventListener('load', async () => {
-            if (!window.sdkReady) {
-                console.log('🔄 Window load - SDK tekrar deneniyor...');
-                await initializeFarcasterSDK();
-            }
+            console.log('🔄 App yüklendi, SDK başlatılıyor...');
+            await initializeFarcasterSDK();
         });
     </script>
     <script>
