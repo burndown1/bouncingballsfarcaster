@@ -360,23 +360,6 @@
             line-height: 1.4;
         }
         
-        .connect-wallet-btn {
-            background: linear-gradient(45deg, var(--neon-color), #00ff88);
-            color: #000;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px var(--neon-color);
-        }
-        
-        .connect-wallet-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--neon-color);
-        }
         
         /* Show canvas initially */
         #gameCanvas {
@@ -540,11 +523,6 @@
                 </button>
             </div>
             
-            <div style="margin-top: 20px; text-align: center;">
-                <button id="connectWalletBtn" class="connect-wallet-btn" onclick="connectWallet()" style="display: none;">
-                    🔗 Connect Wallet for Real Farcaster Data
-                </button>
-            </div>
         </div>
         
         <div class="game-over" id="gameOver">
@@ -811,7 +789,7 @@
                     }
                 }
                 
-                // Try Farcaster context
+                // Try Farcaster context (alternative)
                 if (window.farcaster && window.farcaster.user) {
                     const user = window.farcaster.user;
                     console.log('👤 Farcaster context user:', user);
@@ -823,6 +801,7 @@
                         fid: user.fid
                     };
                 }
+                
                 
                 // Try Farcaster SDK
                 if (window.sdk && window.sdk.getUser) {
@@ -1137,34 +1116,6 @@
             startGame();
         }
 
-        async function connectWallet() {
-            try {
-                if (window.ethereum) {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    if (accounts.length > 0) {
-                        const userData = await getFarcasterUserDataFromNeynar(accounts[0]);
-                        if (userData) {
-                            window.currentUser = userData;
-                            console.log('✅ Wallet connected, user data:', userData);
-                            document.getElementById('connectWalletBtn').style.display = 'none';
-                            document.getElementById('userStatus').textContent = `✅ Connected as @${userData.username}`;
-                        }
-                    }
-                } else {
-                    alert('Please install MetaMask or another wallet extension');
-                }
-            } catch (error) {
-                console.error('Wallet connection error:', error);
-                alert('Failed to connect wallet');
-            }
-        }
-
-        function showWalletConnectionOption() {
-            if (!window.currentUser || window.currentUser.username === 'testuser') {
-                document.getElementById('connectWalletBtn').style.display = 'block';
-                document.getElementById('userStatus').textContent = '⚠️ Connect wallet for real Farcaster data';
-            }
-        }
 
         function startGameWithCPU() {
             gameMode = 'cpu';
@@ -1962,19 +1913,20 @@
                 console.log('⚠️ Farcaster Mini App not available:', error);
             }
             
-            // Try to get user data
+            // Get user data automatically
             try {
                 const userData = await getFarcasterUserData();
+                window.currentUser = userData;
+                console.log('✅ User data loaded:', userData);
+                
                 if (userData && userData.username !== 'testuser') {
-                    window.currentUser = userData;
-                    console.log('✅ User data loaded:', userData);
-                    document.getElementById('userStatus').textContent = `✅ Connected as @${userData.username}`;
+                    document.getElementById('userStatus').textContent = `✅ Playing as @${userData.username}`;
                 } else {
-                    showWalletConnectionOption();
+                    document.getElementById('userStatus').textContent = '🎮 Ready to play!';
                 }
             } catch (error) {
                 console.error('Error initializing:', error);
-                showWalletConnectionOption();
+                document.getElementById('userStatus').textContent = '🎮 Ready to play!';
             }
         }
 
