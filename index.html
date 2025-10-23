@@ -733,14 +733,14 @@
                 userStatusEl.textContent = window.currentUser.verified ? '✅ Verified Farcaster User' : '🔗 Farcaster User';
             }
             
-            if (userAvatarEl && window.currentUser.profileImage) {
-                userAvatarEl.src = window.currentUser.profileImage;
+            if (userAvatarEl && window.currentUser.pfpUrl) {
+                userAvatarEl.src = window.currentUser.pfpUrl;
             }
             
             // Update scoreboard
             if (document.getElementById('player1Name')) {
                 document.getElementById('player1Name').textContent = window.currentUser.username;
-                document.getElementById('player1Avatar').src = window.currentUser.profileImage;
+                document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
             }
             
             // Show game mode selection screen
@@ -1211,40 +1211,65 @@
         async function startRandomFarcasterMatch() {
             console.log('🎲 Starting random Farcaster match...');
             
-            // Get current user data
-            currentUser = await getFarcasterUserData();
-            if (!currentUser) {
-                currentUser = {
+            try {
+                // Get current user data
+                currentUser = await getFarcasterUserData();
+                if (!currentUser) {
+                    currentUser = {
+                        username: 'Guest',
+                        displayName: 'Guest Player',
+                        pfpUrl: 'https://picsum.photos/100/100'
+                    };
+                }
+                
+                // Try to get random Farcaster user
+                let trendingUsers = [];
+                try {
+                    trendingUsers = await getRealFarcasterUsers();
+                    console.log('🎲 Trending users from Neynar:', trendingUsers.length);
+                } catch (error) {
+                    console.log('⚠️ Neynar API failed, using CPU opponent:', error);
+                }
+                
+                if (trendingUsers.length > 0) {
+                    const randomUser = trendingUsers[Math.floor(Math.random() * trendingUsers.length)];
+                    opponentUser = {
+                        username: randomUser.username,
+                        displayName: randomUser.display_name || randomUser.username,
+                        pfpUrl: randomUser.pfp_url || 'https://picsum.photos/100/100',
+                        followerCount: randomUser.follower_count,
+                        verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
+                        powerBadge: randomUser.power_badge
+                    };
+                } else {
+                    opponentUser = {
+                        username: 'CPU',
+                        displayName: 'CPU Player',
+                        pfpUrl: 'https://picsum.photos/100/100'
+                    };
+                }
+                
+                console.log('👤 Current user:', currentUser);
+                console.log('👤 Opponent user:', opponentUser);
+                
+                // Start the game
+                startGame();
+                
+            } catch (error) {
+                console.error('❌ Error starting random match:', error);
+                // Still try to start the game with fallback data
+                currentUser = currentUser || {
                     username: 'Guest',
                     displayName: 'Guest Player',
-                    pfpUrl: null
+                    pfpUrl: 'https://picsum.photos/100/100'
                 };
-            }
-            
-            // Get random Farcaster user
-            const trendingUsers = await getRealFarcasterUsers();
-            if (trendingUsers.length > 0) {
-                const randomUser = trendingUsers[Math.floor(Math.random() * trendingUsers.length)];
-                opponentUser = {
-                    username: randomUser.username,
-                    displayName: randomUser.display_name,
-                    pfpUrl: randomUser.pfp_url,
-                    followerCount: randomUser.follower_count,
-                    verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
-                    powerBadge: randomUser.power_badge
-                };
-            } else {
                 opponentUser = {
                     username: 'CPU',
                     displayName: 'CPU Player',
-                    pfpUrl: null
+                    pfpUrl: 'https://picsum.photos/100/100'
                 };
+                startGame();
             }
-            
-            console.log('👤 Current user:', currentUser);
-            console.log('👤 Opponent user:', opponentUser);
-            
-            startGame();
         }
 
         async function startFarcasterDuel() {
