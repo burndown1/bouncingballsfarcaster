@@ -50,6 +50,7 @@
     <link rel="manifest" href="/manifest.json">
     
     <!-- Farcaster Mini App SDK -->
+    <script src="https://unpkg.com/@farcaster/miniapps@latest/dist/index.js"></script>
     <script src="https://unpkg.com/@farcaster/frame-sdk@latest/dist/frame-sdk.js"></script>
     <meta name="theme-color" content="#00ff00">
     <meta name="mobile-web-app-capable" content="yes">
@@ -547,46 +548,88 @@
             try {
                 console.log('🔄 Initializing Farcaster SDK...');
                 
-                // Call ready() immediately - critical for Mini App!
-                await sdk.actions.ready();
-                console.log('✅ Farcaster SDK ready!');
-                window.farcasterInitialized = true;
-                
-                // Get user information
-                const user = await sdk.getUser();
-                console.log('👤 Farcaster user:', user);
-                
-                if (user && user.username) {
-                    window.currentUser = {
-                        username: user.username,
-                        displayName: user.displayName || user.username,
-                        profileImage: user.pfpUrl,
-                        verified: user.verified || false,
-                        fid: user.fid
-                    };
-                    
-                    console.log('✅ Farcaster user data retrieved:', window.currentUser);
-                    
-                    // Update UI
-                    updateUserInterface();
-                    
-                } else {
-                    console.log('⚠️ Farcaster user data not available, using test mode');
-                    console.log('⚠️ Farcaster SDK not available');
+                // Wait for SDK to be available
+                let attempts = 0;
+                while (!window.FarcasterFrame && !window.FarcasterMiniApps && attempts < 10) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    attempts++;
+                    console.log(`⏳ Waiting for SDK... attempt ${attempts}`);
                 }
+                
+                // Try FarcasterFrame first
+                if (window.FarcasterFrame) {
+                    console.log('✅ FarcasterFrame SDK ready!');
+                    try {
+                        const sdk = await window.FarcasterFrame.init({
+                            allowedOrigins: ['*']
+                        });
+                        
+                        // Try different methods to get user
+                        let user = null;
+                        if (sdk.getUser) {
+                            user = await sdk.getUser();
+                        } else if (sdk.user) {
+                            user = sdk.user;
+                        } else if (window.farcaster && window.farcaster.user) {
+                            user = window.farcaster.user;
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster user from FarcasterFrame:', user);
+                            window.currentUser = {
+                                username: user.username,
+                                displayName: user.displayName || user.username,
+                                pfpUrl: user.pfpUrl || user.pfp,
+                                verified: user.verified || false,
+                                fid: user.fid
+                            };
+                            
+                            updateUserInterface();
+                            return;
+                        }
+                    } catch (frameError) {
+                        console.log('⚠️ FarcasterFrame error:', frameError);
+                    }
+                }
+                
+                // Try FarcasterMiniApps
+                if (window.FarcasterMiniApps) {
+                    console.log('✅ FarcasterMiniApps SDK ready!');
+                    try {
+                        await window.FarcasterMiniApps.init();
+                        
+                        // Try to get user from MiniApps context
+                        let user = null;
+                        if (window.FarcasterMiniApps.getUser) {
+                            user = await window.FarcasterMiniApps.getUser();
+                        } else if (window.FarcasterMiniApps.user) {
+                            user = window.FarcasterMiniApps.user;
+                        } else if (window.FarcasterMiniApps.context && window.FarcasterMiniApps.context.user) {
+                            user = window.FarcasterMiniApps.context.user;
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster user from FarcasterMiniApps:', user);
+                            window.currentUser = {
+                                username: user.username,
+                                displayName: user.displayName || user.username,
+                                pfpUrl: user.pfpUrl || user.pfp,
+                                verified: user.verified || false,
+                                fid: user.fid
+                            };
+                            
+                            updateUserInterface();
+                            return;
+                        }
+                    } catch (miniAppsError) {
+                        console.log('⚠️ FarcasterMiniApps error:', miniAppsError);
+                    }
+                }
+                
+                console.log('⚠️ Farcaster SDK not available');
                 
             } catch (error) {
                 console.log('❌ Farcaster SDK error:', error);
-                
-                // Try to call ready() even in error case
-                try {
-                    await sdk.actions.ready();
-                    console.log('✅ SDK ready in error case!');
-                    window.farcasterInitialized = true;
-                } catch (readyError) {
-                    console.log('❌ Ready call failed:', readyError);
-                }
-                
                 console.log('⚠️ Farcaster SDK not available');
             }
         }
@@ -740,9 +783,8 @@
         async function getRealFarcasterUsers() {
             try {
                 // ChatGPT önerisi: Random user API
-                const response = await fetch(`${NEYNAR_BASE_URL}/user/random`, {
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/random?api_key=${NEYNAR_API_KEY}`, {
                     headers: {
-                        'Authorization': `Bearer ${NEYNAR_API_KEY}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -758,9 +800,8 @@
                         }
                 
                 // Fallback to trending users
-                const trendingResponse = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20`, {
+                const trendingResponse = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20&api_key=${NEYNAR_API_KEY}`, {
                     headers: {
-                        'Authorization': `Bearer ${NEYNAR_API_KEY}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -787,6 +828,8 @@
                 console.log('🔍 window.farcaster:', window.farcaster);
                 console.log('🔍 window.FarcasterFrame:', window.FarcasterFrame);
                 console.log('🔍 window.FarcasterMiniApps:', window.FarcasterMiniApps);
+                console.log('🔍 window.location:', window.location);
+                console.log('🔍 document.referrer:', document.referrer);
                 
                 // Try Farcaster Mini App context (doğru method)
                 if (window.farcaster && window.farcaster.user) {
@@ -802,15 +845,30 @@
                 }
                 
                 // Try Farcaster Mini Apps SDK
-                if (window.FarcasterMiniApps && window.FarcasterMiniApps.useFarcasterIdentity) {
+                if (window.FarcasterMiniApps) {
                     try {
-                        const { user } = window.FarcasterMiniApps.useFarcasterIdentity();
-                        if (user && user.username) {
+                        // Try different methods to get user from MiniApps
+                        let user = null;
+                        
+                        if (window.FarcasterMiniApps.useFarcasterIdentity) {
+                            const identity = window.FarcasterMiniApps.useFarcasterIdentity();
+                            if (identity && identity.user) {
+                                user = identity.user;
+                            }
+                        } else if (window.FarcasterMiniApps.getUser) {
+                            user = await window.FarcasterMiniApps.getUser();
+                        } else if (window.FarcasterMiniApps.user) {
+                            user = window.FarcasterMiniApps.user;
+                        } else if (window.FarcasterMiniApps.context && window.FarcasterMiniApps.context.user) {
+                            user = window.FarcasterMiniApps.context.user;
+                        }
+                        
+                        if (user) {
                             console.log('👤 Farcaster Mini Apps user:', user);
                             return {
                                 username: user.username,
                                 displayName: user.displayName || user.username,
-                                pfpUrl: user.pfp,
+                                pfpUrl: user.pfpUrl || user.pfp,
                                 verified: user.verified || false,
                                 fid: user.fid
                             };
@@ -910,6 +968,29 @@
                             fid: window.farcaster.data.user.fid
                         };
                     }
+                }
+                
+                // Try to get from URL parameters (Farcaster Mini App context)
+                const urlParams = new URLSearchParams(window.location.search);
+                const fid = urlParams.get('fid');
+                const username = urlParams.get('username');
+                const pfp = urlParams.get('pfp');
+                
+                if (fid && username) {
+                    console.log('👤 Found user in URL params:', { fid, username, pfp });
+                    return {
+                        username: username,
+                        displayName: username,
+                        pfpUrl: pfp || null,
+                        verified: false,
+                        fid: parseInt(fid)
+                    };
+                }
+                
+                // Try to get from document.referrer (Farcaster Mini App context)
+                if (document.referrer && document.referrer.includes('farcaster')) {
+                    console.log('🔍 Farcaster referrer detected:', document.referrer);
+                    // Try to extract user data from referrer or other sources
                 }
                 
                 // Fallback to test user
@@ -1114,9 +1195,8 @@
                 
                 searchTimeout = setTimeout(async () => {
                     try {
-                        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10`, {
+                        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10&api_key=${NEYNAR_API_KEY}`, {
                             headers: {
-                                'Authorization': `Bearer ${NEYNAR_API_KEY}`,
                                 'Content-Type': 'application/json'
                             }
                         });
