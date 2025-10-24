@@ -1088,10 +1088,19 @@
             canvas.width = 380;
             canvas.height = 500;
             
-            // Update circle position
-            window.circle.x = canvas.width / 2;
-            window.circle.y = canvas.height / 2;
-            window.circle.radius = Math.min(canvas.width, canvas.height) * 0.45;
+            // Initialize circle if not exists
+            if (!window.circle) {
+                window.circle = {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    radius: Math.min(canvas.width, canvas.height) * 0.45
+                };
+            } else {
+                // Update circle position
+                window.circle.x = canvas.width / 2;
+                window.circle.y = canvas.height / 2;
+                window.circle.radius = Math.min(canvas.width, canvas.height) * 0.45;
+            }
             
             // Reset scores
             document.getElementById('player1Score').textContent = '0';
@@ -1124,6 +1133,36 @@
         
         window.updateUserInterface = function() {
             console.log('🎨 Updating UI...');
+        };
+        
+        window.gameLoop = function() {
+            if (!window.gameRunning) return;
+            
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw circle
+            ctx.beginPath();
+            ctx.arc(window.circle.x, window.circle.y, window.circle.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw balls
+            if (window.balls) {
+                window.balls.forEach(ball => {
+                    ctx.beginPath();
+                    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = ball.color;
+                    ctx.fill();
+                });
+            }
+            
+            // Continue loop
+            requestAnimationFrame(window.gameLoop);
         };
         
         console.log('✅ Script loaded, functions available:', {
