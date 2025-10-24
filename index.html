@@ -436,21 +436,22 @@
             background: linear-gradient(135deg, var(--neon-color), #00cc00);
             color: #000;
             border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            letter-spacing: 0.5px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'SF Pro Display', 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.8px;
+            border-radius: 12px;
             cursor: pointer;
             margin: 8px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 255, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
+            text-transform: uppercase;
         }
         .restart-btn:hover {
             background: linear-gradient(135deg, #00cc00, var(--neon-color));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 255, 0, 0.6);
         }
         
         /* Game Mode Selection Styles */
@@ -516,22 +517,28 @@
         
         .mode-buttons {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             justify-content: center;
-            flex-wrap: wrap;
+            flex-direction: row;
+            align-items: stretch;
         }
         
         .mode-btn {
             background: transparent;
             border: 2px solid var(--neon-color);
             color: var(--neon-color);
-            padding: 20px;
+            padding: 25px 20px;
             border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 150px;
+            min-width: 200px;
+            flex: 1;
+            max-width: 250px;
             text-align: center;
             backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .mode-btn:hover {
@@ -560,8 +567,13 @@
         }
         
         
-        /* Show canvas initially */
+        /* Hide canvas initially */
         #gameCanvas {
+            display: none !important;
+        }
+        
+        /* Show canvas when game starts */
+        .game-started #gameCanvas {
             display: block !important;
         }
         
@@ -625,7 +637,7 @@
             
             .mode-buttons {
                 flex-direction: column;
-                gap: 12px;
+                gap: 15px;
             }
             
             .mode-btn {
@@ -2123,10 +2135,7 @@
                 playRefereeWhistle();
             }, 500);
             
-            // Start background music
-            setTimeout(() => {
-                playBackgroundMusic();
-            }, 1000);
+            // Start background music removed as requested
             
             updateTimer();
             gameLoop();
@@ -2302,123 +2311,6 @@
             }
             
             ctx.restore();
-        }
-        
-        // Background music for football atmosphere
-        let backgroundMusic = null;
-        let musicPlaying = false;
-        
-        function playBackgroundMusic() {
-            if (musicPlaying) return;
-            
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Create a football stadium atmosphere with multiple oscillators
-                const oscillators = [];
-                const gainNodes = [];
-                
-                // Main melody - football chant rhythm
-                const melody = [
-                    { freq: 220, duration: 0.5 }, // A3
-                    { freq: 247, duration: 0.5 }, // B3
-                    { freq: 220, duration: 0.5 }, // A3
-                    { freq: 196, duration: 0.5 }, // G3
-                    { freq: 220, duration: 1.0 }, // A3
-                    { freq: 196, duration: 0.5 }, // G3
-                    { freq: 175, duration: 0.5 }, // F3
-                    { freq: 196, duration: 1.0 }  // G3
-                ];
-                
-                let currentNote = 0;
-                const playNextNote = () => {
-                    if (!musicPlaying) return;
-                    
-                    const note = melody[currentNote];
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.setValueAtTime(note.freq, audioContext.currentTime);
-                    oscillator.type = 'sine';
-                    
-                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                    gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.duration);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + note.duration);
-                    
-                    currentNote = (currentNote + 1) % melody.length;
-                    setTimeout(playNextNote, note.duration * 1000);
-                };
-                
-                // Add crowd noise (low frequency rumble)
-                const crowdOscillator = audioContext.createOscillator();
-                const crowdGain = audioContext.createGain();
-                
-                crowdOscillator.connect(crowdGain);
-                crowdGain.connect(audioContext.destination);
-                
-                crowdOscillator.frequency.setValueAtTime(60, audioContext.currentTime);
-                crowdOscillator.type = 'sawtooth';
-                
-                crowdGain.gain.setValueAtTime(0.05, audioContext.currentTime);
-                
-                crowdOscillator.start();
-                
-                // Add some random crowd cheers
-                const addCrowdCheer = () => {
-                    if (!musicPlaying) return;
-                    
-                    const cheerOscillator = audioContext.createOscillator();
-                    const cheerGain = audioContext.createGain();
-                    
-                    cheerOscillator.connect(cheerGain);
-                    cheerGain.connect(audioContext.destination);
-                    
-                    const cheerFreq = 300 + Math.random() * 200;
-                    cheerOscillator.frequency.setValueAtTime(cheerFreq, audioContext.currentTime);
-                    cheerOscillator.type = 'square';
-                    
-                    cheerGain.gain.setValueAtTime(0, audioContext.currentTime);
-                    cheerGain.gain.linearRampToValueAtTime(0.03, audioContext.currentTime + 0.1);
-                    cheerGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    
-                    cheerOscillator.start(audioContext.currentTime);
-                    cheerOscillator.stop(audioContext.currentTime + 0.3);
-                    
-                    setTimeout(addCrowdCheer, 2000 + Math.random() * 3000);
-                };
-                
-                musicPlaying = true;
-                playNextNote();
-                addCrowdCheer();
-                
-                // Store references for stopping
-                backgroundMusic = {
-                    audioContext,
-                    crowdOscillator,
-                    stop: () => {
-                        musicPlaying = false;
-                        crowdOscillator.stop();
-                        audioContext.close();
-                    }
-                };
-                
-            } catch (error) {
-                console.log('Background music could not be played:', error);
-            }
-        }
-        
-        function stopBackgroundMusic() {
-            if (backgroundMusic) {
-                backgroundMusic.stop();
-                backgroundMusic = null;
-                musicPlaying = false;
-            }
         }
         
         function playRefereeWhistle() {
@@ -2899,8 +2791,7 @@
             // Normal game end
             gameRunning = false;
             
-            // Stop background music
-            stopBackgroundMusic();
+            // Stop background music removed as requested
             
             document.getElementById('finalScore1').textContent = score1;
             document.getElementById('finalScore2').textContent = score2;
