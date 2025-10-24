@@ -1687,10 +1687,18 @@
             gameRunning = true;
             timeLeft = 60; // Reset time
             
-            // Update canvas size and circle position for rectangular canvas
+            // Force canvas to be rectangular for Farcaster Mini App
             const canvas = document.getElementById('gameCanvas');
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            canvas.style.width = '320px';
+            canvas.style.height = '650px';
+            canvas.style.maxWidth = '320px';
+            canvas.style.maxHeight = '650px';
+            canvas.style.minWidth = '320px';
+            canvas.style.minHeight = '650px';
+            
+            // Update canvas size and circle position for rectangular canvas
+            canvas.width = 320;
+            canvas.height = 650;
             
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
