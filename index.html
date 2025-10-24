@@ -588,12 +588,260 @@
         // Define functions immediately so they're available
         window.startRandomFarcasterMatch = async function() {
             console.log('🎲 Starting random Farcaster match...');
-            // Will be overridden by the real function later
+            
+            try {
+                // Get current user data
+                const currentUser = await window.getFarcasterUserData();
+                if (!currentUser) {
+                    window.currentUser = {
+                        username: 'Guest',
+                        displayName: 'Guest Player',
+                        pfpUrl: 'https://picsum.photos/100/100'
+                    };
+                }
+                
+                // Get random Farcaster user from API with aggressive cache busting
+                console.log('🎲 Fetching random Farcaster user from API...');
+                const timestamp = Date.now();
+                const randomParam = Math.floor(Math.random() * 1000000);
+                const response = await fetch(`https://bouncingballs.ataskira1.workers.dev/random?t=${timestamp}&r=${randomParam}&cache=${Math.random()}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                const data = await response.json();
+                
+                console.log('🎲 API Response:', data);
+                
+                let trendingUsers;
+                if (data.users && data.users.length > 0) {
+                    const randomUser = data.users[0];
+                    console.log('🎲 Random user found:', randomUser);
+                    
+                    trendingUsers = [{
+                        username: randomUser.username,
+                        display_name: randomUser.display_name,
+                        pfp_url: randomUser.pfp_url,
+                        follower_count: randomUser.follower_count,
+                        verified_addresses: randomUser.verified_addresses,
+                        power_badge: randomUser.power_badge
+                    }];
+                } else {
+                    console.log('🎲 No users found, using fallback');
+                    trendingUsers = [
+                        {
+                            username: 'vitalik',
+                            display_name: 'Vitalik Buterin',
+                            pfp_url: 'https://picsum.photos/100/100?random=1',
+                            follower_count: 500000,
+                            verified_addresses: [],
+                            power_badge: true
+                        }
+                    ];
+                }
+                
+                console.log('🎲 Users loaded:', trendingUsers.length);
+                console.log('🎲 Trending users:', trendingUsers);
+                
+                if (trendingUsers.length > 0) {
+                    const randomUser = trendingUsers[0];
+                    console.log('🎲 Selected user:', randomUser);
+                    console.log('🎲 User details:', {
+                        username: randomUser.username,
+                        display_name: randomUser.display_name,
+                        pfp_url: randomUser.pfp_url
+                    });
+                    
+                    window.opponentUser = {
+                        username: randomUser.username,
+                        displayName: randomUser.display_name || randomUser.username,
+                        pfpUrl: randomUser.pfp_url || 'https://picsum.photos/100/100',
+                        followerCount: randomUser.follower_count,
+                        verified: randomUser.power_badge || false,
+                        fid: randomUser.fid || Math.floor(Math.random() * 100000)
+                    };
+                    
+                    console.log('🎲 Opponent user set globally:', window.opponentUser);
+                    
+                    // Start the game
+                    console.log('👤 Current user:', window.currentUser);
+                    console.log('👤 Opponent user:', window.opponentUser);
+                    
+                    window.startGame();
+                }
+            } catch (error) {
+                console.error('🎲 Random match error:', error);
+                alert('Error starting random match: ' + error.message);
+            }
         };
         
         window.startFarcasterDuel = async function() {
             console.log('⚔️ Starting Farcaster duel...');
-            // Will be overridden by the real function later
+            
+            // Create search modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            const searchBox = document.createElement('div');
+            searchBox.style.cssText = `
+                background: #001100;
+                border: 2px solid var(--neon-color);
+                border-radius: 15px;
+                padding: 20px;
+                width: 300px;
+                max-width: 90vw;
+            `;
+            
+            const title = document.createElement('h3');
+            title.textContent = '⚔️ Farcaster Duel';
+            title.style.cssText = `
+                color: var(--neon-color);
+                text-align: center;
+                margin-bottom: 15px;
+                font-family: 'Courier New', monospace;
+            `;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Enter Farcaster username...';
+            input.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: #000;
+                border: 1px solid var(--neon-color);
+                border-radius: 5px;
+                color: var(--neon-color);
+                font-family: 'Courier New', monospace;
+                margin-bottom: 10px;
+            `;
+            
+            const searchBtn = document.createElement('button');
+            searchBtn.textContent = 'Search';
+            searchBtn.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: var(--neon-color);
+                color: #000;
+                border: none;
+                border-radius: 5px;
+                font-family: 'Courier New', monospace;
+                font-weight: bold;
+                cursor: pointer;
+                margin-bottom: 10px;
+            `;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: #333;
+                color: var(--neon-color);
+                border: 1px solid var(--neon-color);
+                border-radius: 5px;
+                font-family: 'Courier New', monospace;
+                cursor: pointer;
+            `;
+            
+            const results = document.createElement('div');
+            results.id = 'search-results';
+            results.style.cssText = `
+                max-height: 200px;
+                overflow-y: auto;
+                margin-top: 10px;
+            `;
+            
+            searchBox.appendChild(title);
+            searchBox.appendChild(input);
+            searchBox.appendChild(searchBtn);
+            searchBox.appendChild(closeBtn);
+            searchBox.appendChild(results);
+            modal.appendChild(searchBox);
+            document.body.appendChild(modal);
+            
+            // Search function
+            const searchUsers = async (query) => {
+                if (!query.trim()) return;
+                
+                console.log('🔍 Searching for user:', query);
+                results.innerHTML = '<div style="color: var(--neon-color); text-align: center;">Searching...</div>';
+                
+                try {
+                    const response = await fetch(`https://bouncingballs.ataskira1.workers.dev/search?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    
+                    console.log('🔍 Search response:', data);
+                    
+                    results.innerHTML = '';
+                    
+                    if (data.result && data.result.users && data.result.users.length > 0) {
+                        data.result.users.forEach(user => {
+                            const userDiv = document.createElement('div');
+                            userDiv.style.cssText = `
+                                padding: 10px;
+                                border: 1px solid var(--neon-color);
+                                border-radius: 5px;
+                                margin-bottom: 5px;
+                                cursor: pointer;
+                                background: #000;
+                                color: var(--neon-color);
+                            `;
+                            
+                            userDiv.innerHTML = `
+                                <div><strong>${user.display_name || user.username}</strong></div>
+                                <div>@${user.username}</div>
+                                <div>${user.follower_count || 0} followers</div>
+                            `;
+                            
+                            userDiv.onclick = () => {
+                                console.log('🎯 Selected user:', user);
+                                
+                                window.opponentUser = {
+                        username: user.username,
+                                    displayName: user.display_name || user.username,
+                                    pfpUrl: user.pfp_url || 'https://picsum.photos/100/100',
+                                    followerCount: user.follower_count,
+                                    verified: user.power_badge || false,
+                        fid: user.fid
+                    };
+                    
+                                document.body.removeChild(modal);
+                                window.startGame();
+                            };
+                    
+                            results.appendChild(userDiv);
+                        });
+                } else {
+                        results.innerHTML = '<div style="color: var(--neon-color); text-align: center;">No users found</div>';
+                    }
+                } catch (error) {
+                    console.error('🔍 Search error:', error);
+                    results.innerHTML = '<div style="color: red; text-align: center;">Search error: ' + error.message + '</div>';
+                }
+            };
+            
+            // Event listeners
+            searchBtn.onclick = () => searchUsers(input.value);
+            input.onkeypress = (e) => {
+                if (e.key === 'Enter') {
+                    searchUsers(input.value);
+                }
+            };
+            closeBtn.onclick = () => document.body.removeChild(modal);
         };
         
         window.getFarcasterUserData = async function() {
@@ -703,7 +951,7 @@
                     try {
                         await window.sdk.actions.ready();
                         console.log("✅ Farcaster SDK initialized successfully - app fully loaded");
-                    } catch (readyError) {
+                } catch (readyError) {
                         console.error('Failed to initialize Farcaster SDK:', readyError);
                         setTimeout(async () => {
                             try {
@@ -754,7 +1002,7 @@
                             const userData = user;
                             
                             if (userData) {
-                                window.currentUser = {
+            window.currentUser = {
                                     username: userData.username || 'farcaster_user',
                                     displayName: userData.displayName || userData.username || 'Farcaster User',
                                     pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100',
@@ -763,7 +1011,7 @@
                                 };
                                 
                                 console.log('✅ Current user set:', window.currentUser);
-                                updateUserInterface();
+            updateUserInterface();
                                 return;
                             }
                         }
