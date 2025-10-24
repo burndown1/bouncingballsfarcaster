@@ -985,10 +985,12 @@
             console.log('👤 Opponent user:', opponentUser);
             
             // Start the game
+            console.log('🎮 About to call startGame...');
             if (typeof window.startGame === 'function') {
+                console.log('✅ startGame function found, calling it...');
                 window.startGame();
             } else {
-                console.error('startGame function not found');
+                console.error('❌ startGame function not found');
             }
         }
         
