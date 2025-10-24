@@ -1047,7 +1047,12 @@
                 if (response.ok) {
                     const data = await response.json();
                     console.log('✅ Neynar API success:', data);
-                    return data.users || [];
+                    console.log('✅ Users from API:', data.users?.length);
+                    if (data.users && data.users.length > 0) {
+                        return data.users;
+                    } else {
+                        console.log('⚠️ No users in response, using fallback');
+                    }
                 } else {
                     console.log('⚠️ Neynar API failed:', response.status, response.statusText);
                     if (response.status === 402) {
