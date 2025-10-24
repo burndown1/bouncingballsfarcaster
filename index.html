@@ -193,6 +193,7 @@
             align-items: center;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
             margin-bottom: 10px;
+            gap: 15px;
         }
         
         .player-section {
@@ -202,8 +203,8 @@
         }
         
         .player-avatar {
-            width: 35px;
-            height: 35px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             border: 3px solid #00ff00;
             object-fit: cover;
@@ -224,7 +225,7 @@
             color: var(--neon-color);
             font-family: 'Courier New', monospace;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px;
         }
         
         .player-score {
@@ -276,21 +277,6 @@
             align-items: center;
             gap: 8px;
             margin: 4px 0;
-        }
-        
-        .player-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid var(--neon-color);
-        }
-        
-        .player-avatar.player1 {
-            border-color: var(--player1-color, var(--neon-color));
-        }
-        
-        .player-avatar.player2 {
-            border-color: var(--player2-color, var(--neon-color));
         }
         
         .player-name {
@@ -2056,14 +2042,14 @@
             console.log('🎨 Player 2 ball color:', player2BallColor);
             
             // Update UI with user data
-            console.log('🎯 Updating UI with user data:', currentUser);
-            if (currentUser) {
-                const username = currentUser.username || 'You';
+            console.log('🎯 Updating UI with user data:', window.currentUser);
+            if (window.currentUser) {
+                const username = window.currentUser.username || 'You';
                 document.getElementById('player1Name').textContent = username;
                 console.log('✅ Player 1 name set to:', username);
-                if (currentUser.pfpUrl) {
-                    document.getElementById('player1Avatar').src = currentUser.pfpUrl;
-                    console.log('✅ Player 1 avatar set to:', currentUser.pfpUrl);
+                if (window.currentUser.pfpUrl) {
+                    document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
+                    console.log('✅ Player 1 avatar set to:', window.currentUser.pfpUrl);
                 }
                 
                 // Set player 1 avatar border color
@@ -2297,6 +2283,37 @@
             ctx.restore();
         }
         
+        function playBoinkSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create two quick "boink" sounds
+                for (let i = 0; i < 2; i++) {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        // Boink sound - quick bounce
+                        oscillator.frequency.setValueAtTime(200 + Math.random() * 100, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.1);
+                        
+                        oscillator.type = 'sine';
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                        
+                        // Quick fade out
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    }, i * 50); // 50ms apart for double boink
+                }
+            } catch (error) {
+                console.log('Boink sound could not be played:', error);
+            }
+        }
+        
         function playRefereeWhistle() {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -2514,6 +2531,9 @@
                     
                     // Screen shake effect
                     screenShake = 10;
+                    
+                    // Play boink sound when ball hits circle
+                    playBoinkSound();
                 }
                 
                 const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
@@ -2585,7 +2605,7 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw shooting star trail effect
+                // Draw fiery trail effect
                 if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
                     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
                     const trailIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
@@ -2598,27 +2618,30 @@
                     const startX = ball.x + trailX * ball.radius;
                     const startY = ball.y + trailY * ball.radius;
                     
-                    // Draw shooting star trail
-                    for (let i = 0; i < 6; i++) {
-                        const trailLength = (ball.radius + 25) * trailIntensity * (1 - i / 6);
+                    // Draw fiery trail
+                    for (let i = 0; i < 8; i++) {
+                        const trailLength = (ball.radius + 35) * trailIntensity * (1 - i / 8);
                         const trailXPos = startX + trailX * trailLength;
                         const trailYPos = startY + trailY * trailLength;
-                        const trailWidth = (ball.radius * 0.3) * (1 - i / 6) * trailIntensity;
+                        const trailWidth = (ball.radius * 0.4) * (1 - i / 8) * trailIntensity;
                         
-                        // Shooting star colors (white to blue gradient)
+                        // Fiery colors - from white hot to red
                         let trailColor;
                         if (i < 2) {
-                            trailColor = '#FFFFFF'; // White (bright)
+                            trailColor = '#FFFFFF'; // White hot center
                         } else if (i < 4) {
-                            trailColor = '#87CEEB'; // Sky blue
+                            trailColor = '#FFFF00'; // Yellow hot
+                        } else if (i < 6) {
+                            trailColor = '#FF6600'; // Orange
                         } else {
-                            trailColor = '#4169E1'; // Royal blue
+                            trailColor = '#FF0000'; // Red
                         }
                         
-                        // Create gradient for shooting star effect
+                        // Create fiery gradient
                         const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
                         gradient.addColorStop(0, trailColor);
-                        gradient.addColorStop(0.5, trailColor + 'CC');
+                        gradient.addColorStop(0.3, trailColor + 'DD');
+                        gradient.addColorStop(0.7, trailColor + 'AA');
                         gradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = gradient;
@@ -2626,14 +2649,27 @@
                         ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
                         ctx.fill();
                         
-                        // Add glow effect
+                        // Add intense glow effect for fire
                         ctx.shadowColor = trailColor;
-                        ctx.shadowBlur = 15;
-                        ctx.fillStyle = trailColor + '80';
+                        ctx.shadowBlur = 20;
+                        ctx.fillStyle = trailColor + 'CC';
                         ctx.beginPath();
-                        ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
+                        ctx.arc(trailXPos, trailYPos, trailWidth * 0.7, 0, Math.PI * 2);
                         ctx.fill();
                         ctx.shadowBlur = 0;
+                        
+                        // Add flickering effect
+                        if (Math.random() > 0.7) {
+                            const flickerX = trailXPos + (Math.random() - 0.5) * trailWidth * 0.5;
+                            const flickerY = trailYPos + (Math.random() - 0.5) * trailWidth * 0.5;
+                            ctx.fillStyle = '#FFFF00' + '80';
+                            ctx.shadowColor = '#FFFF00';
+                            ctx.shadowBlur = 15;
+                            ctx.beginPath();
+                            ctx.arc(flickerX, flickerY, trailWidth * 0.3, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
                     }
                 }
                 
@@ -2719,12 +2755,19 @@
         function updateTimer() {
             if (!gameRunning) return;
             timeLeft--;
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
             if (timeLeft <= 0) {
+                document.getElementById('timer').textContent = 'TIME UP!';
+                document.getElementById('timer').style.color = '#ff0000';
+                document.getElementById('timer').style.fontSize = '20px';
+                document.getElementById('timer').style.fontWeight = 'bold';
                 endGame();
             } else {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+                document.getElementById('timer').style.color = '';
+                document.getElementById('timer').style.fontSize = '';
+                document.getElementById('timer').style.fontWeight = '';
                 setTimeout(updateTimer, 1000);
             }
         }
