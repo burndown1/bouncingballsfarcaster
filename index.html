@@ -192,6 +192,7 @@
             max-width: 500px;
             z-index: 20;
             display: none;
+            margin-left: -10px;
         }
         
         .scoreboard-container.show {
@@ -208,7 +209,7 @@
             align-items: center;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
             margin-bottom: 10px;
-            gap: 5px;
+            gap: 0px;
         }
         
         .player-section {
@@ -355,8 +356,8 @@
         .final-player-section {
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex-direction: row;
+            gap: 10px;
+            flex-direction: column;
             text-align: center;
         }
         
@@ -401,6 +402,9 @@
             font-weight: bold;
             font-size: 28px;
             margin: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .winner-display {
@@ -433,10 +437,10 @@
             color: #000;
             border: none;
             padding: 12px 24px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
-            font-family: 'SF Pro Display', 'Helvetica Neue', 'Arial', sans-serif;
-            letter-spacing: 0.3px;
+            font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            letter-spacing: 0.5px;
             border-radius: 8px;
             cursor: pointer;
             margin: 8px;
@@ -729,13 +733,15 @@
                 <div class="final-player-section">
                     <img id="finalPlayer1Avatar" class="final-player-avatar" src="" alt="Player 1">
                     <span id="finalPlayer1Name" class="final-player-name">You</span>
-                    <span id="finalScore1" class="final-player-score">0</span>
                 </div>
-                <div class="final-score-divider">-</div>
-                <div class="final-player-section">
+                <div class="final-score-divider">
+                    <span id="finalScore1" class="final-player-score">0</span>
+                    <span>-</span>
                     <span id="finalScore2" class="final-player-score">0</span>
-                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
+                </div>
+                <div class="final-player-section">
                     <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
+                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
                 </div>
             </div>
             <div class="winner-display" id="winnerDisplay" style="display: none;">
@@ -2117,6 +2123,11 @@
                 playRefereeWhistle();
             }, 500);
             
+            // Start background music
+            setTimeout(() => {
+                playBackgroundMusic();
+            }, 1000);
+            
             updateTimer();
             gameLoop();
             
@@ -2293,45 +2304,120 @@
             ctx.restore();
         }
         
-        function playBoinkSound() {
+        // Background music for football atmosphere
+        let backgroundMusic = null;
+        let musicPlaying = false;
+        
+        function playBackgroundMusic() {
+            if (musicPlaying) return;
+            
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Create funny cartoon-like boink sounds
-                for (let i = 0; i < 3; i++) {
-                    setTimeout(() => {
-                        const oscillator = audioContext.createOscillator();
-                        const gainNode = audioContext.createGain();
-                        
-                        oscillator.connect(gainNode);
-                        gainNode.connect(audioContext.destination);
-                        
-                        // Funny cartoon boink - starts high and bounces down
-                        const startFreq = 400 + Math.random() * 200; // Random high frequency
-                        const endFreq = 80 + Math.random() * 40; // Random low frequency
-                        
-                        oscillator.frequency.setValueAtTime(startFreq, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(endFreq, audioContext.currentTime + 0.15);
-                        
-                        oscillator.type = 'sine';
-                        oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.15);
-                        
-                        // Funny envelope - quick attack, bouncy decay
-                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                        gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.01);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-                        
-                        // Add some randomness for cartoon effect
-                        if (i === 1) {
-                            oscillator.frequency.setValueAtTime(startFreq * 0.8, audioContext.currentTime);
-                        } else if (i === 2) {
-                            oscillator.frequency.setValueAtTime(startFreq * 1.2, audioContext.currentTime);
-                        }
-                    }, i * 60); // 60ms apart for triple boink
-                }
+                // Create a football stadium atmosphere with multiple oscillators
+                const oscillators = [];
+                const gainNodes = [];
+                
+                // Main melody - football chant rhythm
+                const melody = [
+                    { freq: 220, duration: 0.5 }, // A3
+                    { freq: 247, duration: 0.5 }, // B3
+                    { freq: 220, duration: 0.5 }, // A3
+                    { freq: 196, duration: 0.5 }, // G3
+                    { freq: 220, duration: 1.0 }, // A3
+                    { freq: 196, duration: 0.5 }, // G3
+                    { freq: 175, duration: 0.5 }, // F3
+                    { freq: 196, duration: 1.0 }  // G3
+                ];
+                
+                let currentNote = 0;
+                const playNextNote = () => {
+                    if (!musicPlaying) return;
+                    
+                    const note = melody[currentNote];
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(note.freq, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.duration);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + note.duration);
+                    
+                    currentNote = (currentNote + 1) % melody.length;
+                    setTimeout(playNextNote, note.duration * 1000);
+                };
+                
+                // Add crowd noise (low frequency rumble)
+                const crowdOscillator = audioContext.createOscillator();
+                const crowdGain = audioContext.createGain();
+                
+                crowdOscillator.connect(crowdGain);
+                crowdGain.connect(audioContext.destination);
+                
+                crowdOscillator.frequency.setValueAtTime(60, audioContext.currentTime);
+                crowdOscillator.type = 'sawtooth';
+                
+                crowdGain.gain.setValueAtTime(0.05, audioContext.currentTime);
+                
+                crowdOscillator.start();
+                
+                // Add some random crowd cheers
+                const addCrowdCheer = () => {
+                    if (!musicPlaying) return;
+                    
+                    const cheerOscillator = audioContext.createOscillator();
+                    const cheerGain = audioContext.createGain();
+                    
+                    cheerOscillator.connect(cheerGain);
+                    cheerGain.connect(audioContext.destination);
+                    
+                    const cheerFreq = 300 + Math.random() * 200;
+                    cheerOscillator.frequency.setValueAtTime(cheerFreq, audioContext.currentTime);
+                    cheerOscillator.type = 'square';
+                    
+                    cheerGain.gain.setValueAtTime(0, audioContext.currentTime);
+                    cheerGain.gain.linearRampToValueAtTime(0.03, audioContext.currentTime + 0.1);
+                    cheerGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    cheerOscillator.start(audioContext.currentTime);
+                    cheerOscillator.stop(audioContext.currentTime + 0.3);
+                    
+                    setTimeout(addCrowdCheer, 2000 + Math.random() * 3000);
+                };
+                
+                musicPlaying = true;
+                playNextNote();
+                addCrowdCheer();
+                
+                // Store references for stopping
+                backgroundMusic = {
+                    audioContext,
+                    crowdOscillator,
+                    stop: () => {
+                        musicPlaying = false;
+                        crowdOscillator.stop();
+                        audioContext.close();
+                    }
+                };
+                
             } catch (error) {
-                console.log('Boink sound could not be played:', error);
+                console.log('Background music could not be played:', error);
+            }
+        }
+        
+        function stopBackgroundMusic() {
+            if (backgroundMusic) {
+                backgroundMusic.stop();
+                backgroundMusic = null;
+                musicPlaying = false;
             }
         }
         
@@ -2553,8 +2639,7 @@
                     // Screen shake effect
                     screenShake = 10;
                     
-                    // Play boink sound when ball hits circle
-                    playBoinkSound();
+                    // Sound effect removed as requested
                 }
                 
                 const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
@@ -2813,6 +2898,10 @@
             
             // Normal game end
             gameRunning = false;
+            
+            // Stop background music
+            stopBackgroundMusic();
+            
             document.getElementById('finalScore1').textContent = score1;
             document.getElementById('finalScore2').textContent = score2;
             
