@@ -729,20 +729,7 @@
                 margin-bottom: 10px;
             `;
             
-            const searchBtn = document.createElement('button');
-            searchBtn.textContent = 'Search';
-            searchBtn.style.cssText = `
-                width: 100%;
-                padding: 10px;
-                background: var(--neon-color);
-                color: #000;
-                border: none;
-                border-radius: 5px;
-                font-family: 'Courier New', monospace;
-                font-weight: bold;
-                cursor: pointer;
-                margin-bottom: 10px;
-            `;
+            // Search button removed - using real-time search
             
             const closeBtn = document.createElement('button');
             closeBtn.textContent = 'Close';
@@ -767,7 +754,6 @@
             
             searchBox.appendChild(title);
             searchBox.appendChild(input);
-            searchBox.appendChild(searchBtn);
             searchBox.appendChild(closeBtn);
             searchBox.appendChild(results);
             modal.appendChild(searchBox);
@@ -834,13 +820,23 @@
                 }
             };
             
-            // Event listeners
-            searchBtn.onclick = () => searchUsers(input.value);
-            input.onkeypress = (e) => {
-                if (e.key === 'Enter') {
-                    searchUsers(input.value);
+            // Real-time search with debouncing
+            let searchTimeout;
+            input.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    results.innerHTML = '';
+                    return;
                 }
-            };
+                
+                searchTimeout = setTimeout(() => {
+                    searchUsers(query);
+                }, 300); // 300ms delay
+            });
+            
+            // Event listeners
             closeBtn.onclick = () => document.body.removeChild(modal);
         };
         
