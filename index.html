@@ -2253,7 +2253,7 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw realistic flame trail effect
+                // Draw spectacular firework trail effect
                 if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
                     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
                     const flameIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
@@ -2266,33 +2266,51 @@
                     const startX = ball.x + flameX * ball.radius;
                     const startY = ball.y + flameY * ball.radius;
                     
-                    // Draw multiple flame particles with realistic colors
-                    for (let i = 0; i < 8; i++) {
-                        const flameLength = (ball.radius + 15) * flameIntensity * (1 - i / 8);
-                        const flameXPos = startX + flameX * flameLength;
-                        const flameYPos = startY + flameY * flameLength;
-                        const flameRadius = (ball.radius * 0.4) * (1 - i / 8) * flameIntensity;
+                    // Draw multiple spark particles in different directions
+                    for (let i = 0; i < 12; i++) {
+                        // Random angle for spark direction
+                        const sparkAngle = (Math.PI * 2 * i / 12) + (Math.random() - 0.5) * 0.5;
+                        const sparkX = Math.cos(sparkAngle);
+                        const sparkY = Math.sin(sparkAngle);
                         
-                        // Realistic flame colors (red, orange, yellow)
-                        let flameColor;
-                        if (i < 3) {
-                            flameColor = '#FF4500'; // Orange-red
-                        } else if (i < 5) {
-                            flameColor = '#FF8C00'; // Orange
-                        } else {
-                            flameColor = '#FFD700'; // Yellow
+                        // Spark length and size
+                        const sparkLength = (ball.radius + 20) * flameIntensity * (0.5 + Math.random() * 0.5);
+                        const sparkXPos = startX + sparkX * sparkLength;
+                        const sparkYPos = startY + sparkY * sparkLength;
+                        const sparkRadius = (ball.radius * 0.2) * flameIntensity * (0.3 + Math.random() * 0.7);
+                        
+                        // Spectacular spark colors (rainbow effect)
+                        let sparkColor;
+                        const colorIndex = Math.floor(Math.random() * 6);
+                        switch(colorIndex) {
+                            case 0: sparkColor = '#FF0000'; break; // Red
+                            case 1: sparkColor = '#FF4500'; break; // Orange
+                            case 2: sparkColor = '#FFD700'; break; // Yellow
+                            case 3: sparkColor = '#00FF00'; break; // Green
+                            case 4: sparkColor = '#0080FF'; break; // Blue
+                            case 5: sparkColor = '#8000FF'; break; // Purple
                         }
                         
-                        // Create gradient for realistic flame effect
-                        const gradient = ctx.createRadialGradient(flameXPos, flameYPos, 0, flameXPos, flameYPos, flameRadius);
-                        gradient.addColorStop(0, flameColor);
-                        gradient.addColorStop(0.5, flameColor + 'CC');
+                        // Create gradient for spectacular spark effect
+                        const gradient = ctx.createRadialGradient(sparkXPos, sparkYPos, 0, sparkXPos, sparkYPos, sparkRadius);
+                        gradient.addColorStop(0, sparkColor);
+                        gradient.addColorStop(0.3, sparkColor + 'FF');
+                        gradient.addColorStop(0.7, sparkColor + 'AA');
                         gradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = gradient;
                         ctx.beginPath();
-                        ctx.arc(flameXPos, flameYPos, flameRadius, 0, Math.PI * 2);
+                        ctx.arc(sparkXPos, sparkYPos, sparkRadius, 0, Math.PI * 2);
                         ctx.fill();
+                        
+                        // Add glow effect
+                        ctx.shadowColor = sparkColor;
+                        ctx.shadowBlur = 10;
+                        ctx.fillStyle = sparkColor + '80';
+                        ctx.beginPath();
+                        ctx.arc(sparkXPos, sparkYPos, sparkRadius * 0.5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
                     }
                 }
                 
