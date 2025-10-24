@@ -164,13 +164,88 @@
         }
         .ui-overlay {
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        /* Beautiful Horizontal Scoreboard */
+        .scoreboard-container {
+            position: absolute;
             top: 20px;
-            left: 20px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            z-index: 20;
+        }
+        
+        .scoreboard-rectangle {
+            background: linear-gradient(135deg, #001100, #002200);
+            border: 2px solid var(--neon-color);
+            border-radius: 15px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
-            z-index: 10;
-            pointer-events: none;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .player-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .player-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-color);
+            object-fit: cover;
+        }
+        
+        .player-name {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .player-score {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 18px;
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        .score-divider {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 20px;
+            margin: 0 15px;
+        }
+        
+        .timer-container {
+            text-align: center;
+        }
+        
+        .timer-text {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
+            background: rgba(0, 17, 0, 0.8);
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--neon-color);
         }
         .score-display {
             color: var(--neon-color);
@@ -242,7 +317,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
+            background: linear-gradient(135deg, #001100, #002200);
             color: var(--neon-color);
             padding: 40px;
             border-radius: 20px;
@@ -251,6 +326,76 @@
             display: none;
             backdrop-filter: blur(15px);
             box-shadow: 0 0 30px var(--neon-color);
+            min-width: 400px;
+        }
+        
+        .final-scoreboard {
+            background: rgba(0, 17, 0, 0.8);
+            border: 2px solid var(--neon-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .final-player-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .final-player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid var(--neon-color);
+            object-fit: cover;
+        }
+        
+        .final-player-name {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .final-player-score {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 24px;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .final-score-divider {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 28px;
+            margin: 0 20px;
+        }
+        
+        .winner-display {
+            margin: 20px 0;
+        }
+        
+        .winner-display h3 {
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 0 0 15px #ffd700;
+            margin: 0;
+        }
+        
+        .game-over-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
         }
         .game-over h2 {
             margin: 0 0 20px 0;
@@ -499,21 +644,24 @@
 <body>
     <div class="game-container">
         <div class="ui-overlay">
-            <div class="score-display">
-                <div class="player-info">
-                    <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
-                    <span id="player1Name" class="player-name">You</span>
-                    <span id="score1" class="player-score">0</span>
+            <!-- Beautiful Horizontal Scoreboard -->
+            <div class="scoreboard-container">
+                <div class="scoreboard-rectangle">
+                    <div class="player-section">
+                        <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
+                        <span id="player1Name" class="player-name">You</span>
+                        <span id="score1" class="player-score">0</span>
+                    </div>
+                    <div class="score-divider">-</div>
+                    <div class="player-section">
+                        <span id="score2" class="player-score">0</span>
+                        <span id="player2Name" class="player-name">Opponent</span>
+                        <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
+                    </div>
                 </div>
-                <div class="vs-divider">VS</div>
-                <div class="player-info">
-                    <span id="score2" class="player-score">0</span>
-                    <span id="player2Name" class="player-name">Opponent</span>
-                    <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
+                <div class="timer-container">
+                    <span id="timer" class="timer-text">1:00</span>
                 </div>
-            </div>
-            <div class="timer-display">
-                <span id="timer">1:00</span>
             </div>
         </div>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
@@ -549,10 +697,28 @@
         </div>
         
         <div class="game-over" id="gameOver">
-            <h2>Game Over!</h2>
-            <p><span id="finalScore1">0</span> - <span id="finalScore2">0</span></p>
-            <button class="restart-btn" onclick="restartGame()">Play Again</button>
-            <button class="restart-btn" onclick="shareToFarcaster()">Share</button>
+            <h2>🏆 Game Over! 🏆</h2>
+            <div class="final-scoreboard">
+                <div class="final-player-section">
+                    <img id="finalPlayer1Avatar" class="final-player-avatar" src="" alt="Player 1">
+                    <span id="finalPlayer1Name" class="final-player-name">You</span>
+                    <span id="finalScore1" class="final-player-score">0</span>
+                </div>
+                <div class="final-score-divider">-</div>
+                <div class="final-player-section">
+                    <span id="finalScore2" class="final-player-score">0</span>
+                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
+                    <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
+                </div>
+            </div>
+            <div class="winner-display" id="winnerDisplay" style="display: none;">
+                <h3 id="winnerText">🎉 WINNER! 🎉</h3>
+            </div>
+            <div class="game-over-buttons">
+                <button class="restart-btn" onclick="restartGame()">🔄 Play Again</button>
+                <button class="restart-btn" onclick="addToFarcaster()">➕ Add to Farcaster</button>
+                <button class="restart-btn" onclick="shareToFarcaster()">📤 Share Result</button>
+            </div>
         </div>
     </div>
     
@@ -1928,15 +2094,15 @@
             const player1 = window.currentUser || {
                 username: 'Player 1',
                 displayName: 'Player 1',
-                profileImage: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=P1',
+                pfpUrl: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=P1',
                 verified: false,
                 fid: 1
             };
             
-            const player2 = opponentUser || {
+            const player2 = window.opponentUser || opponentUser || {
                 username: 'Player 2',
                 displayName: 'Player 2',
-                profileImage: 'https://via.placeholder.com/40x40/ff0000/ffffff?text=P2',
+                pfpUrl: 'https://via.placeholder.com/40x40/ff0000/ffffff?text=P2',
                 verified: false,
                 fid: 2
             };
@@ -2326,7 +2492,7 @@
         function drawBalls() {
             balls.forEach((ball, index) => {
                 // Draw profile picture if available
-                const user = index === 0 ? currentUser : opponentUser;
+                const user = ball.user; // Use ball.user instead of currentUser/opponentUser
                 
                 if (user && user.pfpUrl) {
                     // Check if image is already loaded
@@ -2547,6 +2713,33 @@
             gameRunning = false;
             document.getElementById('finalScore1').textContent = score1;
             document.getElementById('finalScore2').textContent = score2;
+            
+            // Set final scoreboard with avatars and names
+            if (window.currentUser) {
+                document.getElementById('finalPlayer1Name').textContent = window.currentUser.username;
+                document.getElementById('finalPlayer1Avatar').src = window.currentUser.pfpUrl || 'https://picsum.photos/50/50';
+            }
+            
+            if (window.opponentUser) {
+                document.getElementById('finalPlayer2Name').textContent = window.opponentUser.username;
+                document.getElementById('finalPlayer2Avatar').src = window.opponentUser.pfpUrl || 'https://picsum.photos/50/50';
+            }
+            
+            // Show winner
+            const winnerDisplay = document.getElementById('winnerDisplay');
+            const winnerText = document.getElementById('winnerText');
+            
+            if (score1 > score2) {
+                winnerText.textContent = `🎉 ${window.currentUser?.username || 'You'} WON!!! 🎉`;
+                winnerDisplay.style.display = 'block';
+            } else if (score2 > score1) {
+                winnerText.textContent = `🎉 ${window.opponentUser?.username || 'Opponent'} WON!!! 🎉`;
+                winnerDisplay.style.display = 'block';
+            } else {
+                winnerText.textContent = `🤝 DRAW! 🤝`;
+                winnerDisplay.style.display = 'block';
+            }
+            
             document.getElementById('gameOver').style.display = 'block';
             
             // Reset timer color to normal
@@ -2589,47 +2782,77 @@
             balls[1].vy = 2;
         }
         
-        function shareToFarcaster() {
-            if (!window.currentUser) {
-                alert('User information could not be loaded!');
-                return;
-            }
+        async function addToFarcaster() {
+            console.log('➕ Adding to Farcaster...');
             
-            const winner = score1 > score2 ? window.currentUser.username : (opponentUser ? opponentUser.username : 'CPU');
-            const message = `🏆 Farcaster Football Game! ${window.currentUser.username} ${score1} - ${score2} ${opponentUser ? opponentUser.username : 'CPU'}`;
-            
-            // Share with Farcaster Mini App SDK
-            if (window.sdk) {
-                try {
-                    window.sdk.share({
-                        text: message,
-                        embeds: [{
-                            url: window.location.href,
-                            title: 'Farcaster Football Game',
-                            description: `${winner} won!`,
-                            image: {
-                                url: 'https://bouncingballsfarcaster.netlify.app/app-icon-512.svg'
-                            }
-                        }]
-                    }).then(() => {
-                        console.log('✅ Shared to Farcaster!');
-                        alert('Match result shared to Farcaster!');
-                    }).catch(error => {
-                        console.log('❌ Share error:', error);
-                        // Fallback: Warpcast link
-                        const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
-                        window.open(url, '_blank');
-                    });
-                } catch (error) {
-                    console.log('❌ SDK error:', error);
-                    // Fallback: Warpcast link
-            const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
-            window.open(url, '_blank');
+            try {
+                // Try to use Farcaster SDK if available
+                if (window.sdk && window.sdk.actions && window.sdk.actions.addMiniApp) {
+                    await window.sdk.actions.addMiniApp();
+                    console.log('✅ Mini App added to Farcaster!');
+                } else {
+                    console.log('⚠️ Farcaster SDK not available');
+                    alert('Farcaster SDK not available. Please open this app from Warpcast!');
                 }
-            } else {
-                // Fallback: Warpcast link
-            const url = 'https://warpcast.com/~/compose?text=' + encodeURIComponent(message);
-            window.open(url, '_blank');
+            } catch (error) {
+                console.log('❌ Failed to add Mini App:', error);
+                if (error.name === 'RejectedByUser') {
+                    alert('Mini App add request was rejected by user.');
+                } else if (error.name === 'InvalidDomainManifestJson') {
+                    alert('Domain mismatch. Please ensure the app is deployed to the correct domain.');
+                } else {
+                    alert('Failed to add Mini App: ' + error.message);
+                }
+            }
+        }
+
+        async function shareToFarcaster() {
+            console.log('📤 Sharing to Farcaster...');
+            
+            try {
+                // Get final scores and player names
+                const finalScore1 = parseInt(document.getElementById('finalScore1').textContent);
+                const finalScore2 = parseInt(document.getElementById('finalScore2').textContent);
+                const player1Name = document.getElementById('finalPlayer1Name').textContent;
+                const player2Name = document.getElementById('finalPlayer2Name').textContent;
+                
+                // Determine winner and create share text
+                let shareText;
+                if (finalScore1 > finalScore2) {
+                    // Player 1 won
+                    shareText = `🏆 I've beaten @${player2Name} ${finalScore1}-${finalScore2} at Bouncing Balls and grabbed my 3 points! Can you dare to beat me? ⚽🎮`;
+                } else if (finalScore2 > finalScore1) {
+                    // Player 2 won
+                    shareText = `😤 I've lost against @${player2Name} ${finalScore1}-${finalScore2} at Bouncing Balls and lost 3 points, but I'm ready for the revenge! ⚽🎮`;
+                } else {
+                    // Draw
+                    shareText = `🤝 Draw! @${player2Name} and I tied ${finalScore1}-${finalScore2} at Bouncing Balls! Ready for a rematch? ⚽🎮`;
+                }
+                
+                // Try to use Farcaster SDK if available
+                if (window.sdk && window.sdk.actions && window.sdk.actions.composeCast) {
+                    const result = await window.sdk.actions.composeCast({
+                        text: shareText,
+                        embeds: [window.location.href]
+                    });
+                    
+                    if (result?.cast) {
+                        console.log('✅ Cast posted successfully:', result.cast.hash);
+                    } else {
+                        console.log('📝 Cast was cancelled by user');
+                    }
+                } else {
+                    console.log('⚠️ Farcaster SDK not available');
+                    // Fallback to copy to clipboard
+                    navigator.clipboard.writeText(shareText);
+                    alert('Game result copied to clipboard! Share it on Farcaster!');
+                }
+            } catch (error) {
+                console.log('❌ Failed to share:', error);
+                // Fallback to copy to clipboard
+                const fallbackText = `I just played Bouncing Balls! Final score: ${finalScore1}-${finalScore2}. Can you beat me? 🎮⚽`;
+                navigator.clipboard.writeText(fallbackText);
+                alert('Game result copied to clipboard! Share it on Farcaster!');
             }
         }
         
