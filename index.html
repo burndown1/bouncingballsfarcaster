@@ -2126,7 +2126,13 @@
             
             // Hide game mode selection
             console.log('🎮 Hiding game mode selection...');
-            document.getElementById('gameModeSelection').style.display = 'none';
+            const gameModeElement = document.getElementById('gameModeSelection');
+            if (gameModeElement) {
+                gameModeElement.style.display = 'none';
+                console.log('✅ Game mode selection hidden');
+            } else {
+                console.error('❌ gameModeSelection element not found');
+            }
             
             console.log('🎮 Adding game-started class...');
             document.querySelector('.game-container').classList.add('game-started');
