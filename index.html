@@ -153,14 +153,24 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
+            width: 400px !important;
+            height: 400px !important;
+            max-width: 400px !important;
+            max-height: 400px !important;
+            min-width: 400px !important;
+            min-height: 400px !important;
+            display: block;
+            margin: 20px;
+        }
+        
+        /* Game started - rectangular canvas */
+        .game-started #gameCanvas {
             width: 350px !important;
             height: 600px !important;
             max-width: 350px !important;
             max-height: 600px !important;
             min-width: 350px !important;
             min-height: 600px !important;
-            display: block;
-            margin: 20px;
         }
         .ui-overlay {
             position: absolute;
@@ -181,6 +191,11 @@
             width: 90%;
             max-width: 500px;
             z-index: 20;
+            display: none;
+        }
+        
+        .scoreboard-container.show {
+            display: block;
         }
         
         .scoreboard-rectangle {
@@ -193,7 +208,7 @@
             align-items: center;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
             margin-bottom: 10px;
-            gap: 15px;
+            gap: 5px;
         }
         
         .player-section {
@@ -340,8 +355,8 @@
         .final-player-section {
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-direction: column;
+            gap: 15px;
+            flex-direction: row;
             text-align: center;
         }
         
@@ -718,9 +733,9 @@
                 </div>
                 <div class="final-score-divider">-</div>
                 <div class="final-player-section">
-                    <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
-                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
                     <span id="finalScore2" class="final-player-score">0</span>
+                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
+                    <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
                 </div>
             </div>
             <div class="winner-display" id="winnerDisplay" style="display: none;">
@@ -2012,20 +2027,15 @@
             // Hide game mode selection
             document.getElementById('gameModeSelection').style.display = 'none';
             
+            // Show scoreboard
+            document.querySelector('.scoreboard-container').classList.add('show');
+            
             document.querySelector('.game-container').classList.add('game-started');
             gameRunning = true;
             timeLeft = 60; // Reset time
             
-            // Force canvas to be rectangular for Farcaster Mini App (larger)
-            const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '350px';
-            canvas.style.height = '600px';
-            canvas.style.maxWidth = '350px';
-            canvas.style.maxHeight = '600px';
-            canvas.style.minWidth = '350px';
-            canvas.style.minHeight = '600px';
-            
             // Update canvas size and circle position for rectangular canvas
+            const canvas = document.getElementById('gameCanvas');
             canvas.width = 350;
             canvas.height = 600;
             
@@ -2287,8 +2297,8 @@
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Create two quick "boink" sounds
-                for (let i = 0; i < 2; i++) {
+                // Create funny cartoon-like boink sounds
+                for (let i = 0; i < 3; i++) {
                     setTimeout(() => {
                         const oscillator = audioContext.createOscillator();
                         const gainNode = audioContext.createGain();
@@ -2296,18 +2306,29 @@
                         oscillator.connect(gainNode);
                         gainNode.connect(audioContext.destination);
                         
-                        // Boink sound - quick bounce
-                        oscillator.frequency.setValueAtTime(200 + Math.random() * 100, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.1);
+                        // Funny cartoon boink - starts high and bounces down
+                        const startFreq = 400 + Math.random() * 200; // Random high frequency
+                        const endFreq = 80 + Math.random() * 40; // Random low frequency
+                        
+                        oscillator.frequency.setValueAtTime(startFreq, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(endFreq, audioContext.currentTime + 0.15);
                         
                         oscillator.type = 'sine';
                         oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.1);
+                        oscillator.stop(audioContext.currentTime + 0.15);
                         
-                        // Quick fade out
-                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                    }, i * 50); // 50ms apart for double boink
+                        // Funny envelope - quick attack, bouncy decay
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.01);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                        
+                        // Add some randomness for cartoon effect
+                        if (i === 1) {
+                            oscillator.frequency.setValueAtTime(startFreq * 0.8, audioContext.currentTime);
+                        } else if (i === 2) {
+                            oscillator.frequency.setValueAtTime(startFreq * 1.2, audioContext.currentTime);
+                        }
+                    }, i * 60); // 60ms apart for triple boink
                 }
             } catch (error) {
                 console.log('Boink sound could not be played:', error);
