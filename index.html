@@ -313,20 +313,22 @@
             backdrop-filter: blur(10px);
         }
         .game-over {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #001100, #002200);
             color: var(--neon-color);
-            padding: 40px;
+            padding: 30px;
             border-radius: 20px;
             border: 3px solid var(--neon-color);
             text-align: center;
             display: none;
             backdrop-filter: blur(15px);
             box-shadow: 0 0 30px var(--neon-color);
-            min-width: 400px;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1000;
         }
         
         .final-scoreboard {
@@ -404,22 +406,24 @@
             font-weight: 700;
         }
         .restart-btn {
-            background: var(--neon-color);
+            background: linear-gradient(135deg, var(--neon-color), #00cc00);
             color: #000;
             border: none;
-            padding: 14px 28px;
-            font-size: 16px;
+            padding: 12px 24px;
+            font-size: 14px;
             font-weight: 600;
-            border-radius: 12px;
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 8px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 255, 0, 0.3);
         }
         .restart-btn:hover {
-            opacity: 0.9;
-            box-shadow: 0 0 20px var(--neon-color);
+            background: linear-gradient(135deg, #00cc00, var(--neon-color));
             transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.5);
         }
         
         /* Game Mode Selection Styles */
@@ -649,7 +653,7 @@
                 <div class="scoreboard-rectangle">
                     <div class="player-section">
                         <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
-                        <span id="player1Name" class="player-name">You</span>
+                        <span id="player1Name" class="player-name">Player 1</span>
                         <span id="score1" class="player-score">0</span>
                     </div>
                     <div class="score-divider">-</div>
@@ -692,6 +696,11 @@
                     <div class="mode-title">Farcaster Duel</div>
                     <div class="mode-desc">Challenge specific Farcaster user</div>
                 </button>
+                <button class="mode-btn" onclick="addToFarcaster()">
+                    <div class="mode-icon">➕</div>
+                    <div class="mode-title">Add to Farcaster</div>
+                    <div class="mode-desc">Add this app to your Farcaster</div>
+                </button>
             </div>
             
         </div>
@@ -716,7 +725,6 @@
             </div>
             <div class="game-over-buttons">
                 <button class="restart-btn" onclick="restartGame()">🔄 Play Again</button>
-                <button class="restart-btn" onclick="addToFarcaster()">➕ Add to Farcaster</button>
                 <button class="restart-btn" onclick="shareToFarcaster()">📤 Share Result</button>
             </div>
         </div>
@@ -2033,7 +2041,7 @@
                 document.documentElement.style.setProperty('--player1-color', player1BallColor);
             } else {
                 console.log('⚠️ No currentUser data available');
-                document.getElementById('player1Name').textContent = 'You';
+                document.getElementById('player1Name').textContent = 'Guest';
             }
             
             // Set opponent user globally if not set
