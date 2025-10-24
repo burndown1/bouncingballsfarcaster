@@ -153,12 +153,12 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: 300px !important;
-            height: 500px !important;
-            max-width: 300px !important;
-            max-height: 500px !important;
-            min-width: 300px !important;
-            min-height: 500px !important;
+            width: 320px !important;
+            height: 550px !important;
+            max-width: 320px !important;
+            max-height: 550px !important;
+            min-width: 320px !important;
+            min-height: 550px !important;
             display: block;
             margin: 20px;
         }
@@ -1689,21 +1689,21 @@
             
             // Force canvas to be rectangular for Farcaster Mini App (larger)
             const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '300px';
-            canvas.style.height = '500px';
-            canvas.style.maxWidth = '300px';
-            canvas.style.maxHeight = '500px';
-            canvas.style.minWidth = '300px';
-            canvas.style.minHeight = '500px';
+            canvas.style.width = '320px';
+            canvas.style.height = '550px';
+            canvas.style.maxWidth = '320px';
+            canvas.style.maxHeight = '550px';
+            canvas.style.minWidth = '320px';
+            canvas.style.minHeight = '550px';
             
             // Update canvas size and circle position for rectangular canvas
-            canvas.width = 300;
-            canvas.height = 500;
+            canvas.width = 320;
+            canvas.height = 550;
             
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
             circle.y = canvas.height / 2;
-            circle.radius = Math.min(canvas.width, canvas.height) * 0.42; // 42% of smaller dimension
+            circle.radius = Math.min(canvas.width, canvas.height) * 0.48; // 48% of smaller dimension
             
             // Select different colors for each player
             player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
@@ -2232,12 +2232,7 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Team letter
-                ctx.fillStyle = '#000';
-                ctx.font = 'bold 18px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(ball.team === 'juventus' ? 'J' : 'A', ball.x, ball.y);
+                // No team letter - profile picture is enough
             });
         }
         
