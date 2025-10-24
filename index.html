@@ -586,7 +586,15 @@
         };
         
         // Define functions immediately so they're available
-        // Functions will be defined later in the script
+        window.startRandomFarcasterMatch = async function() {
+            console.log('🎲 Starting random Farcaster match...');
+            // Will be overridden by the real function later
+        };
+        
+        window.startFarcasterDuel = async function() {
+            console.log('⚔️ Starting Farcaster duel...');
+            // Will be overridden by the real function later
+        };
         
         window.getFarcasterUserData = async function() {
             return window.currentUser || {
