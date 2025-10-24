@@ -165,7 +165,7 @@
         .ui-overlay {
             position: absolute;
             top: 20px;
-            left: 70%;
+            left: 50%;
             transform: translateX(-50%);
             z-index: 10;
             pointer-events: none;
@@ -173,6 +173,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        
+        /* Miniapp specific positioning */
+        @media (max-width: 500px) {
+            .ui-overlay {
+                left: 65%;
+                transform: translateX(-50%);
+            }
         }
         
         .game-info-container {
@@ -1735,6 +1743,19 @@
             circle.x = canvas.width / 2;
             circle.y = canvas.height / 2;
             circle.radius = Math.min(canvas.width, canvas.height) * 0.45; // 45% of smaller dimension
+            
+            // Adjust scoreboard position for miniapp
+            const uiOverlay = document.querySelector('.ui-overlay');
+            if (uiOverlay) {
+                // Check if we're in a miniapp context (smaller screen)
+                if (window.innerWidth < 500) {
+                    uiOverlay.style.left = '65%';
+                    uiOverlay.style.transform = 'translateX(-50%)';
+                } else {
+                    uiOverlay.style.left = '50%';
+                    uiOverlay.style.transform = 'translateX(-50%)';
+                }
+            }
             
             // Select different colors for each player
             player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
