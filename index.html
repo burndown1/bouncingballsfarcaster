@@ -1510,7 +1510,7 @@
         }
         
         // Game mode functions
-        window.startRandomFarcasterMatch = async function startRandomFarcasterMatch() {
+        async function startRandomFarcasterMatch() {
             console.log('🎲 Starting random Farcaster match...');
             
             try {
@@ -1610,7 +1610,7 @@
             }
         }
 
-        window.startFarcasterDuel = async function startFarcasterDuel() {
+        async function startFarcasterDuel() {
             // Create search modal
             const modal = document.createElement('div');
             modal.style.cssText = `
