@@ -2253,7 +2253,7 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw flame trail effect
+                // Draw realistic flame trail effect
                 if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
                     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
                     const flameIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
@@ -2262,17 +2262,31 @@
                     const flameX = -ball.vx / speed;
                     const flameY = -ball.vy / speed;
                     
-                    // Draw multiple flame particles
-                    for (let i = 0; i < 5; i++) {
-                        const flameLength = (ball.radius + 10) * flameIntensity * (1 - i / 5);
-                        const flameXPos = ball.x + flameX * flameLength;
-                        const flameYPos = ball.y + flameY * flameLength;
-                        const flameRadius = (ball.radius * 0.3) * (1 - i / 5) * flameIntensity;
+                    // Start flame from the edge of the ball, not from center
+                    const startX = ball.x + flameX * ball.radius;
+                    const startY = ball.y + flameY * ball.radius;
+                    
+                    // Draw multiple flame particles with realistic colors
+                    for (let i = 0; i < 8; i++) {
+                        const flameLength = (ball.radius + 15) * flameIntensity * (1 - i / 8);
+                        const flameXPos = startX + flameX * flameLength;
+                        const flameYPos = startY + flameY * flameLength;
+                        const flameRadius = (ball.radius * 0.4) * (1 - i / 8) * flameIntensity;
                         
-                        // Create gradient for flame effect
+                        // Realistic flame colors (red, orange, yellow)
+                        let flameColor;
+                        if (i < 3) {
+                            flameColor = '#FF4500'; // Orange-red
+                        } else if (i < 5) {
+                            flameColor = '#FF8C00'; // Orange
+                        } else {
+                            flameColor = '#FFD700'; // Yellow
+                        }
+                        
+                        // Create gradient for realistic flame effect
                         const gradient = ctx.createRadialGradient(flameXPos, flameYPos, 0, flameXPos, flameYPos, flameRadius);
-                        gradient.addColorStop(0, ball.ballColor || currentNeonColor);
-                        gradient.addColorStop(0.5, ball.ballColor || currentNeonColor + '80');
+                        gradient.addColorStop(0, flameColor);
+                        gradient.addColorStop(0.5, flameColor + 'CC');
                         gradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = gradient;
