@@ -153,90 +153,50 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: 380px !important;
-            height: 500px !important;
-            max-width: 380px !important;
-            max-height: 500px !important;
-            min-width: 380px !important;
-            min-height: 500px !important;
+            width: 350px !important;
+            height: 600px !important;
+            max-width: 350px !important;
+            max-height: 600px !important;
+            min-width: 350px !important;
+            min-height: 600px !important;
             display: block;
-            margin: 20px auto;
+            margin: 20px;
         }
         .ui-overlay {
             position: absolute;
             top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
             z-index: 10;
             pointer-events: none;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        /* Miniapp specific positioning */
-        @media (max-width: 500px) {
-            .ui-overlay {
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                width: 380px !important;
-            }
-        }
-        
-        /* Force miniapp positioning */
-        @media (max-width: 400px) {
-            .ui-overlay {
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                width: 380px !important;
-            }
-        }
-        
-        .game-info-container {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--neon-color);
-            border-radius: 15px;
-            padding: 10px 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px var(--neon-color);
-            min-width: 350px;
-            text-align: center;
         }
         .score-display {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             color: var(--neon-color);
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
             text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
         }
         
         .player-info {
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-        .player-details {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-        .player-name {
-            font-size: 16px !important;
-            font-weight: bold !important;
-            color: var(--neon-color);
-            text-shadow: 0 0 5px var(--neon-color);
+            margin: 4px 0;
         }
         
         .player-avatar {
-            width: 55px;
-            height: 55px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            border: 3px solid var(--neon-color);
+            border: 2px solid var(--neon-color);
         }
         
         .player-avatar.player1 {
@@ -254,24 +214,28 @@
         }
         
         .player-score {
-            font-size: 28px !important;
-            font-weight: bold !important;
+            font-size: 18px;
+            font-weight: bold;
             color: var(--accent-color);
-            min-width: 45px;
         }
         
         .vs-divider {
-            font-size: 22px !important;
-            font-weight: bold !important;
-            color: var(--neon-color);
-            margin: 0 6px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 4px 0;
+            opacity: 0.8;
         }
         .timer-display {
             color: var(--neon-color);
-            font-size: 28px;
+            font-size: 20px;
             font-weight: bold;
-            text-shadow: 0 0 15px var(--neon-color);
-            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
         }
         .game-over {
             position: absolute;
@@ -287,83 +251,6 @@
             display: none;
             backdrop-filter: blur(15px);
             box-shadow: 0 0 30px var(--neon-color);
-            min-width: 400px;
-        }
-        
-        .final-score-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            border: 1px solid var(--neon-color);
-        }
-        
-        .final-player-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .final-player-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 3px solid var(--neon-color);
-        }
-        
-        .final-player-details {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .final-player-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--neon-color);
-            text-shadow: 0 0 5px var(--neon-color);
-        }
-        
-        .final-player-score {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-        
-        .final-vs-divider {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--neon-color);
-            margin: 0 10px;
-        }
-        
-        .winner-display {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(16, 185, 129, 0.2);
-            border: 2px solid #10B981;
-            border-radius: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #10B981;
-            text-shadow: 0 0 10px #10B981;
-            animation: winnerGlow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes winnerGlow {
-            0% {
-                box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-                text-shadow: 0 0 10px #10B981;
-            }
-            100% {
-                box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
-                text-shadow: 0 0 20px #10B981;
-            }
         }
         .game-over h2 {
             margin: 0 0 20px 0;
@@ -612,28 +499,24 @@
 <body>
     <div class="game-container">
         <div class="ui-overlay">
-            <div class="game-info-container">
-                <div class="timer-display" id="timerDisplay">60</div>
             <div class="score-display">
                 <div class="player-info">
                     <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
-                        <div class="player-details">
-                    <span id="player1Name" class="player-name">Player 1</span>
-                            <span id="player1Score" class="player-score">0</span>
+                    <span id="player1Name" class="player-name">You</span>
+                    <span id="score1" class="player-score">0</span>
                 </div>
-                    </div>
-                    <div class="vs-divider">-</div>
+                <div class="vs-divider">VS</div>
                 <div class="player-info">
-                        <div class="player-details">
-                    <span id="player2Name" class="player-name">Player 2</span>
-                            <span id="player2Score" class="player-score">0</span>
-                        </div>
+                    <span id="score2" class="player-score">0</span>
+                    <span id="player2Name" class="player-name">Opponent</span>
                     <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
                 </div>
             </div>
+            <div class="timer-display">
+                <span id="timer">1:00</span>
             </div>
         </div>
-        <canvas id="gameCanvas" width="450" height="600"></canvas>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
         
         <!-- Game Mode Selection -->
         <div class="game-mode-selection" id="gameModeSelection">
@@ -667,24 +550,7 @@
         
         <div class="game-over" id="gameOver">
             <h2>Game Over!</h2>
-            <div class="final-score-container">
-                <div class="final-player-info">
-                    <img id="finalPlayer1Avatar" class="final-player-avatar" src="" alt="Player 1">
-                    <div class="final-player-details">
-                        <span id="finalPlayer1Name" class="final-player-name">Player 1</span>
-                        <span id="finalPlayer1Score" class="final-player-score">0</span>
-                    </div>
-                </div>
-                <div class="final-vs-divider">-</div>
-                <div class="final-player-info">
-                    <div class="final-player-details">
-                        <span id="finalPlayer2Name" class="final-player-name">Player 2</span>
-                        <span id="finalPlayer2Score" class="final-player-score">0</span>
-                    </div>
-                    <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
-                </div>
-            </div>
-            <div class="winner-display" id="winnerDisplay"></div>
+            <p><span id="finalScore1">0</span> - <span id="finalScore2">0</span></p>
             <button class="restart-btn" onclick="restartGame()">Play Again</button>
             <button class="restart-btn" onclick="shareToFarcaster()">Share</button>
         </div>
@@ -696,45 +562,6 @@
         window.currentUser = null;
         window.sdk = null;
         window.farcasterInitialized = false;
-        
-        // Cloudflare Workers proxy URL (replace with your deployed URL)
-        const PROXY_URL = 'https://bouncingballs.ataskira1.workers.dev';
-        
-        // Fallback users
-        const fallbackUsers = [
-            {
-                username: 'vitalik',
-                display_name: 'Vitalik Buterin',
-                pfp_url: 'https://picsum.photos/100/100?random=1',
-                follower_count: 500000,
-                verified_addresses: [],
-                power_badge: true
-            },
-            {
-                username: 'dwr',
-                display_name: 'Dan Romero',
-                pfp_url: 'https://picsum.photos/100/100?random=2',
-                follower_count: 100000,
-                verified_addresses: [],
-                power_badge: true
-            },
-            {
-                username: 'jessepollak',
-                display_name: 'Jesse Pollak',
-                pfp_url: 'https://picsum.photos/100/100?random=3',
-                follower_count: 50000,
-                verified_addresses: [],
-                power_badge: false
-            },
-            {
-                username: 'dankrad',
-                display_name: 'Dankrad Feist',
-                pfp_url: 'https://picsum.photos/100/100?random=4',
-                follower_count: 25000,
-                verified_addresses: [],
-                power_badge: false
-            }
-        ];
         
         // Load Farcaster SDK dynamically
         async function loadFarcasterSDK() {
@@ -759,240 +586,15 @@
         };
         
         // Define functions immediately so they're available
-        async function startRandomFarcasterMatch() {
+        window.startRandomFarcasterMatch = async function() {
             console.log('🎲 Starting random Farcaster match...');
-            
-            try {
-                // Get current user data
-                currentUser = await getFarcasterUserData();
-                if (!currentUser) {
-                    currentUser = {
-                        username: 'Guest',
-                        displayName: 'Guest Player',
-                        pfpUrl: 'https://picsum.photos/100/100'
-                    };
-                }
-                
-                // Always use fallback users for Farcaster Mini App
-                console.log('🎲 Using fallback users for Farcaster Mini App');
-                
-                // Select random opponent from fallback users
-                const randomOpponent = fallbackUsers[Math.floor(Math.random() * fallbackUsers.length)];
-                
-                // Set opponent user
-                opponentUser = {
-                    username: randomOpponent.username,
-                    displayName: randomOpponent.display_name,
-                    pfpUrl: randomOpponent.pfp_url,
-                    followerCount: randomOpponent.follower_count,
-                    verified: randomOpponent.verified_addresses && randomOpponent.verified_addresses.length > 0,
-                    powerBadge: randomOpponent.power_badge
-                };
-                
-                console.log('🎲 Random opponent selected:', opponentUser);
-                
-                // Start the game
-                if (typeof window.startGame === 'function') {
-                    window.startGame();
-                } else {
-                    console.error('startGame function not found');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error starting random match:', error);
-            }
-        }
+            alert('Random Match clicked! Game will start soon...');
+        };
         
-        async function startFarcasterDuel() {
+        window.startFarcasterDuel = async function() {
             console.log('⚔️ Starting Farcaster duel...');
-            
-            // Create search modal
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-            `;
-            
-            const searchBox = document.createElement('div');
-            searchBox.style.cssText = `
-                background: #001100;
-                border: 2px solid var(--neon-color);
-                border-radius: 15px;
-                padding: 20px;
-                max-width: 400px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
-            `;
-            
-            searchBox.innerHTML = `
-                <h3 style="color: var(--neon-color); margin-bottom: 15px;">Challenge Farcaster User</h3>
-                <input type="text" id="usernameSearch" placeholder="Search username..." 
-                       style="width: 100%; padding: 10px; border: 1px solid var(--neon-color); 
-                              background: #000; color: white; border-radius: 5px; margin-bottom: 10px;">
-                <div id="searchResults" style="max-height: 200px; overflow-y: auto;"></div>
-                <div style="margin-top: 15px; text-align: right;">
-                    <button id="cancelBtn" 
-                            style="background: #666; color: white; border: none; padding: 8px 16px; 
-                                   border-radius: 5px; margin-right: 10px; cursor: pointer;">Cancel</button>
-                </div>
-            `;
-            
-            modal.appendChild(searchBox);
-            document.body.appendChild(modal);
-            
-            const searchInput = document.getElementById('usernameSearch');
-            const resultsDiv = document.getElementById('searchResults');
-            const cancelBtn = document.getElementById('cancelBtn');
-            
-            // Cancel button event listener
-            cancelBtn.addEventListener('click', () => {
-                modal.remove();
-            });
-            
-            let searchTimeout;
-            searchInput.addEventListener('input', async (e) => {
-                clearTimeout(searchTimeout);
-                const query = e.target.value.trim();
-                
-                if (query.length < 2) {
-                    resultsDiv.innerHTML = '';
-                    return;
-                }
-                
-                searchTimeout = setTimeout(async () => {
-                    try {
-                        // Try to fetch from Neynar API via proxy
-                        const response = await fetch(`${PROXY_URL}/search?q=${encodeURIComponent(query)}`, {
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        
-                        resultsDiv.innerHTML = '';
-                        
-                        if (response.ok) {
-                            const data = await response.json();
-                            
-                            if (data.result && data.result.users && data.result.users.length > 0) {
-                                data.result.users.forEach(user => {
-                                    const userDiv = document.createElement('div');
-                                    userDiv.style.cssText = `
-                                        padding: 10px;
-                                        border-bottom: 1px solid #333;
-                                        cursor: pointer;
-                                        display: flex;
-                                        align-items: center;
-                                    `;
-                                    userDiv.innerHTML = `
-                                        <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
-                                             style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                                        <div>
-                                            <div style="color: white; font-weight: bold;">@${user.username}</div>
-                                            <div style="color: #888; font-size: 12px;">${user.display_name || user.username}</div>
-                                        </div>
-                                    `;
-                                    
-                                    userDiv.addEventListener('click', () => {
-                                        selectUser(user);
-                                        modal.remove();
-                                    });
-                                    
-                                    resultsDiv.appendChild(userDiv);
-                                });
-                            } else {
-                                resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No users found</div>';
-                            }
-                        } else {
-                            // Fallback to local users
-                            const foundUsers = fallbackUsers.filter(u => 
-                                u.username.toLowerCase().includes(query.toLowerCase())
-                            );
-                            
-                            if (foundUsers.length > 0) {
-                                foundUsers.forEach(foundUser => {
-                                    const userDiv = document.createElement('div');
-                                    userDiv.style.cssText = `
-                                        padding: 10px;
-                                        border-bottom: 1px solid #333;
-                                        cursor: pointer;
-                                        display: flex;
-                                        align-items: center;
-                                    `;
-                                    userDiv.innerHTML = `
-                                        <img src="${foundUser.pfp_url}" 
-                                             style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                                        <div>
-                                            <div style="color: white; font-weight: bold;">@${foundUser.username}</div>
-                                            <div style="color: #888; font-size: 12px;">${foundUser.display_name}</div>
-                                        </div>
-                                    `;
-                                    
-                                    userDiv.addEventListener('click', () => {
-                                        selectUser(foundUser);
-                                        modal.remove();
-                                    });
-                                    
-                                    resultsDiv.appendChild(userDiv);
-                                });
-                            } else {
-                                resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No users found</div>';
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Search error:', error);
-                        resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Search failed</div>';
-                    }
-                }, 300);
-            });
-            
-            // Focus on search input
-            searchInput.focus();
-        }
-        
-        async function selectUser(user) {
-            console.log('⚔️ Starting Farcaster duel with:', user.username);
-            
-            // Get current user data
-            currentUser = await getFarcasterUserData();
-            if (!currentUser) {
-                currentUser = {
-                    username: 'Guest',
-                    displayName: 'Guest Player',
-                    pfpUrl: null
-                };
-            }
-            
-            // Set opponent user
-            opponentUser = {
-                username: user.username,
-                displayName: user.display_name,
-                pfpUrl: user.pfp_url,
-                followerCount: user.follower_count,
-                verified: user.verified_addresses && user.verified_addresses.length > 0,
-                powerBadge: user.power_badge
-            };
-            
-            console.log('👤 Current user:', currentUser);
-            console.log('👤 Opponent user:', opponentUser);
-            
-            // Start the game
-            console.log('🎮 About to call startGame...');
-            if (typeof window.startGame === 'function') {
-                console.log('✅ startGame function found, calling it...');
-                window.startGame();
-            } else {
-                console.error('❌ startGame function not found');
-            }
-        }
+            alert('Duel Match clicked! Game will start soon...');
+        };
         
         window.getFarcasterUserData = async function() {
             return window.currentUser || {
@@ -1064,152 +666,11 @@
         
         window.startGame = function() {
             console.log('🎮 Starting game...');
-            
-            // Hide game mode selection
-            const gameModeElement = document.getElementById('gameModeSelection');
-            if (gameModeElement) {
-                gameModeElement.style.display = 'none';
-            }
-            
-            // Add game-started class
-            const gameContainer = document.querySelector('.game-container');
-            if (gameContainer) {
-                gameContainer.classList.add('game-started');
-            }
-            
-            // Set game state
-            window.gameRunning = true;
-            window.timeLeft = 60;
-            
-            // Force canvas to be rectangular for Farcaster Mini App
-            const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '380px';
-            canvas.style.height = '500px';
-            canvas.width = 380;
-            canvas.height = 500;
-            
-            // Initialize circle if not exists
-            if (!window.circle) {
-                window.circle = {
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    radius: Math.min(canvas.width, canvas.height) * 0.45
-                };
-            } else {
-                // Update circle position
-                window.circle.x = canvas.width / 2;
-                window.circle.y = canvas.height / 2;
-                window.circle.radius = Math.min(canvas.width, canvas.height) * 0.45;
-            }
-            
-            // Reset scores
-            document.getElementById('player1Score').textContent = '0';
-            document.getElementById('player2Score').textContent = '0';
-            
-            // Update UI with user data
-            if (window.currentUser) {
-                document.getElementById('player1Name').textContent = window.currentUser.username || 'You';
-                if (window.currentUser.pfpUrl) {
-                    document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
-                }
-            }
-            
-            // Set opponent user
-            if (window.opponentUser) {
-                document.getElementById('player2Name').textContent = window.opponentUser.username || 'Opponent';
-                if (window.opponentUser.pfpUrl) {
-                    document.getElementById('player2Avatar').src = window.opponentUser.pfpUrl;
-                }
-            }
-            
-            // Recreate balls
-            window.balls = window.createBalls();
-            
-            // Start game loop
-            window.gameLoop();
-            
-            console.log('✅ Game started!');
+            alert('Game starting!');
         };
         
         window.updateUserInterface = function() {
             console.log('🎨 Updating UI...');
-        };
-        
-        window.createBalls = function() {
-            // Safe user data
-            const player1 = window.currentUser || {
-                username: 'Player 1',
-                displayName: 'Player 1',
-                pfpUrl: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=P1',
-                verified: false,
-                fid: 1
-            };
-            
-            const player2 = window.opponentUser || {
-                username: 'Player 2',
-                displayName: 'Player 2',
-                pfpUrl: 'https://via.placeholder.com/40x40/ff0000/ffffff?text=P2',
-                verified: false,
-                fid: 2
-            };
-            
-            return [
-                {
-                    x: 150, y: 200, vx: 3, vy: -2, radius: 20, 
-                    team: 'juventus', color: '#ffffff',
-                    user: player1,
-                    ballColor: '#00ff00'
-                },
-                {
-                    x: 250, y: 200, vx: -3, vy: 2, radius: 20, 
-                    team: 'atalanta', color: '#0066cc',
-                    user: player2,
-                    ballColor: '#ff0000'
-                }
-            ];
-        };
-        
-        window.gameLoop = function() {
-            if (!window.gameRunning) return;
-            
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw circle
-            ctx.beginPath();
-            ctx.arc(window.circle.x, window.circle.y, window.circle.radius, 0, Math.PI * 2);
-            ctx.strokeStyle = '#00ff00';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            
-            // Update and draw balls
-            if (window.balls) {
-                window.balls.forEach(ball => {
-                    // Update position
-                    ball.x += ball.vx;
-                    ball.y += ball.vy;
-                    
-                    // Bounce off walls
-                    if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
-                        ball.vx = -ball.vx;
-                    }
-                    if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
-                        ball.vy = -ball.vy;
-                    }
-                    
-                    // Draw ball
-                    ctx.beginPath();
-                    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = ball.color;
-                    ctx.fill();
-                });
-            }
-            
-            // Continue loop
-            requestAnimationFrame(window.gameLoop);
         };
         
         console.log('✅ Script loaded, functions available:', {
@@ -1242,7 +703,7 @@
                     try {
                         await window.sdk.actions.ready();
                         console.log("✅ Farcaster SDK initialized successfully - app fully loaded");
-                } catch (readyError) {
+                    } catch (readyError) {
                         console.error('Failed to initialize Farcaster SDK:', readyError);
                         setTimeout(async () => {
                             try {
@@ -1293,7 +754,7 @@
                             const userData = user;
                             
                             if (userData) {
-            window.currentUser = {
+                                window.currentUser = {
                                     username: userData.username || 'farcaster_user',
                                     displayName: userData.displayName || userData.username || 'Farcaster User',
                                     pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100',
@@ -1302,7 +763,7 @@
                                 };
                                 
                                 console.log('✅ Current user set:', window.currentUser);
-            updateUserInterface();
+                                updateUserInterface();
                                 return;
                             }
                         }
@@ -1409,8 +870,8 @@
             }
             
             // Update scoreboard
-            if (document.getElementById('player1Score')) {
-                document.getElementById('player1Score').textContent = window.currentUser.username;
+            if (document.getElementById('player1Name')) {
+                document.getElementById('player1Name').textContent = window.currentUser.username;
                 document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
             }
             
@@ -1499,6 +960,9 @@
         // Farcaster API integration
         let currentUser = null;
         let opponentUser = null;
+        
+        // Cloudflare Workers proxy URL
+        const PROXY_URL = 'https://bouncingballs.ataskira1.workers.dev';
         
         // Neynar API configuration
         const NEYNAR_API_KEY = '947A9234-D36B-4230-AB2D-3BE5987A8369';
@@ -1903,8 +1367,8 @@
                 console.log('✅ Real Farcaster user:', window.currentUser);
                 
                 // Update player info
-                if (document.getElementById('player1Score')) {
-                    document.getElementById('player1Score').textContent = window.currentUser.username;
+                if (document.getElementById('player1Name')) {
+                    document.getElementById('player1Name').textContent = window.currentUser.username;
                 }
                 
                 // Update UI
@@ -1921,7 +1385,7 @@
         }
         
         // Game mode functions
-        async function startRandomFarcasterMatch() {
+        window.startRandomFarcasterMatch = async function startRandomFarcasterMatch() {
             console.log('🎲 Starting random Farcaster match...');
             
             try {
@@ -2021,7 +1485,7 @@
             }
         }
 
-        async function startFarcasterDuel() {
+        window.startFarcasterDuel = async function startFarcasterDuel() {
             // Create search modal
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -2086,8 +1550,8 @@
                 
                 searchTimeout = setTimeout(async () => {
                     try {
-                        // Try to search for user by username
-                        const response = await fetch(`${NEYNAR_BASE_URL}/user?username=${encodeURIComponent(query)}&api_key=${NEYNAR_API_KEY}`, {
+                        // Use proxy instead of direct Neynar API
+                        const response = await fetch(`${PROXY_URL}/search?q=${encodeURIComponent(query)}`, {
                             headers: {
                                 'Content-Type': 'application/json'
                             }
@@ -2097,71 +1561,35 @@
                             const data = await response.json();
                             resultsDiv.innerHTML = '';
                             
-                            // Handle single user response from /user endpoint
-                            if (data.result && data.result.user) {
-                                const user = data.result.user;
-                                const userDiv = document.createElement('div');
-                                userDiv.style.cssText = `
-                                    padding: 10px;
-                                    border-bottom: 1px solid #333;
-                                    cursor: pointer;
-                                    display: flex;
-                                    align-items: center;
-                                `;
-                                userDiv.innerHTML = `
-                                    <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
-                                         style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                                    <div>
-                                        <div style="color: white; font-weight: bold;">@${user.username}</div>
-                                        <div style="color: #888; font-size: 12px;">${user.display_name || user.username}</div>
-                                    </div>
-                                `;
-                                
-                                userDiv.addEventListener('click', () => {
-                                    selectUser(user);
-                                    modal.remove();
+                            if (data.result && data.result.users && data.result.users.length > 0) {
+                                data.result.users.forEach(user => {
+                                    const userDiv = document.createElement('div');
+                                    userDiv.style.cssText = `
+                                        padding: 10px;
+                                        border-bottom: 1px solid #333;
+                                        cursor: pointer;
+                                        display: flex;
+                                        align-items: center;
+                                    `;
+                                    userDiv.innerHTML = `
+                                        <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
+                                             style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                                        <div>
+                                            <div style="color: white; font-weight: bold;">@${user.username}</div>
+                                            <div style="color: #888; font-size: 12px;">${user.display_name || user.username}</div>
+                                        </div>
+                                    `;
+                                    
+                                    userDiv.addEventListener('click', () => {
+                                        selectUser(user);
+                                        modal.remove();
+                                    });
+                                    
+                                    resultsDiv.appendChild(userDiv);
                                 });
-                                
-                                resultsDiv.appendChild(userDiv);
-                                });
-                        } else {
-                            // Fallback: try to find user in our fallback list
-                            const fallbackUsers = [
-                                { username: 'vitalik', display_name: 'Vitalik Buterin', pfp_url: 'https://picsum.photos/40/40?random=1' },
-                                { username: 'dwr', display_name: 'Dan Romero', pfp_url: 'https://picsum.photos/40/40?random=2' },
-                                { username: 'jessepollak', display_name: 'Jesse Pollak', pfp_url: 'https://picsum.photos/40/40?random=3' },
-                                { username: 'dankrad', display_name: 'Dankrad Feist', pfp_url: 'https://picsum.photos/40/40?random=4' }
-                            ];
-                            
-                            const foundUser = fallbackUsers.find(u => u.username.toLowerCase().includes(query.toLowerCase()));
-                            if (foundUser) {
-                                const userDiv = document.createElement('div');
-                                userDiv.style.cssText = `
-                                    padding: 10px;
-                                    border-bottom: 1px solid #333;
-                                    cursor: pointer;
-                                    display: flex;
-                                    align-items: center;
-                                `;
-                                userDiv.innerHTML = `
-                                    <img src="${foundUser.pfp_url}" 
-                                         style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                                    <div>
-                                        <div style="color: white; font-weight: bold;">@${foundUser.username}</div>
-                                        <div style="color: #888; font-size: 12px;">${foundUser.display_name}</div>
-                                    </div>
-                                `;
-                                
-                                userDiv.addEventListener('click', () => {
-                                    selectUser(foundUser);
-                                    modal.remove();
-                                });
-                                
-                                resultsDiv.appendChild(userDiv);
                             } else {
                                 resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No users found</div>';
                             }
-                        }
                         }
                     } catch (error) {
                         console.error('Search error:', error);
@@ -2212,8 +1640,8 @@
                 opponentUser = opponent;
                 console.log('🤖 CPU opponent:', opponentUser);
                 
-                if (document.getElementById('player2Score')) {
-                    document.getElementById('player2Score').textContent = opponentUser.username;
+                if (document.getElementById('player2Name')) {
+                    document.getElementById('player2Name').textContent = opponentUser.username;
                     document.getElementById('player2Avatar').src = opponentUser.profileImage;
                 }
                 
@@ -2246,8 +1674,8 @@
             console.log('✅ Farcaster opponent found:', opponentUser);
             
             // Update opponent info
-            if (document.getElementById('player2Score')) {
-                document.getElementById('player2Score').textContent = opponentUser.username;
+            if (document.getElementById('player2Name')) {
+                document.getElementById('player2Name').textContent = opponentUser.username;
                 document.getElementById('player2Avatar').src = opponentUser.profileImage;
             }
             
@@ -2266,61 +1694,29 @@
             console.log('🎮 Starting game...');
             
             // Hide game mode selection
-            console.log('🎮 Hiding game mode selection...');
-            const gameModeElement = document.getElementById('gameModeSelection');
-            if (gameModeElement) {
-                gameModeElement.style.display = 'none';
-                console.log('✅ Game mode selection hidden');
-            } else {
-                console.error('❌ gameModeSelection element not found');
-            }
+            document.getElementById('gameModeSelection').style.display = 'none';
             
-            console.log('🎮 Adding game-started class...');
-            const gameContainer = document.querySelector('.game-container');
-            if (gameContainer) {
-                gameContainer.classList.add('game-started');
-                console.log('✅ Game-started class added');
-            } else {
-                console.error('❌ Game container not found');
-            }
+            document.querySelector('.game-container').classList.add('game-started');
             gameRunning = true;
             timeLeft = 60; // Reset time
-            console.log('🎮 Game state set:', { gameRunning, timeLeft });
             
-            // Force canvas to be rectangular for Farcaster Mini App (smaller for mobile)
+            // Force canvas to be rectangular for Farcaster Mini App (larger)
             const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '380px';
-            canvas.style.height = '500px';
-            canvas.style.maxWidth = '380px';
-            canvas.style.maxHeight = '500px';
-            canvas.style.minWidth = '380px';
-            canvas.style.minHeight = '500px';
+            canvas.style.width = '350px';
+            canvas.style.height = '600px';
+            canvas.style.maxWidth = '350px';
+            canvas.style.maxHeight = '600px';
+            canvas.style.minWidth = '350px';
+            canvas.style.minHeight = '600px';
             
             // Update canvas size and circle position for rectangular canvas
-            canvas.width = 380;
-            canvas.height = 500;
+            canvas.width = 350;
+            canvas.height = 600;
             
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
             circle.y = canvas.height / 2;
             circle.radius = Math.min(canvas.width, canvas.height) * 0.45; // 45% of smaller dimension
-            
-            // Adjust scoreboard position for miniapp
-            const uiOverlay = document.querySelector('.ui-overlay');
-            if (uiOverlay) {
-                // Check if we're in a miniapp context (smaller screen)
-                if (window.innerWidth < 500) {
-                    uiOverlay.style.left = '50%';
-                    uiOverlay.style.transform = 'translateX(-50%)';
-                    uiOverlay.style.position = 'absolute';
-                    uiOverlay.style.top = '20px';
-                    uiOverlay.style.zIndex = '10';
-                    uiOverlay.style.width = '380px';
-                } else {
-                    uiOverlay.style.left = '50%';
-                    uiOverlay.style.transform = 'translateX(-50%)';
-                }
-            }
             
             // Select different colors for each player
             player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
@@ -2331,15 +1727,12 @@
             console.log('🎨 Player 1 ball color:', player1BallColor);
             console.log('🎨 Player 2 ball color:', player2BallColor);
             
-            // Reset scores to 0-0
-            document.getElementById('player1Score').textContent = '0';
-            document.getElementById('player2Score').textContent = '0';
-            
             // Update UI with user data
             console.log('🎯 Updating UI with user data:', currentUser);
             if (currentUser) {
                 const username = currentUser.username || 'You';
                 document.getElementById('player1Name').textContent = username;
+                console.log('✅ Player 1 name set to:', username);
                 if (currentUser.pfpUrl) {
                     document.getElementById('player1Avatar').src = currentUser.pfpUrl;
                     console.log('✅ Player 1 avatar set to:', currentUser.pfpUrl);
@@ -2350,7 +1743,7 @@
                 document.documentElement.style.setProperty('--player1-color', player1BallColor);
             } else {
                 console.log('⚠️ No currentUser data available');
-                document.getElementById('player1Score').textContent = 'You';
+                document.getElementById('player1Name').textContent = 'You';
             }
             
             // Set opponent user globally if not set
@@ -2375,7 +1768,7 @@
             } else {
                 console.log('⚠️ No opponentUser available in startGame()');
                 // Fallback to CPU
-                document.getElementById('player2Score').textContent = 'CPU';
+                document.getElementById('player2Name').textContent = 'CPU';
                 document.getElementById('player2Avatar').src = 'https://picsum.photos/100/100';
                 document.getElementById('player2Avatar').classList.add('player2');
                 document.documentElement.style.setProperty('--player2-color', player2BallColor);
@@ -2391,9 +1784,9 @@
             console.log('🎨 New neon color:', newColor);
             
             // Reset timer style
-            document.getElementById('timerDisplay').style.color = currentNeonColor;
-            document.getElementById('timerDisplay').style.fontSize = '18px';
-            document.getElementById('timerDisplay').style.fontWeight = 'normal';
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
             
             // Play referee whistle when game starts
             setTimeout(() => {
@@ -2411,7 +1804,7 @@
             const player1 = window.currentUser || {
                 username: 'Player 1',
                 displayName: 'Player 1',
-                pfpUrl: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=P1',
+                profileImage: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=P1',
                 verified: false,
                 fid: 1
             };
@@ -2419,7 +1812,7 @@
             const player2 = opponentUser || {
                 username: 'Player 2',
                 displayName: 'Player 2',
-                pfpUrl: 'https://via.placeholder.com/40x40/ff0000/ffffff?text=P2',
+                profileImage: 'https://via.placeholder.com/40x40/ff0000/ffffff?text=P2',
                 verified: false,
                 fid: 2
             };
@@ -2446,7 +1839,7 @@
         const friction = 0.99;
         const bounce = 0.8;
         const gravity = 0.1;
-        const wallBounce = 2.1;
+        const wallBounce = 1.2;
         const maxSpeed = 8;
         
         // Titreme efekti için değişkenler
@@ -2458,10 +1851,6 @@
         let audioContext = null;
         let soundEnabled = false;
         const minSpeed = 0.5;
-        
-        // Çarpma sesi için sınırlama
-        let lastBoinkTime = 0;
-        const boinkCooldown = 100; // 100ms bekleme süresi
         
         function gameLoop() {
             if (!gameRunning) return;
@@ -2581,56 +1970,53 @@
         }
         
         function playRefereeWhistle() {
-            console.log('🎶 Referee whistle function called!');
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                console.log('🎶 AudioContext created:', audioContext.state);
-                if (audioContext.state === 'suspended') {
-                    console.log('🎶 Resuming suspended AudioContext...');
-                    audioContext.resume();
-                }
                 
-                // Create realistic referee whistle sound
+                // Real referee whistle sound - metallic and sharp
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 const filter = audioContext.createBiquadFilter();
-                const compressor = audioContext.createDynamicsCompressor();
+                const distortion = audioContext.createWaveShaper();
                 
-                oscillator.connect(filter);
-                filter.connect(compressor);
-                compressor.connect(gainNode);
+                oscillator.connect(distortion);
+                distortion.connect(filter);
+                filter.connect(gainNode);
                 gainNode.connect(audioContext.destination);
                 
-                // Realistic whistle frequency pattern - starts low, goes high, ends low
-                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                oscillator.frequency.linearRampToValueAtTime(2000, audioContext.currentTime + 0.1);
-                oscillator.frequency.linearRampToValueAtTime(1800, audioContext.currentTime + 0.3);
-                oscillator.frequency.linearRampToValueAtTime(1200, audioContext.currentTime + 0.8);
-                oscillator.frequency.linearRampToValueAtTime(600, audioContext.currentTime + 1.2);
+                // Referee whistle frequency (very high and sharp)
+                oscillator.frequency.setValueAtTime(2000, audioContext.currentTime);
+                oscillator.frequency.linearRampToValueAtTime(3000, audioContext.currentTime + 0.05);
+                oscillator.frequency.linearRampToValueAtTime(2500, audioContext.currentTime + 0.2);
+                oscillator.frequency.linearRampToValueAtTime(1800, audioContext.currentTime + 0.6);
                 
-                oscillator.type = 'sine'; // Clean whistle sound
+                // Sound shape (like metallic whistle)
+                oscillator.type = 'sawtooth';
                 
-                // Filter for realistic whistle sound
+                // Distortion (for metallic sound)
+                const distortionAmount = 50;
+                const samples = 44100;
+                const curve = new Float32Array(samples);
+                for (let i = 0; i < samples; i++) {
+                    const x = (i * 2) / samples - 1;
+                    curve[i] = Math.tanh(x * distortionAmount);
+                }
+                distortion.curve = curve;
+                distortion.oversample = '4x';
+                
+                // Filter (sharp whistle characteristic)
                 filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(1500, audioContext.currentTime);
-                filter.Q.setValueAtTime(3, audioContext.currentTime);
+                filter.frequency.setValueAtTime(2500, audioContext.currentTime);
+                filter.Q.setValueAtTime(5, audioContext.currentTime);
                 
-                // Compressor for more realistic sound
-                compressor.threshold.setValueAtTime(-20, audioContext.currentTime);
-                compressor.knee.setValueAtTime(40, audioContext.currentTime);
-                compressor.ratio.setValueAtTime(12, audioContext.currentTime);
-                compressor.attack.setValueAtTime(0.003, audioContext.currentTime);
-                compressor.release.setValueAtTime(0.25, audioContext.currentTime);
-                
-                // Volume envelope - realistic whistle pattern
+                // Sound level
                 gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
-                gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.2);
-                gainNode.gain.linearRampToValueAtTime(0.35, audioContext.currentTime + 0.6);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.2);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.02);
+                gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.3);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
                 
                 oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 1.2);
+                oscillator.stop(audioContext.currentTime + 0.8);
                 
                 console.log('Real referee whistle played!');
                 
@@ -2639,63 +2025,11 @@
             }
         }
         
-        function playBoinkSound() {
-            console.log('🔊 Funny boink sound played!');
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
-                
-                // Create a funny cartoon-like "boink" sound
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                const filter = audioContext.createBiquadFilter();
-                
-                oscillator.connect(filter);
-                filter.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                // Funny boink frequency pattern - quick drop and bounce
-                oscillator.frequency.setValueAtTime(500, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.08);
-                oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.12);
-                oscillator.frequency.exponentialRampToValueAtTime(120, audioContext.currentTime + 0.18);
-                oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.25);
-                
-                oscillator.type = 'square'; // More cartoon-like sound
-                
-                // Filter for funny boink sound
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(800, audioContext.currentTime);
-                filter.Q.setValueAtTime(2, audioContext.currentTime);
-                
-                // Volume envelope - quick attack, bouncy decay
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.01);
-                gainNode.gain.exponentialRampToValueAtTime(0.2, audioContext.currentTime + 0.08);
-                gainNode.gain.exponentialRampToValueAtTime(0.1, audioContext.currentTime + 0.15);
-                gainNode.gain.exponentialRampToValueAtTime(0.05, audioContext.currentTime + 0.22);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.25);
-                
-            } catch (error) {
-                console.log('Boink sound could not be played:', error);
-            }
-        }
-        
         function playGoalSound() {
             console.log('🎯 Goal sound function called!');
             
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Resume audio context if suspended (mobile requirement)
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
                 
                 // Fallback synthesized crowd sound
                 const createCrowdVoice = (baseFreq, delay, duration, voiceType) => {
@@ -2852,23 +2186,9 @@
                     
                     // Screen shake effect
                     screenShake = 10;
-                    
-                    // Play boink sound when ball bounces off circle (with cooldown)
-                    const currentTime = Date.now();
-                    if (currentTime - lastBoinkTime > boinkCooldown) {
-                        playBoinkSound();
-                        lastBoinkTime = currentTime;
-                    }
                 }
                 
                 const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                
-                // Limit maximum speed to prevent infinite acceleration
-                if (speed > maxSpeed) {
-                    ball.vx = (ball.vx / speed) * maxSpeed;
-                    ball.vy = (ball.vy / speed) * maxSpeed;
-                }
-                
                 if (speed < minSpeed) {
                     ball.vx += (Math.random() - 0.5) * 0.5;
                     ball.vy += (Math.random() - 0.5) * 0.5;
@@ -2937,72 +2257,57 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-               // Draw realistic flame trail effect
-               const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-               
-               // Only show trail when moving fast enough
-               if (speed > 1.0) {
-                   // Calculate trail intensity based on speed (more speed = more visible)
-                   const trailIntensity = Math.min((speed - 1.0) / 6, 1); // Normalize speed to 0-1
-                   
-                   // Calculate trail direction (opposite to movement)
-                   const trailX = -ball.vx / speed;
-                   const trailY = -ball.vy / speed;
-                   
-                   // Start trail from the edge of the ball
-                   const startX = ball.x + trailX * ball.radius;
-                   const startY = ball.y + trailY * ball.radius;
-                   
-                   // Draw realistic flame trail with more particles and dynamic movement
-                   for (let i = 0; i < 8; i++) {
-                       // Add some randomness to make flame look more natural
-                       const randomOffset = (Math.random() - 0.5) * 3;
-                       const randomOffsetY = (Math.random() - 0.5) * 3;
-                       
-                       const trailLength = (ball.radius + 30) * trailIntensity * (1 - i / 8);
-                       const trailXPos = startX + trailX * trailLength + randomOffset;
-                       const trailYPos = startY + trailY * trailLength + randomOffsetY;
-                       const trailWidth = (ball.radius * 0.4) * (1 - i / 8) * trailIntensity;
-                       
-                       // Realistic flame colors (yellow to orange to red)
-                       let trailColor;
-                       let alpha;
-                       if (i < 2) {
-                           trailColor = '#FFFF00'; // Bright yellow (hottest part)
-                           alpha = 0.6 * trailIntensity;
-                       } else if (i < 4) {
-                           trailColor = '#FFA500'; // Orange (medium heat)
-                           alpha = 0.5 * trailIntensity;
-                       } else if (i < 6) {
-                           trailColor = '#FF4500'; // Orange red (cooling)
-                           alpha = 0.35 * trailIntensity;
-                       } else {
-                           trailColor = '#FF0000'; // Red (coolest part)
-                           alpha = 0.2 * trailIntensity;
-                       }
-                       
-                       // Create more realistic flame gradient
-                       const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
-                       gradient.addColorStop(0, trailColor + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
-                       gradient.addColorStop(0.3, trailColor + Math.floor(alpha * 200).toString(16).padStart(2, '0'));
-                       gradient.addColorStop(0.7, trailColor + Math.floor(alpha * 100).toString(16).padStart(2, '0'));
-                       gradient.addColorStop(1, 'transparent');
-                       
-                       ctx.fillStyle = gradient;
-                       ctx.beginPath();
-                       ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
-                       ctx.fill();
-                       
-                       // Add subtle flame glow effect
-                       ctx.shadowColor = trailColor;
-                       ctx.shadowBlur = 10 * trailIntensity;
-                       ctx.fillStyle = trailColor + Math.floor(alpha * 100).toString(16).padStart(2, '0');
-                       ctx.beginPath();
-                       ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
-                       ctx.fill();
-                       ctx.shadowBlur = 0;
-                   }
-               }
+                // Draw shooting star trail effect
+                if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
+                    const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                    const trailIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
+                    
+                    // Calculate trail direction (opposite to movement)
+                    const trailX = -ball.vx / speed;
+                    const trailY = -ball.vy / speed;
+                    
+                    // Start trail from the edge of the ball
+                    const startX = ball.x + trailX * ball.radius;
+                    const startY = ball.y + trailY * ball.radius;
+                    
+                    // Draw shooting star trail
+                    for (let i = 0; i < 6; i++) {
+                        const trailLength = (ball.radius + 25) * trailIntensity * (1 - i / 6);
+                        const trailXPos = startX + trailX * trailLength;
+                        const trailYPos = startY + trailY * trailLength;
+                        const trailWidth = (ball.radius * 0.3) * (1 - i / 6) * trailIntensity;
+                        
+                        // Shooting star colors (white to blue gradient)
+                        let trailColor;
+                        if (i < 2) {
+                            trailColor = '#FFFFFF'; // White (bright)
+                        } else if (i < 4) {
+                            trailColor = '#87CEEB'; // Sky blue
+                        } else {
+                            trailColor = '#4169E1'; // Royal blue
+                        }
+                        
+                        // Create gradient for shooting star effect
+                        const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
+                        gradient.addColorStop(0, trailColor);
+                        gradient.addColorStop(0.5, trailColor + 'CC');
+                        gradient.addColorStop(1, 'transparent');
+                        
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Add glow effect
+                        ctx.shadowColor = trailColor;
+                        ctx.shadowBlur = 15;
+                        ctx.fillStyle = trailColor + '80';
+                        ctx.beginPath();
+                        ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                }
                 
                 // No team letter - profile picture is enough
             });
@@ -3016,15 +2321,7 @@
             const distance = Math.sqrt(dx * dx + dy * dy);
             
             if (distance < ball1.radius + ball2.radius && distance > 0) {
-                // Simple collision response - no magnetic effect
-                const tempVx = ball1.vx;
-                const tempVy = ball1.vy;
-                ball1.vx = ball2.vx * bounce;
-                ball1.vy = ball2.vy * bounce;
-                ball2.vx = tempVx * bounce;
-                ball2.vy = tempVy * bounce;
-                
-                // Separate balls to prevent overlap
+                // Separate balls - safer method
                 const overlap = (ball1.radius + ball2.radius) - distance;
                 const separationX = (dx / distance) * overlap * 0.5;
                 const separationY = (dy / distance) * overlap * 0.5;
@@ -3033,6 +2330,26 @@
                 ball1.y -= separationY;
                 ball2.x += separationX;
                 ball2.y += separationY;
+                
+                const tempVx = ball1.vx;
+                const tempVy = ball1.vy;
+                ball1.vx = ball2.vx * bounce;
+                ball1.vy = ball2.vy * bounce;
+                ball2.vx = tempVx * bounce;
+                ball2.vy = tempVy * bounce;
+                
+                const speed1 = Math.sqrt(ball1.vx * ball1.vx + ball1.vy * ball1.vy);
+                const speed2 = Math.sqrt(ball2.vx * ball2.vx + ball2.vy * ball2.vy);
+                
+                if (speed1 > maxSpeed) {
+                    ball1.vx = (ball1.vx / speed1) * maxSpeed;
+                    ball1.vy = (ball1.vy / speed1) * maxSpeed;
+                }
+                
+                if (speed2 > maxSpeed) {
+                    ball2.vx = (ball2.vx / speed2) * maxSpeed;
+                    ball2.vy = (ball2.vy / speed2) * maxSpeed;
+                }
             }
         }
         
@@ -3050,10 +2367,10 @@
                 if (inGoalX && inGoalY) {
                     if (ball.team === 'juventus') {
                         score1++;
-                        document.getElementById('player1Score').textContent = score1;
+                        document.getElementById('score1').textContent = score1;
                     } else {
                         score2++;
-                        document.getElementById('player2Score').textContent = score2;
+                        document.getElementById('score2').textContent = score2;
                     }
                     
                     // Show goal text
@@ -3076,7 +2393,7 @@
             timeLeft--;
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            document.getElementById('timerDisplay').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            document.getElementById('timer').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
             if (timeLeft <= 0) {
                 endGame();
             } else {
@@ -3089,11 +2406,11 @@
             if (score1 === score2) {
                 console.log('⚽ Tie! Adding extra 15 seconds...');
                 timeLeft = 15; // 15 seconds extra time
-                document.getElementById('timerDisplay').textContent = '0:15';
-                document.getElementById('timerDisplay').style.color = '#ff6600'; // Orange color
+                document.getElementById('timer').textContent = '0:15';
+                document.getElementById('timer').style.color = '#ff6600'; // Orange color
                 
                 // Show extra time message
-                const timerElement = document.getElementById('timerDisplay');
+                const timerElement = document.getElementById('timer');
                 timerElement.style.fontSize = '20px';
                 timerElement.style.fontWeight = 'bold';
                 
@@ -3104,35 +2421,17 @@
             
             // Normal game end
             gameRunning = false;
-            
-            // Update Game Over screen with player info
-            document.getElementById('finalPlayer1Score').textContent = score1;
-            document.getElementById('finalPlayer2Score').textContent = score2;
-            document.getElementById('finalPlayer1Name').textContent = document.getElementById('player1Name').textContent;
-            document.getElementById('finalPlayer2Name').textContent = document.getElementById('player2Name').textContent;
-            document.getElementById('finalPlayer1Avatar').src = document.getElementById('player1Avatar').src;
-            document.getElementById('finalPlayer2Avatar').src = document.getElementById('player2Avatar').src;
-            
-            // Determine winner and update winner display
-            let winnerName = '';
-            if (score1 > score2) {
-                winnerName = document.getElementById('player1Name').textContent.toUpperCase();
-            } else {
-                winnerName = document.getElementById('player2Name').textContent.toUpperCase();
-            }
-            document.getElementById('winnerDisplay').textContent = winnerName + ' WON!!!';
-            
+            document.getElementById('finalScore1').textContent = score1;
+            document.getElementById('finalScore2').textContent = score2;
             document.getElementById('gameOver').style.display = 'block';
             
             // Reset timer color to normal
-            document.getElementById('timerDisplay').style.color = currentNeonColor;
-            document.getElementById('timerDisplay').style.fontSize = '18px';
-            document.getElementById('timerDisplay').style.fontWeight = 'normal';
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
             
             // Play referee whistle when game ends
-            console.log('🎶 Game ended, playing referee whistle...');
             setTimeout(() => {
-                console.log('🎶 Playing referee whistle now...');
                 playRefereeWhistle();
             }, 500);
         }
@@ -3146,14 +2445,14 @@
             // Reset scores
             score1 = 0;
             score2 = 0;
-            document.getElementById('player1Score').textContent = '0';
-            document.getElementById('player2Score').textContent = '0';
-            document.getElementById('timerDisplay').textContent = '1:00';
+            document.getElementById('score1').textContent = '0';
+            document.getElementById('score2').textContent = '0';
+            document.getElementById('timer').textContent = '1:00';
             
             // Reset timer style
-            document.getElementById('timerDisplay').style.color = currentNeonColor;
-            document.getElementById('timerDisplay').style.fontSize = '18px';
-            document.getElementById('timerDisplay').style.fontWeight = 'normal';
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
             
             // Return balls to starting position
             balls[0].x = 150;
@@ -3274,16 +2573,6 @@
         window.addEventListener('load', async () => {
             await initializeGame();
         });
-        
-        // Initialize audio on first user interaction (mobile requirement)
-        document.addEventListener('touchstart', () => {
-            console.log('🎵 Touch detected - enabling audio');
-        }, { once: true });
-        
-        document.addEventListener('click', () => {
-            console.log('🎵 Click detected - enabling audio');
-        }, { once: true });
-        
     </script>
 </body>
 </html>
