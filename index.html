@@ -153,11 +153,11 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: 350px !important;
+            width: 450px !important;
             height: 600px !important;
-            max-width: 350px !important;
+            max-width: 450px !important;
             max-height: 600px !important;
-            min-width: 350px !important;
+            min-width: 450px !important;
             min-height: 600px !important;
             display: block;
             margin: 20px;
@@ -165,38 +165,59 @@
         .ui-overlay {
             position: absolute;
             top: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 10;
             pointer-events: none;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .game-info-container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--neon-color);
+            border-radius: 15px;
+            padding: 20px 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px var(--neon-color);
+            min-width: 400px;
+            text-align: center;
         }
         .score-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             color: var(--neon-color);
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
             text-shadow: 0 0 10px var(--neon-color);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid var(--neon-color);
-            backdrop-filter: blur(10px);
-            min-width: 200px;
         }
         
         .player-info {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin: 4px 0;
+        }
+        .player-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .player-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--neon-color);
+            text-shadow: 0 0 5px var(--neon-color);
         }
         
         .player-avatar {
-            width: 24px;
-            height: 24px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            border: 2px solid var(--neon-color);
+            border: 3px solid var(--neon-color);
         }
         
         .player-avatar.player1 {
@@ -214,28 +235,24 @@
         }
         
         .player-score {
-            font-size: 18px;
+            font-size: 32px;
             font-weight: bold;
             color: var(--accent-color);
+            min-width: 45px;
         }
         
         .vs-divider {
-            text-align: center;
-            font-size: 12px;
+            font-size: 24px;
             font-weight: bold;
-            margin: 4px 0;
-            opacity: 0.8;
+            color: var(--neon-color);
+            margin: 0 6px;
         }
         .timer-display {
             color: var(--neon-color);
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
-            text-shadow: 0 0 10px var(--neon-color);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid var(--neon-color);
-            backdrop-filter: blur(10px);
+            text-shadow: 0 0 15px var(--neon-color);
+            margin-bottom: 15px;
         }
         .game-over {
             position: absolute;
@@ -499,24 +516,28 @@
 <body>
     <div class="game-container">
         <div class="ui-overlay">
+            <div class="game-info-container">
+                <div class="timer-display" id="timerDisplay">60</div>
             <div class="score-display">
                 <div class="player-info">
                     <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
-                    <span id="player1Name" class="player-name">You</span>
-                    <span id="score1" class="player-score">0</span>
+                        <div class="player-details">
+                    <span id="player1Name" class="player-name">Player 1</span>
+                            <span id="player1Score" class="player-score">0</span>
                 </div>
-                <div class="vs-divider">VS</div>
+                    </div>
+                    <div class="vs-divider">-</div>
                 <div class="player-info">
-                    <span id="score2" class="player-score">0</span>
-                    <span id="player2Name" class="player-name">Opponent</span>
+                        <div class="player-details">
+                    <span id="player2Name" class="player-name">Player 2</span>
+                            <span id="player2Score" class="player-score">0</span>
+                        </div>
                     <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
                 </div>
             </div>
-            <div class="timer-display">
-                <span id="timer">1:00</span>
             </div>
         </div>
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <canvas id="gameCanvas" width="450" height="600"></canvas>
         
         <!-- Game Mode Selection -->
         <div class="game-mode-selection" id="gameModeSelection">
@@ -870,8 +891,8 @@
             }
             
             // Update scoreboard
-            if (document.getElementById('player1Name')) {
-                document.getElementById('player1Name').textContent = window.currentUser.username;
+            if (document.getElementById('player1Score')) {
+                document.getElementById('player1Score').textContent = window.currentUser.username;
                 document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
             }
             
@@ -1364,8 +1385,8 @@
                 console.log('✅ Real Farcaster user:', window.currentUser);
                 
                 // Update player info
-                if (document.getElementById('player1Name')) {
-                    document.getElementById('player1Name').textContent = window.currentUser.username;
+                if (document.getElementById('player1Score')) {
+                    document.getElementById('player1Score').textContent = window.currentUser.username;
                 }
                 
                 // Update UI
@@ -1636,8 +1657,8 @@
                 opponentUser = opponent;
                 console.log('🤖 CPU opponent:', opponentUser);
                 
-                if (document.getElementById('player2Name')) {
-                    document.getElementById('player2Name').textContent = opponentUser.username;
+                if (document.getElementById('player2Score')) {
+                    document.getElementById('player2Score').textContent = opponentUser.username;
                     document.getElementById('player2Avatar').src = opponentUser.profileImage;
                 }
                 
@@ -1670,8 +1691,8 @@
             console.log('✅ Farcaster opponent found:', opponentUser);
             
             // Update opponent info
-            if (document.getElementById('player2Name')) {
-                document.getElementById('player2Name').textContent = opponentUser.username;
+            if (document.getElementById('player2Score')) {
+                document.getElementById('player2Score').textContent = opponentUser.username;
                 document.getElementById('player2Avatar').src = opponentUser.profileImage;
             }
             
@@ -1698,15 +1719,15 @@
             
             // Force canvas to be rectangular for Farcaster Mini App (larger)
             const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '350px';
+            canvas.style.width = '450px';
             canvas.style.height = '600px';
-            canvas.style.maxWidth = '350px';
+            canvas.style.maxWidth = '450px';
             canvas.style.maxHeight = '600px';
-            canvas.style.minWidth = '350px';
+            canvas.style.minWidth = '450px';
             canvas.style.minHeight = '600px';
             
             // Update canvas size and circle position for rectangular canvas
-            canvas.width = 350;
+            canvas.width = 450;
             canvas.height = 600;
             
             // Update circle position to center of rectangular canvas
@@ -1723,12 +1744,15 @@
             console.log('🎨 Player 1 ball color:', player1BallColor);
             console.log('🎨 Player 2 ball color:', player2BallColor);
             
+            // Reset scores to 0-0
+            document.getElementById('player1Score').textContent = '0';
+            document.getElementById('player2Score').textContent = '0';
+            
             // Update UI with user data
             console.log('🎯 Updating UI with user data:', currentUser);
             if (currentUser) {
                 const username = currentUser.username || 'You';
                 document.getElementById('player1Name').textContent = username;
-                console.log('✅ Player 1 name set to:', username);
                 if (currentUser.pfpUrl) {
                     document.getElementById('player1Avatar').src = currentUser.pfpUrl;
                     console.log('✅ Player 1 avatar set to:', currentUser.pfpUrl);
@@ -1739,7 +1763,7 @@
                 document.documentElement.style.setProperty('--player1-color', player1BallColor);
             } else {
                 console.log('⚠️ No currentUser data available');
-                document.getElementById('player1Name').textContent = 'You';
+                document.getElementById('player1Score').textContent = 'You';
             }
             
             // Set opponent user globally if not set
@@ -1764,7 +1788,7 @@
             } else {
                 console.log('⚠️ No opponentUser available in startGame()');
                 // Fallback to CPU
-                document.getElementById('player2Name').textContent = 'CPU';
+                document.getElementById('player2Score').textContent = 'CPU';
                 document.getElementById('player2Avatar').src = 'https://picsum.photos/100/100';
                 document.getElementById('player2Avatar').classList.add('player2');
                 document.documentElement.style.setProperty('--player2-color', player2BallColor);
@@ -1780,9 +1804,9 @@
             console.log('🎨 New neon color:', newColor);
             
             // Reset timer style
-            document.getElementById('timer').style.color = currentNeonColor;
-            document.getElementById('timer').style.fontSize = '18px';
-            document.getElementById('timer').style.fontWeight = 'normal';
+            document.getElementById('timerDisplay').style.color = currentNeonColor;
+            document.getElementById('timerDisplay').style.fontSize = '18px';
+            document.getElementById('timerDisplay').style.fontWeight = 'normal';
             
             // Play referee whistle when game starts
             setTimeout(() => {
@@ -1835,7 +1859,7 @@
         const friction = 0.99;
         const bounce = 0.8;
         const gravity = 0.1;
-        const wallBounce = 1.2;
+        const wallBounce = 2.1;
         const maxSpeed = 8;
         
         // Titreme efekti için değişkenler
@@ -2185,6 +2209,13 @@
                 }
                 
                 const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                
+                // Limit maximum speed to prevent infinite acceleration
+                if (speed > maxSpeed) {
+                    ball.vx = (ball.vx / speed) * maxSpeed;
+                    ball.vy = (ball.vy / speed) * maxSpeed;
+                }
+                
                 if (speed < minSpeed) {
                     ball.vx += (Math.random() - 0.5) * 0.5;
                     ball.vy += (Math.random() - 0.5) * 0.5;
@@ -2253,10 +2284,13 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw shooting star trail effect
-                if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
-                    const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                    const trailIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
+                // Draw flame trail effect
+                const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                
+                // Only show trail when moving fast enough
+                if (speed > 1.0) {
+                    // Calculate trail intensity based on speed (more speed = more visible)
+                    const trailIntensity = Math.min((speed - 1.0) / 6, 1); // Normalize speed to 0-1
                     
                     // Calculate trail direction (opposite to movement)
                     const trailX = -ball.vx / speed;
@@ -2266,27 +2300,31 @@
                     const startX = ball.x + trailX * ball.radius;
                     const startY = ball.y + trailY * ball.radius;
                     
-                    // Draw shooting star trail
+                    // Draw flame trail (more particles, more visible)
                     for (let i = 0; i < 6; i++) {
-                        const trailLength = (ball.radius + 25) * trailIntensity * (1 - i / 6);
+                        const trailLength = (ball.radius + 20) * trailIntensity * (1 - i / 6);
                         const trailXPos = startX + trailX * trailLength;
                         const trailYPos = startY + trailY * trailLength;
                         const trailWidth = (ball.radius * 0.3) * (1 - i / 6) * trailIntensity;
                         
-                        // Shooting star colors (white to blue gradient)
+                        // Flame colors with more intensity
                         let trailColor;
+                        let alpha;
                         if (i < 2) {
-                            trailColor = '#FFFFFF'; // White (bright)
+                            trailColor = '#FF4500'; // Orange red (brightest flame)
+                            alpha = 0.8 * trailIntensity;
                         } else if (i < 4) {
-                            trailColor = '#87CEEB'; // Sky blue
+                            trailColor = '#FF6347'; // Tomato (medium flame)
+                            alpha = 0.6 * trailIntensity;
                         } else {
-                            trailColor = '#4169E1'; // Royal blue
+                            trailColor = '#FF8C00'; // Dark orange (fading flame)
+                            alpha = 0.4 * trailIntensity;
                         }
                         
-                        // Create gradient for shooting star effect
+                        // Create gradient for flame effect
                         const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
-                        gradient.addColorStop(0, trailColor);
-                        gradient.addColorStop(0.5, trailColor + 'CC');
+                        gradient.addColorStop(0, trailColor + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
+                        gradient.addColorStop(0.5, trailColor + Math.floor(alpha * 128).toString(16).padStart(2, '0'));
                         gradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = gradient;
@@ -2294,10 +2332,10 @@
                         ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
                         ctx.fill();
                         
-                        // Add glow effect
+                        // Add flame glow effect
                         ctx.shadowColor = trailColor;
-                        ctx.shadowBlur = 15;
-                        ctx.fillStyle = trailColor + '80';
+                        ctx.shadowBlur = 12 * trailIntensity;
+                        ctx.fillStyle = trailColor + Math.floor(alpha * 128).toString(16).padStart(2, '0');
                         ctx.beginPath();
                         ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
                         ctx.fill();
@@ -2317,7 +2355,15 @@
             const distance = Math.sqrt(dx * dx + dy * dy);
             
             if (distance < ball1.radius + ball2.radius && distance > 0) {
-                // Separate balls - safer method
+                // Simple collision response - no magnetic effect
+                const tempVx = ball1.vx;
+                const tempVy = ball1.vy;
+                ball1.vx = ball2.vx * bounce;
+                ball1.vy = ball2.vy * bounce;
+                ball2.vx = tempVx * bounce;
+                ball2.vy = tempVy * bounce;
+                
+                // Separate balls to prevent overlap
                 const overlap = (ball1.radius + ball2.radius) - distance;
                 const separationX = (dx / distance) * overlap * 0.5;
                 const separationY = (dy / distance) * overlap * 0.5;
@@ -2326,26 +2372,6 @@
                 ball1.y -= separationY;
                 ball2.x += separationX;
                 ball2.y += separationY;
-                
-                const tempVx = ball1.vx;
-                const tempVy = ball1.vy;
-                ball1.vx = ball2.vx * bounce;
-                ball1.vy = ball2.vy * bounce;
-                ball2.vx = tempVx * bounce;
-                ball2.vy = tempVy * bounce;
-                
-                const speed1 = Math.sqrt(ball1.vx * ball1.vx + ball1.vy * ball1.vy);
-                const speed2 = Math.sqrt(ball2.vx * ball2.vx + ball2.vy * ball2.vy);
-                
-                if (speed1 > maxSpeed) {
-                    ball1.vx = (ball1.vx / speed1) * maxSpeed;
-                    ball1.vy = (ball1.vy / speed1) * maxSpeed;
-                }
-                
-                if (speed2 > maxSpeed) {
-                    ball2.vx = (ball2.vx / speed2) * maxSpeed;
-                    ball2.vy = (ball2.vy / speed2) * maxSpeed;
-                }
             }
         }
         
@@ -2363,10 +2389,10 @@
                 if (inGoalX && inGoalY) {
                     if (ball.team === 'juventus') {
                         score1++;
-                        document.getElementById('score1').textContent = score1;
+                        document.getElementById('player1Score').textContent = score1;
                     } else {
                         score2++;
-                        document.getElementById('score2').textContent = score2;
+                        document.getElementById('player2Score').textContent = score2;
                     }
                     
                     // Show goal text
@@ -2389,7 +2415,7 @@
             timeLeft--;
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            document.getElementById('timerDisplay').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
             if (timeLeft <= 0) {
                 endGame();
             } else {
@@ -2402,11 +2428,11 @@
             if (score1 === score2) {
                 console.log('⚽ Tie! Adding extra 15 seconds...');
                 timeLeft = 15; // 15 seconds extra time
-                document.getElementById('timer').textContent = '0:15';
-                document.getElementById('timer').style.color = '#ff6600'; // Orange color
+                document.getElementById('timerDisplay').textContent = '0:15';
+                document.getElementById('timerDisplay').style.color = '#ff6600'; // Orange color
                 
                 // Show extra time message
-                const timerElement = document.getElementById('timer');
+                const timerElement = document.getElementById('timerDisplay');
                 timerElement.style.fontSize = '20px';
                 timerElement.style.fontWeight = 'bold';
                 
@@ -2422,9 +2448,9 @@
             document.getElementById('gameOver').style.display = 'block';
             
             // Reset timer color to normal
-            document.getElementById('timer').style.color = currentNeonColor;
-            document.getElementById('timer').style.fontSize = '18px';
-            document.getElementById('timer').style.fontWeight = 'normal';
+            document.getElementById('timerDisplay').style.color = currentNeonColor;
+            document.getElementById('timerDisplay').style.fontSize = '18px';
+            document.getElementById('timerDisplay').style.fontWeight = 'normal';
             
             // Play referee whistle when game ends
             setTimeout(() => {
@@ -2441,14 +2467,14 @@
             // Reset scores
             score1 = 0;
             score2 = 0;
-            document.getElementById('score1').textContent = '0';
-            document.getElementById('score2').textContent = '0';
-            document.getElementById('timer').textContent = '1:00';
+            document.getElementById('player1Score').textContent = '0';
+            document.getElementById('player2Score').textContent = '0';
+            document.getElementById('timerDisplay').textContent = '1:00';
             
             // Reset timer style
-            document.getElementById('timer').style.color = currentNeonColor;
-            document.getElementById('timer').style.fontSize = '18px';
-            document.getElementById('timer').style.fontWeight = 'normal';
+            document.getElementById('timerDisplay').style.color = currentNeonColor;
+            document.getElementById('timerDisplay').style.fontSize = '18px';
+            document.getElementById('timerDisplay').style.fontWeight = 'normal';
             
             // Return balls to starting position
             balls[0].x = 150;
