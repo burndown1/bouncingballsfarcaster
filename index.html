@@ -791,7 +791,11 @@
                 console.log('🎲 Random opponent selected:', opponentUser);
                 
                 // Start the game
-                startGame();
+                if (typeof window.startGame === 'function') {
+                    window.startGame();
+                } else {
+                    console.error('startGame function not found');
+                }
                 
             } catch (error) {
                 console.error('❌ Error starting random match:', error);
@@ -980,7 +984,12 @@
             console.log('👤 Current user:', currentUser);
             console.log('👤 Opponent user:', opponentUser);
             
-            startGame();
+            // Start the game
+            if (typeof window.startGame === 'function') {
+                window.startGame();
+            } else {
+                console.error('startGame function not found');
+            }
         }
         
         window.getFarcasterUserData = async function() {
