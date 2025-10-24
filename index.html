@@ -205,8 +205,19 @@
             width: 35px;
             height: 35px;
             border-radius: 50%;
-            border: 2px solid var(--neon-color);
+            border: 3px solid #00ff00;
             object-fit: cover;
+            box-shadow: 0 0 8px #00ff00;
+        }
+        
+        .player-avatar.player1 {
+            border-color: #00ff00;
+            box-shadow: 0 0 8px #00ff00;
+        }
+        
+        .player-avatar.player2 {
+            border-color: #ff0080;
+            box-shadow: 0 0 8px #ff0080;
         }
         
         .player-name {
@@ -332,28 +343,39 @@
         }
         
         .final-scoreboard {
-            background: rgba(0, 17, 0, 0.8);
-            border: 2px solid var(--neon-color);
-            border-radius: 15px;
             padding: 20px;
             margin: 20px 0;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            gap: 20px;
         }
         
         .final-player-section {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            flex-direction: column;
+            text-align: center;
         }
         
         .final-player-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            border: 3px solid var(--neon-color);
+            border: 3px solid #00ff00;
             object-fit: cover;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .final-player-avatar.player1 {
+            border-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .final-player-avatar.player2 {
+            border-color: #ff0080;
+            box-shadow: 0 0 10px #ff0080;
         }
         
         .final-player-name {
@@ -412,8 +434,8 @@
             padding: 12px 24px;
             font-size: 14px;
             font-weight: 600;
-            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-            letter-spacing: 0.5px;
+            font-family: 'SF Pro Display', 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.3px;
             border-radius: 8px;
             cursor: pointer;
             margin: 8px;
@@ -696,11 +718,6 @@
                     <div class="mode-title">Farcaster Duel</div>
                     <div class="mode-desc">Challenge specific Farcaster user</div>
                 </button>
-                <button class="mode-btn" onclick="addToFarcaster()">
-                    <div class="mode-icon">➕</div>
-                    <div class="mode-title">Add to Farcaster</div>
-                    <div class="mode-desc">Add this app to your Farcaster</div>
-                </button>
             </div>
             
         </div>
@@ -715,9 +732,9 @@
                 </div>
                 <div class="final-score-divider">-</div>
                 <div class="final-player-section">
-                    <span id="finalScore2" class="final-player-score">0</span>
-                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
                     <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
+                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
+                    <span id="finalScore2" class="final-player-score">0</span>
                 </div>
             </div>
             <div class="winner-display" id="winnerDisplay" style="display: none;">
@@ -1306,6 +1323,21 @@
             }
             
             console.log('🎨 UI updated:', window.currentUser);
+            
+            // Auto-prompt to add Mini App to Farcaster after UI is ready
+            setTimeout(async () => {
+                try {
+                    console.log('➕ Auto-prompting to add Mini App to Farcaster...');
+                    await window.sdk.actions.addMiniApp();
+                    console.log('✅ Mini App added to Farcaster!');
+                } catch (error) {
+                    console.log('ℹ️ Add Mini App prompt:', error.name);
+                    // Don't show error alerts for user rejection or domain issues
+                    if (error.name !== 'RejectedByUser' && error.name !== 'InvalidDomainManifestJson') {
+                        console.log('❌ Unexpected error:', error);
+                    }
+                }
+            }, 3000); // Wait 3 seconds after UI is ready
         }
         
         function updateGameModeDisplay() {
@@ -2016,11 +2048,9 @@
             circle.y = canvas.height / 2;
             circle.radius = Math.min(canvas.width, canvas.height) * 0.45; // 45% of smaller dimension
             
-            // Select different colors for each player
-            player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
-            do {
-                player2BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
-            } while (player2BallColor === player1BallColor); // Ensure different colors
+            // Set fixed colors for each player
+            player1BallColor = '#00ff00'; // Green for player 1
+            player2BallColor = '#ff0080'; // Pink for player 2
             
             console.log('🎨 Player 1 ball color:', player1BallColor);
             console.log('🎨 Player 2 ball color:', player2BallColor);
@@ -2547,9 +2577,9 @@
                 
                 // Ball frame - each player has different color
                 ctx.strokeStyle = ball.ballColor || currentNeonColor;
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 4;
                 ctx.shadowColor = ball.ballColor || currentNeonColor;
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = 8;
                 ctx.beginPath();
                 ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                 ctx.stroke();
@@ -2726,11 +2756,13 @@
             if (window.currentUser) {
                 document.getElementById('finalPlayer1Name').textContent = window.currentUser.username;
                 document.getElementById('finalPlayer1Avatar').src = window.currentUser.pfpUrl || 'https://picsum.photos/50/50';
+                document.getElementById('finalPlayer1Avatar').classList.add('player1');
             }
             
             if (window.opponentUser) {
                 document.getElementById('finalPlayer2Name').textContent = window.opponentUser.username;
                 document.getElementById('finalPlayer2Avatar').src = window.opponentUser.pfpUrl || 'https://picsum.photos/50/50';
+                document.getElementById('finalPlayer2Avatar').classList.add('player2');
             }
             
             // Show winner
@@ -2841,7 +2873,7 @@
                 if (window.sdk && window.sdk.actions && window.sdk.actions.composeCast) {
                     const result = await window.sdk.actions.composeCast({
                         text: shareText,
-                        embeds: [window.location.href]
+                        embeds: ['https://farcaster.xyz/miniapps/6Cn8Z1DiToCH/bouncing-balls']
                     });
                     
                     if (result?.cast) {
