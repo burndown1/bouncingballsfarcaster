@@ -153,12 +153,12 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: 320px !important;
-            height: 550px !important;
-            max-width: 320px !important;
-            max-height: 550px !important;
-            min-width: 320px !important;
-            min-height: 550px !important;
+            width: 350px !important;
+            height: 600px !important;
+            max-width: 350px !important;
+            max-height: 600px !important;
+            min-width: 350px !important;
+            min-height: 600px !important;
             display: block;
             margin: 20px;
         }
@@ -1689,21 +1689,21 @@
             
             // Force canvas to be rectangular for Farcaster Mini App (larger)
             const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '320px';
-            canvas.style.height = '550px';
-            canvas.style.maxWidth = '320px';
-            canvas.style.maxHeight = '550px';
-            canvas.style.minWidth = '320px';
-            canvas.style.minHeight = '550px';
+            canvas.style.width = '350px';
+            canvas.style.height = '600px';
+            canvas.style.maxWidth = '350px';
+            canvas.style.maxHeight = '600px';
+            canvas.style.minWidth = '350px';
+            canvas.style.minHeight = '600px';
             
             // Update canvas size and circle position for rectangular canvas
-            canvas.width = 320;
-            canvas.height = 550;
+            canvas.width = 350;
+            canvas.height = 600;
             
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
             circle.y = canvas.height / 2;
-            circle.radius = Math.min(canvas.width, canvas.height) * 0.48; // 48% of smaller dimension
+            circle.radius = Math.min(canvas.width, canvas.height) * 0.52; // 52% of smaller dimension
             
             // Select different colors for each player
             player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
@@ -1738,9 +1738,11 @@
             const currentOpponent = window.opponentUser || opponentUser;
             if (currentOpponent) {
                 console.log('🎯 Setting opponent name in scoreboard:', currentOpponent.username);
+                console.log('🎯 Setting opponent avatar in scoreboard:', currentOpponent.pfpUrl);
                 document.getElementById('player2Name').textContent = currentOpponent.username || 'Opponent';
                 if (currentOpponent.pfpUrl) {
                     document.getElementById('player2Avatar').src = currentOpponent.pfpUrl;
+                    console.log('✅ Player 2 avatar set to:', currentOpponent.pfpUrl);
                 }
             } else {
                 console.log('⚠️ No opponentUser available in startGame()');
