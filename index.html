@@ -870,10 +870,9 @@
                 searchTimeout = setTimeout(async () => {
                     try {
         // Use correct Neynar searchUser API
-        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10`, {
+        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10&api_key=${NEYNAR_API_KEY}`, {
             headers: {
-                'Content-Type': 'application/json',
-                'api_key': NEYNAR_API_KEY
+                'Content-Type': 'application/json'
             }
         });
                         
@@ -1065,7 +1064,62 @@
         
         window.startGame = function() {
             console.log('🎮 Starting game...');
-            alert('Game starting!');
+            
+            // Hide game mode selection
+            const gameModeElement = document.getElementById('gameModeSelection');
+            if (gameModeElement) {
+                gameModeElement.style.display = 'none';
+            }
+            
+            // Add game-started class
+            const gameContainer = document.querySelector('.game-container');
+            if (gameContainer) {
+                gameContainer.classList.add('game-started');
+            }
+            
+            // Set game state
+            window.gameRunning = true;
+            window.timeLeft = 60;
+            
+            // Force canvas to be rectangular for Farcaster Mini App
+            const canvas = document.getElementById('gameCanvas');
+            canvas.style.width = '380px';
+            canvas.style.height = '500px';
+            canvas.width = 380;
+            canvas.height = 500;
+            
+            // Update circle position
+            window.circle.x = canvas.width / 2;
+            window.circle.y = canvas.height / 2;
+            window.circle.radius = Math.min(canvas.width, canvas.height) * 0.45;
+            
+            // Reset scores
+            document.getElementById('player1Score').textContent = '0';
+            document.getElementById('player2Score').textContent = '0';
+            
+            // Update UI with user data
+            if (window.currentUser) {
+                document.getElementById('player1Name').textContent = window.currentUser.username || 'You';
+                if (window.currentUser.pfpUrl) {
+                    document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
+                }
+            }
+            
+            // Set opponent user
+            if (window.opponentUser) {
+                document.getElementById('player2Name').textContent = window.opponentUser.username || 'Opponent';
+                if (window.opponentUser.pfpUrl) {
+                    document.getElementById('player2Avatar').src = window.opponentUser.pfpUrl;
+                }
+            }
+            
+            // Recreate balls
+            window.balls = window.createBalls();
+            
+            // Start game loop
+            window.gameLoop();
+            
+            console.log('✅ Game started!');
         };
         
         window.updateUserInterface = function() {
