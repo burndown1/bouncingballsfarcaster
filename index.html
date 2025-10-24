@@ -178,16 +178,18 @@
         /* Miniapp specific positioning */
         @media (max-width: 500px) {
             .ui-overlay {
-                left: 90% !important;
+                left: 50% !important;
                 transform: translateX(-50%) !important;
+                width: 380px !important;
             }
         }
         
         /* Force miniapp positioning */
         @media (max-width: 400px) {
             .ui-overlay {
-                left: 95% !important;
+                left: 50% !important;
                 transform: translateX(-50%) !important;
+                width: 380px !important;
             }
         }
         
@@ -1757,11 +1759,12 @@
             if (uiOverlay) {
                 // Check if we're in a miniapp context (smaller screen)
                 if (window.innerWidth < 500) {
-                    uiOverlay.style.left = '90%';
+                    uiOverlay.style.left = '50%';
                     uiOverlay.style.transform = 'translateX(-50%)';
                     uiOverlay.style.position = 'absolute';
                     uiOverlay.style.top = '20px';
                     uiOverlay.style.zIndex = '10';
+                    uiOverlay.style.width = '380px';
                 } else {
                     uiOverlay.style.left = '50%';
                     uiOverlay.style.transform = 'translateX(-50%)';
