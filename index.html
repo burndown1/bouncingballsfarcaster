@@ -720,9 +720,264 @@
         };
         
         // Define functions immediately so they're available
-        // startRandomFarcasterMatch function is defined below
+        async function startRandomFarcasterMatch() {
+            console.log('🎲 Starting random Farcaster match...');
+            
+            try {
+                // Get current user data
+                currentUser = await getFarcasterUserData();
+                if (!currentUser) {
+                    currentUser = {
+                        username: 'Guest',
+                        displayName: 'Guest Player',
+                        pfpUrl: 'https://picsum.photos/100/100'
+                    };
+                }
+                
+                // Always use fallback users for Farcaster Mini App
+                console.log('🎲 Using fallback users for Farcaster Mini App');
+                const trendingUsers = [
+                    {
+                        username: 'vitalik',
+                        display_name: 'Vitalik Buterin',
+                        pfp_url: 'https://picsum.photos/100/100?random=1',
+                        follower_count: 500000,
+                        verified_addresses: [],
+                        power_badge: true
+                    },
+                    {
+                        username: 'dwr',
+                        display_name: 'Dan Romero',
+                        pfp_url: 'https://picsum.photos/100/100?random=2',
+                        follower_count: 100000,
+                        verified_addresses: [],
+                        power_badge: true
+                    },
+                    {
+                        username: 'jessepollak',
+                        display_name: 'Jesse Pollak',
+                        pfp_url: 'https://picsum.photos/100/100?random=3',
+                        follower_count: 50000,
+                        verified_addresses: [],
+                        power_badge: false
+                    },
+                    {
+                        username: 'dankrad',
+                        display_name: 'Dankrad Feist',
+                        pfp_url: 'https://picsum.photos/100/100?random=4',
+                        follower_count: 25000,
+                        verified_addresses: [],
+                        power_badge: false
+                    }
+                ];
+                
+                // Select random opponent
+                const randomOpponent = trendingUsers[Math.floor(Math.random() * trendingUsers.length)];
+                
+                // Set opponent user
+                opponentUser = {
+                    username: randomOpponent.username,
+                    displayName: randomOpponent.display_name,
+                    pfpUrl: randomOpponent.pfp_url,
+                    followerCount: randomOpponent.follower_count,
+                    verified: randomOpponent.verified_addresses && randomOpponent.verified_addresses.length > 0,
+                    powerBadge: randomOpponent.power_badge
+                };
+                
+                console.log('🎲 Random opponent selected:', opponentUser);
+                
+                // Start the game
+                startGame();
+                
+            } catch (error) {
+                console.error('❌ Error starting random match:', error);
+            }
+        }
         
-        // startFarcasterDuel function is defined below
+        async function startFarcasterDuel() {
+            console.log('⚔️ Starting Farcaster duel...');
+            
+            // Create search modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            const searchBox = document.createElement('div');
+            searchBox.style.cssText = `
+                background: #001100;
+                border: 2px solid var(--neon-color);
+                border-radius: 15px;
+                padding: 20px;
+                max-width: 400px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            `;
+            
+            searchBox.innerHTML = `
+                <h3 style="color: var(--neon-color); margin-bottom: 15px;">Challenge Farcaster User</h3>
+                <input type="text" id="usernameSearch" placeholder="Search username..." 
+                       style="width: 100%; padding: 10px; border: 1px solid var(--neon-color); 
+                              background: #000; color: white; border-radius: 5px; margin-bottom: 10px;">
+                <div id="searchResults" style="max-height: 200px; overflow-y: auto;"></div>
+                <div style="margin-top: 15px; text-align: right;">
+                    <button id="cancelBtn" 
+                            style="background: #666; color: white; border: none; padding: 8px 16px; 
+                                   border-radius: 5px; margin-right: 10px; cursor: pointer;">Cancel</button>
+                </div>
+            `;
+            
+            modal.appendChild(searchBox);
+            document.body.appendChild(modal);
+            
+            const searchInput = document.getElementById('usernameSearch');
+            const resultsDiv = document.getElementById('searchResults');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            // Cancel button event listener
+            cancelBtn.addEventListener('click', () => {
+                modal.remove();
+            });
+            
+            let searchTimeout;
+            searchInput.addEventListener('input', async (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    resultsDiv.innerHTML = '';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(async () => {
+                    try {
+                        // Use correct Neynar searchUser API
+                        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10&api_key=${NEYNAR_API_KEY}`, {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            resultsDiv.innerHTML = '';
+                            
+                            if (data.result && data.result.users && data.result.users.length > 0) {
+                                data.result.users.forEach(user => {
+                                    const userDiv = document.createElement('div');
+                                    userDiv.style.cssText = `
+                                        padding: 10px;
+                                        border-bottom: 1px solid #333;
+                                        cursor: pointer;
+                                        display: flex;
+                                        align-items: center;
+                                    `;
+                                    userDiv.innerHTML = `
+                                        <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
+                                             style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                                        <div>
+                                            <div style="color: white; font-weight: bold;">@${user.username}</div>
+                                            <div style="color: #888; font-size: 12px;">${user.display_name || user.username}</div>
+                                        </div>
+                                    `;
+                                    
+                                    userDiv.addEventListener('click', () => {
+                                        selectUser(user);
+                                        modal.remove();
+                                    });
+                                    
+                                    resultsDiv.appendChild(userDiv);
+                                });
+                } else {
+                                resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No users found</div>';
+                            }
+                        } else {
+                            // Fallback: try to find user in our fallback list
+                            const fallbackUsers = [
+                                { username: 'vitalik', display_name: 'Vitalik Buterin', pfp_url: 'https://picsum.photos/40/40?random=1' },
+                                { username: 'dwr', display_name: 'Dan Romero', pfp_url: 'https://picsum.photos/40/40?random=2' },
+                                { username: 'jessepollak', display_name: 'Jesse Pollak', pfp_url: 'https://picsum.photos/40/40?random=3' },
+                                { username: 'dankrad', display_name: 'Dankrad Feist', pfp_url: 'https://picsum.photos/40/40?random=4' }
+                            ];
+                            
+                            const foundUser = fallbackUsers.find(u => u.username.toLowerCase().includes(query.toLowerCase()));
+                            if (foundUser) {
+                                const userDiv = document.createElement('div');
+                                userDiv.style.cssText = `
+                                    padding: 10px;
+                                    border-bottom: 1px solid #333;
+                                    cursor: pointer;
+                                    display: flex;
+                                    align-items: center;
+                                `;
+                                userDiv.innerHTML = `
+                                    <img src="${foundUser.pfp_url}" 
+                                         style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                                    <div>
+                                        <div style="color: white; font-weight: bold;">@${foundUser.username}</div>
+                                        <div style="color: #888; font-size: 12px;">${foundUser.display_name}</div>
+                                    </div>
+                                `;
+                                
+                                userDiv.addEventListener('click', () => {
+                                    selectUser(foundUser);
+                                    modal.remove();
+                                });
+                                
+                                resultsDiv.appendChild(userDiv);
+                            } else {
+                                resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No users found</div>';
+                            }
+                        }
+            } catch (error) {
+                        console.error('Search error:', error);
+                        resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Search failed</div>';
+                    }
+                }, 300);
+            });
+            
+            // Focus on search input
+            searchInput.focus();
+        }
+        
+        async function selectUser(user) {
+            console.log('⚔️ Starting Farcaster duel with:', user.username);
+            
+            // Get current user data
+            currentUser = await getFarcasterUserData();
+            if (!currentUser) {
+                currentUser = {
+                    username: 'Guest',
+                    displayName: 'Guest Player',
+                    pfpUrl: null
+                };
+            }
+            
+            // Set opponent user
+            opponentUser = {
+                username: user.username,
+                displayName: user.display_name,
+                pfpUrl: user.pfp_url,
+                followerCount: user.follower_count,
+                verified: user.verified_addresses && user.verified_addresses.length > 0,
+                powerBadge: user.power_badge
+            };
+            
+            console.log('👤 Current user:', currentUser);
+            console.log('👤 Opponent user:', opponentUser);
+            
+            startGame();
+        }
         
         window.getFarcasterUserData = async function() {
             return window.currentUser || {
@@ -831,7 +1086,7 @@
                     try {
                         await window.sdk.actions.ready();
                         console.log("✅ Farcaster SDK initialized successfully - app fully loaded");
-                    } catch (readyError) {
+                } catch (readyError) {
                         console.error('Failed to initialize Farcaster SDK:', readyError);
                         setTimeout(async () => {
                             try {
@@ -882,7 +1137,7 @@
                             const userData = user;
                             
                             if (userData) {
-                                window.currentUser = {
+            window.currentUser = {
                                     username: userData.username || 'farcaster_user',
                                     displayName: userData.displayName || userData.username || 'Farcaster User',
                                     pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100',
@@ -891,7 +1146,7 @@
                                 };
                                 
                                 console.log('✅ Current user set:', window.currentUser);
-                                updateUserInterface();
+            updateUserInterface();
                                 return;
                             }
                         }
