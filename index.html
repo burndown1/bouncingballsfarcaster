@@ -2087,6 +2087,11 @@
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
+                // Resume audio context if suspended (mobile requirement)
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
                 // Fallback synthesized crowd sound
                 const createCrowdVoice = (baseFreq, delay, duration, voiceType) => {
                     setTimeout(() => {
@@ -2639,6 +2644,7 @@
         window.addEventListener('load', async () => {
             await initializeGame();
         });
+        
     </script>
 </body>
 </html>
