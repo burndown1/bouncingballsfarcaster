@@ -1681,7 +1681,8 @@
                 
                 searchTimeout = setTimeout(async () => {
                     try {
-                        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10&api_key=${NEYNAR_API_KEY}`, {
+                        // Try to search for user by username
+                        const response = await fetch(`${NEYNAR_BASE_URL}/user?username=${encodeURIComponent(query)}&api_key=${NEYNAR_API_KEY}`, {
                             headers: {
                                 'Content-Type': 'application/json'
                             }
@@ -1691,35 +1692,71 @@
                             const data = await response.json();
                             resultsDiv.innerHTML = '';
                             
-                            if (data.result && data.result.users && data.result.users.length > 0) {
-                                data.result.users.forEach(user => {
-                                    const userDiv = document.createElement('div');
-                                    userDiv.style.cssText = `
-                                        padding: 10px;
-                                        border-bottom: 1px solid #333;
-                                        cursor: pointer;
-                                        display: flex;
-                                        align-items: center;
-                                    `;
-                                    userDiv.innerHTML = `
-                                        <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
-                                             style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                                        <div>
-                                            <div style="color: white; font-weight: bold;">@${user.username}</div>
-                                            <div style="color: #888; font-size: 12px;">${user.display_name || user.username}</div>
-                                        </div>
-                                    `;
-                                    
-                                    userDiv.addEventListener('click', () => {
-                                        selectUser(user);
-                                        modal.remove();
-                                    });
-                                    
-                                    resultsDiv.appendChild(userDiv);
+                            // Handle single user response from /user endpoint
+                            if (data.result && data.result.user) {
+                                const user = data.result.user;
+                                const userDiv = document.createElement('div');
+                                userDiv.style.cssText = `
+                                    padding: 10px;
+                                    border-bottom: 1px solid #333;
+                                    cursor: pointer;
+                                    display: flex;
+                                    align-items: center;
+                                `;
+                                userDiv.innerHTML = `
+                                    <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
+                                         style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                                    <div>
+                                        <div style="color: white; font-weight: bold;">@${user.username}</div>
+                                        <div style="color: #888; font-size: 12px;">${user.display_name || user.username}</div>
+                                    </div>
+                                `;
+                                
+                                userDiv.addEventListener('click', () => {
+                                    selectUser(user);
+                                    modal.remove();
                                 });
+                                
+                                resultsDiv.appendChild(userDiv);
+                                });
+                        } else {
+                            // Fallback: try to find user in our fallback list
+                            const fallbackUsers = [
+                                { username: 'vitalik', display_name: 'Vitalik Buterin', pfp_url: 'https://picsum.photos/40/40?random=1' },
+                                { username: 'dwr', display_name: 'Dan Romero', pfp_url: 'https://picsum.photos/40/40?random=2' },
+                                { username: 'jessepollak', display_name: 'Jesse Pollak', pfp_url: 'https://picsum.photos/40/40?random=3' },
+                                { username: 'dankrad', display_name: 'Dankrad Feist', pfp_url: 'https://picsum.photos/40/40?random=4' }
+                            ];
+                            
+                            const foundUser = fallbackUsers.find(u => u.username.toLowerCase().includes(query.toLowerCase()));
+                            if (foundUser) {
+                                const userDiv = document.createElement('div');
+                                userDiv.style.cssText = `
+                                    padding: 10px;
+                                    border-bottom: 1px solid #333;
+                                    cursor: pointer;
+                                    display: flex;
+                                    align-items: center;
+                                `;
+                                userDiv.innerHTML = `
+                                    <img src="${foundUser.pfp_url}" 
+                                         style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                                    <div>
+                                        <div style="color: white; font-weight: bold;">@${foundUser.username}</div>
+                                        <div style="color: #888; font-size: 12px;">${foundUser.display_name}</div>
+                                    </div>
+                                `;
+                                
+                                userDiv.addEventListener('click', () => {
+                                    selectUser(foundUser);
+                                    modal.remove();
+                                });
+                                
+                                resultsDiv.appendChild(userDiv);
                             } else {
                                 resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No users found</div>';
                             }
+                        }
                         }
                     } catch (error) {
                         console.error('Search error:', error);
