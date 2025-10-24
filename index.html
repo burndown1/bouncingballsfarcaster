@@ -161,6 +161,7 @@
             min-height: 600px !important;
             display: block;
             margin: 20px;
+            z-index: 5;
         }
         .ui-overlay {
             position: absolute;
@@ -169,33 +170,36 @@
             transform: translateX(-50%);
             z-index: 10;
             pointer-events: none;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
         .game-info-container {
             background: rgba(0, 0, 0, 0.9);
             border: 2px solid var(--neon-color);
             border-radius: 15px;
-            padding: 16px 24px;
+            padding: 20px 30px;
             backdrop-filter: blur(10px);
             box-shadow: 0 0 20px var(--neon-color);
-            min-width: 320px;
+            min-width: 400px;
             text-align: center;
         }
         
         .timer-display {
             color: var(--neon-color);
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
-            text-shadow: 0 0 10px var(--neon-color);
-            margin-bottom: 12px;
+            text-shadow: 0 0 15px var(--neon-color);
+            margin-bottom: 15px;
         }
         
         .score-display {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 20px;
             color: var(--neon-color);
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
             text-shadow: 0 0 10px var(--neon-color);
         }
@@ -203,14 +207,14 @@
         .player-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
         
         .player-avatar {
-            width: 28px;
-            height: 28px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            border: 2px solid var(--neon-color);
+            border: 3px solid var(--neon-color);
         }
         
         .player-avatar.player1 {
@@ -222,17 +226,17 @@
         }
         
         .player-score {
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
             color: var(--accent-color);
-            min-width: 30px;
+            min-width: 40px;
         }
         
         .vs-divider {
-            font-size: 16px;
+            font-size: 24px;
             font-weight: bold;
             color: var(--neon-color);
-            margin: 0 8px;
+            margin: 0 12px;
         }
         .game-over {
             position: absolute;
