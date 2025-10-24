@@ -153,12 +153,12 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: 250px !important;
-            height: 450px !important;
-            max-width: 250px !important;
-            max-height: 450px !important;
-            min-width: 250px !important;
-            min-height: 450px !important;
+            width: 300px !important;
+            height: 500px !important;
+            max-width: 300px !important;
+            max-height: 500px !important;
+            min-width: 300px !important;
+            min-height: 500px !important;
             display: block;
             margin: 20px;
         }
@@ -1687,18 +1687,18 @@
             gameRunning = true;
             timeLeft = 60; // Reset time
             
-            // Force canvas to be rectangular for Farcaster Mini App (smaller)
+            // Force canvas to be rectangular for Farcaster Mini App (larger)
             const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '250px';
-            canvas.style.height = '450px';
-            canvas.style.maxWidth = '250px';
-            canvas.style.maxHeight = '450px';
-            canvas.style.minWidth = '250px';
-            canvas.style.minHeight = '450px';
+            canvas.style.width = '300px';
+            canvas.style.height = '500px';
+            canvas.style.maxWidth = '300px';
+            canvas.style.maxHeight = '500px';
+            canvas.style.minWidth = '300px';
+            canvas.style.minHeight = '500px';
             
             // Update canvas size and circle position for rectangular canvas
-            canvas.width = 250;
-            canvas.height = 450;
+            canvas.width = 300;
+            canvas.height = 500;
             
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
@@ -2171,28 +2171,38 @@
             });
         }
         
+        // Store loaded images globally
+        const loadedImages = {};
+        
         function drawBalls() {
             balls.forEach((ball, index) => {
                 // Draw profile picture if available
                 const user = index === 0 ? currentUser : opponentUser;
-                console.log('🎨 Drawing ball', index, 'for user:', user?.username, 'pfpUrl:', user?.pfpUrl);
                 
                 if (user && user.pfpUrl) {
-                    // Try to load and draw profile picture
-                    const img = new Image();
-                    img.crossOrigin = 'anonymous';
-                    img.onload = function() {
+                    // Check if image is already loaded
+                    if (loadedImages[user.pfpUrl]) {
+                        // Draw the loaded image
                         ctx.save();
                         ctx.beginPath();
                         ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                         ctx.clip();
-                        ctx.drawImage(img, ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
+                        ctx.drawImage(loadedImages[user.pfpUrl], ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
                         ctx.restore();
-                        console.log('✅ Profile picture drawn for ball', index);
-                    };
-                    img.onerror = function() {
-                        console.log('❌ Failed to load profile picture for ball', index);
-                        // Fallback to colored circle
+                    } else {
+                        // Load image if not loaded yet
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = function() {
+                            loadedImages[user.pfpUrl] = img;
+                            console.log('✅ Profile picture loaded for ball', index, user.username);
+                        };
+                        img.onerror = function() {
+                            console.log('❌ Failed to load profile picture for ball', index);
+                        };
+                        img.src = user.pfpUrl;
+                        
+                        // Draw colored circle while loading
                         ctx.fillStyle = ball.color;
                         ctx.shadowColor = ball.color;
                         ctx.shadowBlur = 15;
@@ -2200,11 +2210,9 @@
                         ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                         ctx.fill();
                         ctx.shadowBlur = 0;
-                    };
-                    img.src = user.pfpUrl;
+                    }
                 } else {
                     // Fallback: Colored circle
-                    console.log('⚠️ No profile picture for ball', index, 'using colored circle');
                 ctx.fillStyle = ball.color;
                 ctx.shadowColor = ball.color;
                 ctx.shadowBlur = 15;
