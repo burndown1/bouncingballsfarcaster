@@ -2253,62 +2253,53 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw spectacular firework trail effect
+                // Draw shooting star trail effect
                 if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
                     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                    const flameIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
+                    const trailIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
                     
-                    // Calculate flame direction (opposite to movement)
-                    const flameX = -ball.vx / speed;
-                    const flameY = -ball.vy / speed;
+                    // Calculate trail direction (opposite to movement)
+                    const trailX = -ball.vx / speed;
+                    const trailY = -ball.vy / speed;
                     
-                    // Start flame from the edge of the ball, not from center
-                    const startX = ball.x + flameX * ball.radius;
-                    const startY = ball.y + flameY * ball.radius;
+                    // Start trail from the edge of the ball
+                    const startX = ball.x + trailX * ball.radius;
+                    const startY = ball.y + trailY * ball.radius;
                     
-                    // Draw multiple spark particles in different directions
-                    for (let i = 0; i < 12; i++) {
-                        // Random angle for spark direction
-                        const sparkAngle = (Math.PI * 2 * i / 12) + (Math.random() - 0.5) * 0.5;
-                        const sparkX = Math.cos(sparkAngle);
-                        const sparkY = Math.sin(sparkAngle);
+                    // Draw shooting star trail
+                    for (let i = 0; i < 6; i++) {
+                        const trailLength = (ball.radius + 25) * trailIntensity * (1 - i / 6);
+                        const trailXPos = startX + trailX * trailLength;
+                        const trailYPos = startY + trailY * trailLength;
+                        const trailWidth = (ball.radius * 0.3) * (1 - i / 6) * trailIntensity;
                         
-                        // Spark length and size
-                        const sparkLength = (ball.radius + 20) * flameIntensity * (0.5 + Math.random() * 0.5);
-                        const sparkXPos = startX + sparkX * sparkLength;
-                        const sparkYPos = startY + sparkY * sparkLength;
-                        const sparkRadius = (ball.radius * 0.2) * flameIntensity * (0.3 + Math.random() * 0.7);
-                        
-                        // Spectacular spark colors (rainbow effect)
-                        let sparkColor;
-                        const colorIndex = Math.floor(Math.random() * 6);
-                        switch(colorIndex) {
-                            case 0: sparkColor = '#FF0000'; break; // Red
-                            case 1: sparkColor = '#FF4500'; break; // Orange
-                            case 2: sparkColor = '#FFD700'; break; // Yellow
-                            case 3: sparkColor = '#00FF00'; break; // Green
-                            case 4: sparkColor = '#0080FF'; break; // Blue
-                            case 5: sparkColor = '#8000FF'; break; // Purple
+                        // Shooting star colors (white to blue gradient)
+                        let trailColor;
+                        if (i < 2) {
+                            trailColor = '#FFFFFF'; // White (bright)
+                        } else if (i < 4) {
+                            trailColor = '#87CEEB'; // Sky blue
+                        } else {
+                            trailColor = '#4169E1'; // Royal blue
                         }
                         
-                        // Create gradient for spectacular spark effect
-                        const gradient = ctx.createRadialGradient(sparkXPos, sparkYPos, 0, sparkXPos, sparkYPos, sparkRadius);
-                        gradient.addColorStop(0, sparkColor);
-                        gradient.addColorStop(0.3, sparkColor + 'FF');
-                        gradient.addColorStop(0.7, sparkColor + 'AA');
+                        // Create gradient for shooting star effect
+                        const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
+                        gradient.addColorStop(0, trailColor);
+                        gradient.addColorStop(0.5, trailColor + 'CC');
                         gradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = gradient;
                         ctx.beginPath();
-                        ctx.arc(sparkXPos, sparkYPos, sparkRadius, 0, Math.PI * 2);
+                        ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
                         ctx.fill();
                         
                         // Add glow effect
-                        ctx.shadowColor = sparkColor;
-                        ctx.shadowBlur = 10;
-                        ctx.fillStyle = sparkColor + '80';
+                        ctx.shadowColor = trailColor;
+                        ctx.shadowBlur = 15;
+                        ctx.fillStyle = trailColor + '80';
                         ctx.beginPath();
-                        ctx.arc(sparkXPos, sparkYPos, sparkRadius * 0.5, 0, Math.PI * 2);
+                        ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
                         ctx.fill();
                         ctx.shadowBlur = 0;
                     }
