@@ -153,90 +153,77 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: 350px !important;
-            height: 600px !important;
-            max-width: 350px !important;
-            max-height: 600px !important;
-            min-width: 350px !important;
-            min-height: 600px !important;
+            width: min(85vw, 400px);
+            height: min(85vh, 600px);
             display: block;
             margin: 20px;
-            z-index: 5;
         }
         .ui-overlay {
             position: absolute;
             top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
             z-index: 10;
             pointer-events: none;
-            width: 100%;
-            display: flex;
-            justify-content: center;
         }
-        .game-info-container {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--neon-color);
-            border-radius: 15px;
-            padding: 20px 30px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px var(--neon-color);
-            min-width: 400px;
-            text-align: center;
-        }
-        
-        .timer-display {
-            color: var(--neon-color);
-            font-size: 28px;
-            font-weight: bold;
-            text-shadow: 0 0 15px var(--neon-color);
-            margin-bottom: 15px;
-        }
-        
         .score-display {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
             color: var(--neon-color);
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
             text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
         }
         
         .player-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+            margin: 4px 0;
         }
         
         .player-avatar {
-            width: 40px;
-            height: 40px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            border: 3px solid var(--neon-color);
+            border: 1px solid var(--neon-color);
         }
         
-        .player-avatar.player1 {
-            border-color: var(--player1-color, var(--neon-color));
-        }
-        
-        .player-avatar.player2 {
-            border-color: var(--player2-color, var(--neon-color));
+        .player-name {
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 60px;
         }
         
         .player-score {
-            font-size: 28px;
+            font-size: 18px;
             font-weight: bold;
             color: var(--accent-color);
-            min-width: 40px;
         }
         
         .vs-divider {
-            font-size: 24px;
+            text-align: center;
+            font-size: 12px;
             font-weight: bold;
+            margin: 4px 0;
+            opacity: 0.8;
+        }
+        .timer-display {
             color: var(--neon-color);
-            margin: 0 12px;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
         }
         .game-over {
             position: absolute;
@@ -245,69 +232,13 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.95);
             color: var(--neon-color);
-            padding: 40px 50px;
+            padding: 40px;
             border-radius: 20px;
             border: 3px solid var(--neon-color);
             text-align: center;
             display: none;
             backdrop-filter: blur(15px);
             box-shadow: 0 0 30px var(--neon-color);
-            z-index: 20;
-            min-width: 450px;
-        }
-        
-        .game-over-title {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px var(--neon-color);
-        }
-        
-        .game-over-score {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            color: var(--neon-color);
-            font-size: 20px;
-            font-weight: bold;
-            text-shadow: 0 0 10px var(--neon-color);
-            margin-bottom: 25px;
-        }
-        
-        .game-over-player-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .game-over-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid var(--neon-color);
-        }
-        
-        .game-over-avatar.player1 {
-            border-color: var(--player1-color, var(--neon-color));
-        }
-        
-        .game-over-avatar.player2 {
-            border-color: var(--player2-color, var(--neon-color));
-        }
-        
-        .game-over-score-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--accent-color);
-            min-width: 50px;
-        }
-        
-        .game-over-vs {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--neon-color);
-            margin: 0 15px;
         }
         .game-over h2 {
             margin: 0 0 20px 0;
@@ -556,19 +487,21 @@
 <body>
     <div class="game-container">
         <div class="ui-overlay">
-            <div class="game-info-container">
-                <div class="timer-display" id="timerDisplay">60</div>
-                <div class="score-display">
-                    <div class="player-info">
-                        <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
-                        <span id="player1Score" class="player-score">0</span>
-                    </div>
-                    <div class="vs-divider">-</div>
-                    <div class="player-info">
-                        <span id="player2Score" class="player-score">0</span>
-                        <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
-                    </div>
+            <div class="score-display">
+                <div class="player-info">
+                    <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
+                    <span id="player1Name" class="player-name">You</span>
+                    <span id="score1" class="player-score">0</span>
                 </div>
+                <div class="vs-divider">VS</div>
+                <div class="player-info">
+                    <span id="score2" class="player-score">0</span>
+                    <span id="player2Name" class="player-name">Opponent</span>
+                    <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
+                </div>
+            </div>
+            <div class="timer-display">
+                <span id="timer">1:00</span>
             </div>
         </div>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
@@ -604,18 +537,8 @@
         </div>
         
         <div class="game-over" id="gameOver">
-            <div class="game-over-title">Game Over!</div>
-            <div class="game-over-score">
-                <div class="game-over-player-info">
-                    <img id="finalPlayer1Avatar" class="game-over-avatar" src="" alt="Player 1">
-                    <span id="finalScore1" class="game-over-score-number">0</span>
-                </div>
-                <div class="game-over-vs">-</div>
-                <div class="game-over-player-info">
-                    <span id="finalScore2" class="game-over-score-number">0</span>
-                    <img id="finalPlayer2Avatar" class="game-over-avatar" src="" alt="Player 2">
-                </div>
-            </div>
+            <h2>Game Over!</h2>
+            <p><span id="finalScore1">0</span> - <span id="finalScore2">0</span></p>
             <button class="restart-btn" onclick="restartGame()">Play Again</button>
             <button class="restart-btn" onclick="shareToFarcaster()">Share</button>
         </div>
@@ -1510,7 +1433,6 @@
                         verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
                         powerBadge: randomUser.power_badge
                     };
-                    console.log('🎲 Opponent user pfpUrl set to:', opponentUser.pfpUrl);
                     // Set globally
                     window.opponentUser = opponentUser;
                     console.log('🎲 Opponent user set globally:', window.opponentUser);
@@ -1761,23 +1683,15 @@
             gameRunning = true;
             timeLeft = 60; // Reset time
             
-            // Force canvas to be rectangular for Farcaster Mini App (larger)
-            const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '350px';
-            canvas.style.height = '600px';
-            canvas.style.maxWidth = '350px';
-            canvas.style.maxHeight = '600px';
-            canvas.style.minWidth = '350px';
-            canvas.style.minHeight = '600px';
-            
             // Update canvas size and circle position for rectangular canvas
-            canvas.width = 350;
-            canvas.height = 600;
+            const canvas = document.getElementById('gameCanvas');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
             
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
             circle.y = canvas.height / 2;
-            circle.radius = Math.min(canvas.width, canvas.height) * 0.45; // 45% of smaller dimension
+            circle.radius = Math.min(canvas.width, canvas.height) * 0.42; // 42% of smaller dimension
             
             // Select different colors for each player
             player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
@@ -1798,10 +1712,6 @@
                     document.getElementById('player1Avatar').src = currentUser.pfpUrl;
                     console.log('✅ Player 1 avatar set to:', currentUser.pfpUrl);
                 }
-                
-                // Set player 1 avatar border color
-                document.getElementById('player1Avatar').classList.add('player1');
-                document.documentElement.style.setProperty('--player1-color', player1BallColor);
             } else {
                 console.log('⚠️ No currentUser data available');
                 document.getElementById('player1Name').textContent = 'You';
@@ -1816,23 +1726,15 @@
             const currentOpponent = window.opponentUser || opponentUser;
             if (currentOpponent) {
                 console.log('🎯 Setting opponent name in scoreboard:', currentOpponent.username);
-                console.log('🎯 Setting opponent avatar in scoreboard:', currentOpponent.pfpUrl);
                 document.getElementById('player2Name').textContent = currentOpponent.username || 'Opponent';
                 if (currentOpponent.pfpUrl) {
                     document.getElementById('player2Avatar').src = currentOpponent.pfpUrl;
-                    console.log('✅ Player 2 avatar set to:', currentOpponent.pfpUrl);
                 }
-                
-                // Set player 2 avatar border color
-                document.getElementById('player2Avatar').classList.add('player2');
-                document.documentElement.style.setProperty('--player2-color', player2BallColor);
             } else {
                 console.log('⚠️ No opponentUser available in startGame()');
                 // Fallback to CPU
                 document.getElementById('player2Name').textContent = 'CPU';
                 document.getElementById('player2Avatar').src = 'https://picsum.photos/100/100';
-                document.getElementById('player2Avatar').classList.add('player2');
-                document.documentElement.style.setProperty('--player2-color', player2BallColor);
             }
             
             // Recreate balls with user data
@@ -2257,46 +2159,21 @@
             });
         }
         
-        // Store loaded images globally
-        const loadedImages = {};
-        
         function drawBalls() {
             balls.forEach((ball, index) => {
                 // Draw profile picture if available
                 const user = index === 0 ? currentUser : opponentUser;
-                
                 if (user && user.pfpUrl) {
-                    // Check if image is already loaded
-                    if (loadedImages[user.pfpUrl]) {
-                        // Draw the loaded image
+                    const img = new Image();
+                    img.onload = function() {
                         ctx.save();
                         ctx.beginPath();
                         ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                         ctx.clip();
-                        ctx.drawImage(loadedImages[user.pfpUrl], ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
+                        ctx.drawImage(img, ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
                         ctx.restore();
-                    } else {
-                        // Load image if not loaded yet
-                        const img = new Image();
-                        img.crossOrigin = 'anonymous';
-                        img.onload = function() {
-                            loadedImages[user.pfpUrl] = img;
-                            console.log('✅ Profile picture loaded for ball', index, user.username);
-                        };
-                        img.onerror = function() {
-                            console.log('❌ Failed to load profile picture for ball', index);
-                        };
-                        img.src = user.pfpUrl;
-                        
-                        // Draw colored circle while loading
-                        ctx.fillStyle = ball.color;
-                        ctx.shadowColor = ball.color;
-                        ctx.shadowBlur = 15;
-                        ctx.beginPath();
-                        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.shadowBlur = 0;
-                    }
+                    };
+                    img.src = user.pfpUrl;
                 } else {
                     // Fallback: Colored circle
                 ctx.fillStyle = ball.color;
@@ -2318,52 +2195,12 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw subtle flame trail effect that fades away quickly
-                if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
-                    const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                    const flameIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
-                    
-                    // Calculate flame direction (opposite to movement)
-                    const flameX = -ball.vx / speed;
-                    const flameY = -ball.vy / speed;
-                    
-                    // Start flame from the edge of the ball
-                    const startX = ball.x + flameX * ball.radius;
-                    const startY = ball.y + flameY * ball.radius;
-                    
-                    // Draw subtle flame trail with quick fading effect
-                    for (let i = 0; i < 3; i++) {
-                        const flameLength = (ball.radius + 8) * flameIntensity * (1 - i / 3);
-                        const flameXPos = startX + flameX * flameLength;
-                        const flameYPos = startY + flameY * flameLength;
-                        const flameWidth = (ball.radius * 0.15) * (1 - i / 3) * flameIntensity;
-                        
-                        // Subtle flame colors (darker orange)
-                        let flameColor;
-                        if (i < 1) {
-                            flameColor = '#FF6B35'; // Darker orange-red
-                        } else {
-                            flameColor = '#FF8C42'; // Darker orange
-                        }
-                        
-                        // Quick fading effect - make it very transparent quickly
-                        const alpha = (1 - i / 3) * flameIntensity * 0.4; // Much more transparent
-                        const alphaHex = Math.floor(alpha * 255).toString(16).padStart(2, '0');
-                        
-                        // Create gradient for subtle flame effect
-                        const gradient = ctx.createRadialGradient(flameXPos, flameYPos, 0, flameXPos, flameYPos, flameWidth);
-                        gradient.addColorStop(0, flameColor + alphaHex);
-                        gradient.addColorStop(0.5, flameColor + Math.floor(alpha * 0.5 * 255).toString(16).padStart(2, '0'));
-                        gradient.addColorStop(1, 'transparent');
-                        
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.arc(flameXPos, flameYPos, flameWidth, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-                
-                // No team letter - profile picture is enough
+                // Team letter
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(ball.team === 'juventus' ? 'J' : 'A', ball.x, ball.y);
             });
         }
         
@@ -2421,10 +2258,10 @@
                 if (inGoalX && inGoalY) {
                     if (ball.team === 'juventus') {
                         score1++;
-                        document.getElementById('player1Score').textContent = score1;
+                        document.getElementById('score1').textContent = score1;
                     } else {
                         score2++;
-                        document.getElementById('player2Score').textContent = score2;
+                        document.getElementById('score2').textContent = score2;
                     }
                     
                     // Show goal text
@@ -2447,7 +2284,7 @@
             timeLeft--;
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            document.getElementById('timerDisplay').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            document.getElementById('timer').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
             if (timeLeft <= 0) {
                 endGame();
             } else {
@@ -2460,11 +2297,11 @@
             if (score1 === score2) {
                 console.log('⚽ Tie! Adding extra 15 seconds...');
                 timeLeft = 15; // 15 seconds extra time
-                document.getElementById('timerDisplay').textContent = '0:15';
-                document.getElementById('timerDisplay').style.color = '#ff6600'; // Orange color
+                document.getElementById('timer').textContent = '0:15';
+                document.getElementById('timer').style.color = '#ff6600'; // Orange color
                 
                 // Show extra time message
-                const timerElement = document.getElementById('timerDisplay');
+                const timerElement = document.getElementById('timer');
                 timerElement.style.fontSize = '20px';
                 timerElement.style.fontWeight = 'bold';
                 
@@ -2477,21 +2314,6 @@
             gameRunning = false;
             document.getElementById('finalScore1').textContent = score1;
             document.getElementById('finalScore2').textContent = score2;
-            
-            // Set final avatars with proper styling
-            const finalPlayer1Avatar = document.getElementById('finalPlayer1Avatar');
-            const finalPlayer2Avatar = document.getElementById('finalPlayer2Avatar');
-            
-            if (window.currentUser && window.currentUser.pfpUrl) {
-                finalPlayer1Avatar.src = window.currentUser.pfpUrl;
-                finalPlayer1Avatar.classList.add('player1');
-            }
-            
-            if (window.opponentUser && window.opponentUser.pfpUrl) {
-                finalPlayer2Avatar.src = window.opponentUser.pfpUrl;
-                finalPlayer2Avatar.classList.add('player2');
-            }
-            
             document.getElementById('gameOver').style.display = 'block';
             
             // Reset timer color to normal
@@ -2514,14 +2336,14 @@
             // Reset scores
             score1 = 0;
             score2 = 0;
-            document.getElementById('player1Score').textContent = '0';
-            document.getElementById('player2Score').textContent = '0';
-            document.getElementById('timerDisplay').textContent = '1:00';
+            document.getElementById('score1').textContent = '0';
+            document.getElementById('score2').textContent = '0';
+            document.getElementById('timer').textContent = '1:00';
             
             // Reset timer style
-            document.getElementById('timerDisplay').style.color = currentNeonColor;
-            document.getElementById('timerDisplay').style.fontSize = '20px';
-            document.getElementById('timerDisplay').style.fontWeight = 'normal';
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
             
             // Return balls to starting position
             balls[0].x = 150;
