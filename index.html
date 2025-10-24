@@ -2253,48 +2253,55 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw flame trail effect that fades away
+                // Draw shooting star trail effect
                 if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
                     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                    const flameIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
+                    const trailIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
                     
-                    // Calculate flame direction (opposite to movement)
-                    const flameX = -ball.vx / speed;
-                    const flameY = -ball.vy / speed;
+                    // Calculate trail direction (opposite to movement)
+                    const trailX = -ball.vx / speed;
+                    const trailY = -ball.vy / speed;
                     
-                    // Start flame from the edge of the ball
-                    const startX = ball.x + flameX * ball.radius;
-                    const startY = ball.y + flameY * ball.radius;
+                    // Start trail from the edge of the ball
+                    const startX = ball.x + trailX * ball.radius;
+                    const startY = ball.y + trailY * ball.radius;
                     
-                    // Draw flame trail with fading effect
-                    for (let i = 0; i < 4; i++) {
-                        const flameLength = (ball.radius + 15) * flameIntensity * (1 - i / 4);
-                        const flameXPos = startX + flameX * flameLength;
-                        const flameYPos = startY + flameY * flameLength;
-                        const flameWidth = (ball.radius * 0.25) * (1 - i / 4) * flameIntensity;
+                    // Draw shooting star trail
+                    for (let i = 0; i < 6; i++) {
+                        const trailLength = (ball.radius + 25) * trailIntensity * (1 - i / 6);
+                        const trailXPos = startX + trailX * trailLength;
+                        const trailYPos = startY + trailY * trailLength;
+                        const trailWidth = (ball.radius * 0.3) * (1 - i / 6) * trailIntensity;
                         
-                        // Flame colors (red to orange gradient)
-                        let flameColor;
+                        // Shooting star colors (white to blue gradient)
+                        let trailColor;
                         if (i < 2) {
-                            flameColor = '#FF4500'; // Orange-red
+                            trailColor = '#FFFFFF'; // White (bright)
+                        } else if (i < 4) {
+                            trailColor = '#87CEEB'; // Sky blue
                         } else {
-                            flameColor = '#FF8C00'; // Orange
+                            trailColor = '#4169E1'; // Royal blue
                         }
                         
-                        // Fading effect - make it more transparent as it gets longer
-                        const alpha = (1 - i / 4) * flameIntensity;
-                        const alphaHex = Math.floor(alpha * 255).toString(16).padStart(2, '0');
-                        
-                        // Create gradient for flame effect
-                        const gradient = ctx.createRadialGradient(flameXPos, flameYPos, 0, flameXPos, flameYPos, flameWidth);
-                        gradient.addColorStop(0, flameColor + alphaHex);
-                        gradient.addColorStop(0.5, flameColor + Math.floor(alpha * 0.8 * 255).toString(16).padStart(2, '0'));
+                        // Create gradient for shooting star effect
+                        const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
+                        gradient.addColorStop(0, trailColor);
+                        gradient.addColorStop(0.5, trailColor + 'CC');
                         gradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = gradient;
                         ctx.beginPath();
-                        ctx.arc(flameXPos, flameYPos, flameWidth, 0, Math.PI * 2);
+                        ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
                         ctx.fill();
+                        
+                        // Add glow effect
+                        ctx.shadowColor = trailColor;
+                        ctx.shadowBlur = 15;
+                        ctx.fillStyle = trailColor + '80';
+                        ctx.beginPath();
+                        ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
                     }
                 }
                 
