@@ -196,7 +196,15 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            border: 1px solid var(--neon-color);
+            border: 2px solid var(--neon-color);
+        }
+        
+        .player-avatar.player1 {
+            border-color: var(--player1-color, var(--neon-color));
+        }
+        
+        .player-avatar.player2 {
+            border-color: var(--player2-color, var(--neon-color));
         }
         
         .player-name {
@@ -1437,6 +1445,7 @@
                         verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
                         powerBadge: randomUser.power_badge
                     };
+                    console.log('🎲 Opponent user pfpUrl set to:', opponentUser.pfpUrl);
                     // Set globally
                     window.opponentUser = opponentUser;
                     console.log('🎲 Opponent user set globally:', window.opponentUser);
@@ -1703,7 +1712,7 @@
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
             circle.y = canvas.height / 2;
-            circle.radius = Math.min(canvas.width, canvas.height) * 0.52; // 52% of smaller dimension
+            circle.radius = Math.min(canvas.width, canvas.height) * 0.45; // 45% of smaller dimension
             
             // Select different colors for each player
             player1BallColor = neonColors[Math.floor(Math.random() * neonColors.length)];
@@ -1724,6 +1733,10 @@
                     document.getElementById('player1Avatar').src = currentUser.pfpUrl;
                     console.log('✅ Player 1 avatar set to:', currentUser.pfpUrl);
                 }
+                
+                // Set player 1 avatar border color
+                document.getElementById('player1Avatar').classList.add('player1');
+                document.documentElement.style.setProperty('--player1-color', player1BallColor);
             } else {
                 console.log('⚠️ No currentUser data available');
                 document.getElementById('player1Name').textContent = 'You';
@@ -1744,11 +1757,17 @@
                     document.getElementById('player2Avatar').src = currentOpponent.pfpUrl;
                     console.log('✅ Player 2 avatar set to:', currentOpponent.pfpUrl);
                 }
+                
+                // Set player 2 avatar border color
+                document.getElementById('player2Avatar').classList.add('player2');
+                document.documentElement.style.setProperty('--player2-color', player2BallColor);
             } else {
                 console.log('⚠️ No opponentUser available in startGame()');
                 // Fallback to CPU
                 document.getElementById('player2Name').textContent = 'CPU';
                 document.getElementById('player2Avatar').src = 'https://picsum.photos/100/100';
+                document.getElementById('player2Avatar').classList.add('player2');
+                document.documentElement.style.setProperty('--player2-color', player2BallColor);
             }
             
             // Recreate balls with user data
@@ -2233,6 +2252,35 @@
                 ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                 ctx.stroke();
                 ctx.shadowBlur = 0;
+                
+                // Draw flame trail effect
+                if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
+                    const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                    const flameIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
+                    
+                    // Calculate flame direction (opposite to movement)
+                    const flameX = -ball.vx / speed;
+                    const flameY = -ball.vy / speed;
+                    
+                    // Draw multiple flame particles
+                    for (let i = 0; i < 5; i++) {
+                        const flameLength = (ball.radius + 10) * flameIntensity * (1 - i / 5);
+                        const flameXPos = ball.x + flameX * flameLength;
+                        const flameYPos = ball.y + flameY * flameLength;
+                        const flameRadius = (ball.radius * 0.3) * (1 - i / 5) * flameIntensity;
+                        
+                        // Create gradient for flame effect
+                        const gradient = ctx.createRadialGradient(flameXPos, flameYPos, 0, flameXPos, flameYPos, flameRadius);
+                        gradient.addColorStop(0, ball.ballColor || currentNeonColor);
+                        gradient.addColorStop(0.5, ball.ballColor || currentNeonColor + '80');
+                        gradient.addColorStop(1, 'transparent');
+                        
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(flameXPos, flameYPos, flameRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
                 
                 // No team letter - profile picture is enough
             });
