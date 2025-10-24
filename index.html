@@ -2125,11 +2125,14 @@
             console.log('🎮 Starting game...');
             
             // Hide game mode selection
+            console.log('🎮 Hiding game mode selection...');
             document.getElementById('gameModeSelection').style.display = 'none';
             
+            console.log('🎮 Adding game-started class...');
             document.querySelector('.game-container').classList.add('game-started');
             gameRunning = true;
             timeLeft = 60; // Reset time
+            console.log('🎮 Game state set:', { gameRunning, timeLeft });
             
             // Force canvas to be rectangular for Farcaster Mini App (smaller for mobile)
             const canvas = document.getElementById('gameCanvas');
