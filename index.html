@@ -697,6 +697,10 @@
         window.sdk = null;
         window.farcasterInitialized = false;
         
+        // Neynar API configuration
+        const NEYNAR_BASE_URL = 'https://api.neynar.com/v2/farcaster';
+        const NEYNAR_API_KEY = '947A9234-D36B-4230-AB2D-3BE5987A8369';
+        
         // Load Farcaster SDK dynamically
         async function loadFarcasterSDK() {
             try {
