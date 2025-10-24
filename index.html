@@ -869,12 +869,13 @@
                 
                 searchTimeout = setTimeout(async () => {
                     try {
-                        // Use correct Neynar searchUser API
-                        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10&api_key=${NEYNAR_API_KEY}`, {
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
+        // Use correct Neynar searchUser API
+        const response = await fetch(`${NEYNAR_BASE_URL}/user/search?q=${encodeURIComponent(query)}&limit=10`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'api_key': NEYNAR_API_KEY
+            }
+        });
                         
                         if (response.ok) {
                             const data = await response.json();
