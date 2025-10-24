@@ -153,14 +153,14 @@
             border-radius: 15px;
             background: #001100;
             box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
-            width: 450px !important;
-            height: 600px !important;
-            max-width: 450px !important;
-            max-height: 600px !important;
-            min-width: 450px !important;
-            min-height: 600px !important;
+            width: 380px !important;
+            height: 500px !important;
+            max-width: 380px !important;
+            max-height: 500px !important;
+            min-width: 380px !important;
+            min-height: 500px !important;
             display: block;
-            margin: 20px;
+            margin: 20px auto;
         }
         .ui-overlay {
             position: absolute;
@@ -172,6 +172,7 @@
             width: 100%;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
         
         .game-info-container {
@@ -1717,18 +1718,18 @@
             gameRunning = true;
             timeLeft = 60; // Reset time
             
-            // Force canvas to be rectangular for Farcaster Mini App (larger)
+            // Force canvas to be rectangular for Farcaster Mini App (smaller for mobile)
             const canvas = document.getElementById('gameCanvas');
-            canvas.style.width = '450px';
-            canvas.style.height = '600px';
-            canvas.style.maxWidth = '450px';
-            canvas.style.maxHeight = '600px';
-            canvas.style.minWidth = '450px';
-            canvas.style.minHeight = '600px';
+            canvas.style.width = '380px';
+            canvas.style.height = '500px';
+            canvas.style.maxWidth = '380px';
+            canvas.style.maxHeight = '500px';
+            canvas.style.minWidth = '380px';
+            canvas.style.minHeight = '500px';
             
             // Update canvas size and circle position for rectangular canvas
-            canvas.width = 450;
-            canvas.height = 600;
+            canvas.width = 380;
+            canvas.height = 500;
             
             // Update circle position to center of rectangular canvas
             circle.x = canvas.width / 2;
@@ -2284,64 +2285,72 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw flame trail effect
-                const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                
-                // Only show trail when moving fast enough
-                if (speed > 1.0) {
-                    // Calculate trail intensity based on speed (more speed = more visible)
-                    const trailIntensity = Math.min((speed - 1.0) / 6, 1); // Normalize speed to 0-1
-                    
-                    // Calculate trail direction (opposite to movement)
-                    const trailX = -ball.vx / speed;
-                    const trailY = -ball.vy / speed;
-                    
-                    // Start trail from the edge of the ball
-                    const startX = ball.x + trailX * ball.radius;
-                    const startY = ball.y + trailY * ball.radius;
-                    
-                    // Draw flame trail (more particles, more visible)
-                    for (let i = 0; i < 6; i++) {
-                        const trailLength = (ball.radius + 20) * trailIntensity * (1 - i / 6);
-                        const trailXPos = startX + trailX * trailLength;
-                        const trailYPos = startY + trailY * trailLength;
-                        const trailWidth = (ball.radius * 0.3) * (1 - i / 6) * trailIntensity;
-                        
-                        // Flame colors with more intensity
-                        let trailColor;
-                        let alpha;
-                        if (i < 2) {
-                            trailColor = '#FF4500'; // Orange red (brightest flame)
-                            alpha = 0.8 * trailIntensity;
-                        } else if (i < 4) {
-                            trailColor = '#FF6347'; // Tomato (medium flame)
-                            alpha = 0.6 * trailIntensity;
-                        } else {
-                            trailColor = '#FF8C00'; // Dark orange (fading flame)
-                            alpha = 0.4 * trailIntensity;
-                        }
-                        
-                        // Create gradient for flame effect
-                        const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
-                        gradient.addColorStop(0, trailColor + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
-                        gradient.addColorStop(0.5, trailColor + Math.floor(alpha * 128).toString(16).padStart(2, '0'));
-                        gradient.addColorStop(1, 'transparent');
-                        
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Add flame glow effect
-                        ctx.shadowColor = trailColor;
-                        ctx.shadowBlur = 12 * trailIntensity;
-                        ctx.fillStyle = trailColor + Math.floor(alpha * 128).toString(16).padStart(2, '0');
-                        ctx.beginPath();
-                        ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.shadowBlur = 0;
-                    }
-                }
+               // Draw realistic flame trail effect
+               const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+               
+               // Only show trail when moving fast enough
+               if (speed > 1.0) {
+                   // Calculate trail intensity based on speed (more speed = more visible)
+                   const trailIntensity = Math.min((speed - 1.0) / 6, 1); // Normalize speed to 0-1
+                   
+                   // Calculate trail direction (opposite to movement)
+                   const trailX = -ball.vx / speed;
+                   const trailY = -ball.vy / speed;
+                   
+                   // Start trail from the edge of the ball
+                   const startX = ball.x + trailX * ball.radius;
+                   const startY = ball.y + trailY * ball.radius;
+                   
+                   // Draw realistic flame trail with more particles and dynamic movement
+                   for (let i = 0; i < 8; i++) {
+                       // Add some randomness to make flame look more natural
+                       const randomOffset = (Math.random() - 0.5) * 3;
+                       const randomOffsetY = (Math.random() - 0.5) * 3;
+                       
+                       const trailLength = (ball.radius + 30) * trailIntensity * (1 - i / 8);
+                       const trailXPos = startX + trailX * trailLength + randomOffset;
+                       const trailYPos = startY + trailY * trailLength + randomOffsetY;
+                       const trailWidth = (ball.radius * 0.4) * (1 - i / 8) * trailIntensity;
+                       
+                       // Realistic flame colors (yellow to orange to red)
+                       let trailColor;
+                       let alpha;
+                       if (i < 2) {
+                           trailColor = '#FFFF00'; // Bright yellow (hottest part)
+                           alpha = 0.6 * trailIntensity;
+                       } else if (i < 4) {
+                           trailColor = '#FFA500'; // Orange (medium heat)
+                           alpha = 0.5 * trailIntensity;
+                       } else if (i < 6) {
+                           trailColor = '#FF4500'; // Orange red (cooling)
+                           alpha = 0.35 * trailIntensity;
+                       } else {
+                           trailColor = '#FF0000'; // Red (coolest part)
+                           alpha = 0.2 * trailIntensity;
+                       }
+                       
+                       // Create more realistic flame gradient
+                       const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
+                       gradient.addColorStop(0, trailColor + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
+                       gradient.addColorStop(0.3, trailColor + Math.floor(alpha * 200).toString(16).padStart(2, '0'));
+                       gradient.addColorStop(0.7, trailColor + Math.floor(alpha * 100).toString(16).padStart(2, '0'));
+                       gradient.addColorStop(1, 'transparent');
+                       
+                       ctx.fillStyle = gradient;
+                       ctx.beginPath();
+                       ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
+                       ctx.fill();
+                       
+                       // Add subtle flame glow effect
+                       ctx.shadowColor = trailColor;
+                       ctx.shadowBlur = 10 * trailIntensity;
+                       ctx.fillStyle = trailColor + Math.floor(alpha * 100).toString(16).padStart(2, '0');
+                       ctx.beginPath();
+                       ctx.arc(trailXPos, trailYPos, trailWidth * 0.6, 0, Math.PI * 2);
+                       ctx.fill();
+                       ctx.shadowBlur = 0;
+                   }
+               }
                 
                 // No team letter - profile picture is enough
             });
