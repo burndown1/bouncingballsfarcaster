@@ -141,24 +141,30 @@
         
         /* --- Canvas & Game Area --- */
         #gameCanvas {
+            /* DÜZELTME 1: Canvas boyutları ve görünürlük kısıtlamaları kaldırıldı. */
             border: 2px solid var(--neon-color);
             border-radius: 12px;
             background: #050B15;
             box-shadow: var(--shadow-dark);
             filter: drop-shadow(var(--glow-green));
-            width: 400px !important;
-            height: 400px !important;
-            max-width: 400px !important;
-            max-height: 400px !important;
-            display: block;
-            margin: 20px;
+            
+            /* Canvas'ın orijinal HTML boyutu geçerli olmalı: width="400" height="400" */
+            display: block; 
+            margin: 20px auto; 
             transition: all 0.5s ease;
+            
+            /* Hatalı kısıtlamalar kaldırıldı: */
+            /* width: 400px !important; */
+            /* height: 400px !important; */
+            /* max-width: 400px !important; */
+            /* max-height: 400px !important; */
         }
         
-        .game-started #gameCanvas {
+        /* Bu class, canvas'ın boyutunu dinamik değiştirdiği için kaldırıldı. */
+        /* .game-started #gameCanvas { 
             width: 350px !important;
             height: 600px !important;
-        }
+        } */
         
         .ui-overlay {
             position: absolute;
@@ -177,7 +183,8 @@
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 550px;
+            /* DÜZELTME 2: Maksimum genişlik 550px'ten 450px'e düşürüldü. */
+            max-width: 450px; 
             z-index: 20;
             display: none;
             pointer-events: all;
@@ -189,7 +196,7 @@
         
         .scoreboard-rectangle {
             background: rgba(10, 10, 25, 0.7);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--neon-color); /* Neon yeşil border kullanıldı */
             border-radius: 10px;
             padding: 10px 15px;
             display: flex;
@@ -198,18 +205,18 @@
             backdrop-filter: blur(5px);
             box-shadow: var(--shadow-dark);
             margin-bottom: 10px;
-            gap: 10px;
+            gap: 5px; /* DÜZELTME 2: Boşluk azaltıldı */
         }
         
         .player-section {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 5px; /* DÜZELTME 2: Boşluk azaltıldı */
         }
         
         .player-avatar {
-            width: 40px;
-            height: 40px;
+            width: 35px; /* DÜZELTME 2: Avatar boyutu 40px'ten 35px'e düşürüldü */
+            height: 35px;
             border-radius: 50%;
             object-fit: cover;
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
@@ -230,18 +237,19 @@
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px; /* DÜZELTME 2: Yazı boyutu 14px'ten 13px'e düşürüldü */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 80px; /* DÜZELTME 2: İsim uzunluğu kısıtlandı */
         }
         
         .player-score {
             color: var(--neon-green);
             font-family: 'Orbitron', monospace;
             font-weight: bold;
-            font-size: 24px;
-            min-width: 30px;
+            font-size: 22px; /* DÜZELTME 2: Skor boyutu 24px'ten 22px'e düşürüldü */
+            min-width: 25px;
             text-align: center;
             text-shadow: 0 0 5px var(--neon-green);
         }
@@ -255,13 +263,13 @@
             color: var(--text-secondary);
             font-family: 'Orbitron', monospace;
             font-weight: bold;
-            font-size: 20px;
-            margin: 0 10px;
+            font-size: 18px; /* DÜZELTME 2: Ayırıcı boyutu 20px'ten 18px'e düşürüldü */
+            margin: 0 5px;
         }
         
         .timer-container {
             position: absolute;
-            top: 65px;
+            top: 70px;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
@@ -272,7 +280,7 @@
             color: var(--neon-color);
             font-family: 'Orbitron', monospace;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px; /* DÜZELTME 2: Zamanlayıcı boyutu 18px'ten 16px'e düşürüldü */
             background: rgba(10, 10, 25, 0.8);
             padding: 5px 15px;
             border-radius: 10px;
@@ -335,7 +343,7 @@
         /* --- User Info Card --- */
         .user-info-card {
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
             border-radius: 12px;
             padding: 15px 20px;
             margin-bottom: 30px;
@@ -380,6 +388,7 @@
             justify-content: center;
             flex-direction: row;
             align-items: stretch;
+            flex-wrap: wrap; /* Esneklik için eklendi */
         }
         
         .mode-btn {
@@ -465,15 +474,16 @@
         }
         
         .final-scoreboard {
-            padding: 20px;
+            padding: 15px 10px; /* DÜZELTME 2: Padding azaltıldı */
             margin: 20px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 30px;
+            gap: 15px; /* DÜZELTME 2: Gap azaltıldı */
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
+            flex-wrap: wrap; /* DÜZELTME 2: Mobil uyumluluk için eklendi */
         }
         
         .final-player-section {
@@ -485,8 +495,8 @@
         }
         
         .final-player-avatar {
-            width: 60px;
-            height: 60px;
+            width: 50px; /* DÜZELTME 2: Avatar boyutu 60px'ten 50px'e düşürüldü */
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -505,14 +515,18 @@
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 14px;
+            max-width: 100px; /* İsim uzunluğu kısıtlandı */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .final-player-score {
             font-family: 'Orbitron', monospace;
             font-weight: bold;
-            font-size: 36px;
-            min-width: 40px;
+            font-size: 30px; /* DÜZELTME 2: Skor boyutu 36px'ten 30px'e düşürüldü */
+            min-width: 30px;
             text-align: center;
         }
         
@@ -530,17 +544,19 @@
             color: var(--text-secondary);
             font-family: 'Orbitron', monospace;
             font-weight: bold;
-            font-size: 30px;
-            margin: 0 10px;
+            font-size: 24px; /* DÜZELTME 2: Ayırıcı boyutu 30px'ten 24px'e düşürüldü */
+            margin: 0 5px;
         }
         
         .winner-display h3 {
             color: gold;
             font-family: 'Orbitron', monospace;
             font-weight: 700;
-            font-size: 28px;
+            font-size: 24px; /* DÜZELTME 2: Başlık boyutu 28px'ten 24px'e düşürüldü */
             text-shadow: 0 0 15px gold;
             margin: 0;
+            word-wrap: break-word; /* Uzun isimler için kelime kırmayı etkinleştir */
+            max-width: 300px;
         }
         
         .game-over-buttons {
@@ -548,6 +564,7 @@
             gap: 15px;
             justify-content: center;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
         
         .restart-btn {
@@ -640,7 +657,7 @@
             padding: 10px;
             background: var(--card-bg);
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
             border-radius: 8px;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
@@ -670,7 +687,7 @@
         
         .duel-user-div {
             padding: 8px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
             border-radius: 8px;
             margin-bottom: 5px;
             cursor: pointer;
@@ -707,71 +724,85 @@
         }
         
         /* --- Mobile Responsiveness --- */
-        @media (max-width: 768px) {
+        @media (max-width: 500px) { /* Mobil ekranlar için kısıtlamalar */
             .game-mode-selection {
-                padding: 25px;
+                padding: 20px;
             }
             
             .game-mode-selection h2 {
-                font-size: 24px;
+                font-size: 20px;
             }
             
             .mode-buttons {
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
             }
             
             .mode-btn {
                 min-width: 100%;
-                padding: 20px;
+                padding: 15px;
             }
             
             .scoreboard-rectangle {
-                padding: 10px;
+                padding: 8px;
+                flex-wrap: nowrap;
             }
             
             .player-avatar {
-                width: 35px;
-                height: 35px;
+                width: 30px;
+                height: 30px;
             }
             
             .player-name {
-                font-size: 12px;
+                font-size: 11px;
+                max-width: 60px;
             }
             
             .player-score {
-                font-size: 20px;
+                font-size: 18px;
             }
             
             .timer-text {
-                font-size: 14px;
+                font-size: 13px;
+            }
+            
+            .final-scoreboard {
+                gap: 10px;
+                padding: 10px;
+                flex-wrap: wrap; /* İhtiyaç halinde sarmalama */
+            }
+            
+            .final-player-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .final-player-name {
+                font-size: 12px;
             }
             
             .final-player-score {
-                font-size: 28px;
+                font-size: 24px;
+            }
+            
+            .final-score-divider {
+                font-size: 20px;
             }
             
             .game-over h2 {
-                font-size: 28px;
+                font-size: 24px;
+            }
+
+            .winner-display h3 {
+                font-size: 18px;
             }
         }
         
-        /* Hide canvas initially */
-        #gameCanvas {
-            display: none !important;
-        }
-        
-        /* Show canvas when game starts */
+        /* DÜZELTME 1: Canvas gizleme/gösterme kuralları basitleştirildi. */
         .game-started #gameCanvas {
-            display: block !important;
+             /* Oyun başladığında kanvas zaten gösteriliyor olmalı, bu kuralı kaldırdık. */
         }
         
-        /* Show game mode selection initially */
-        .game-mode-selection {
-            display: block;
-        }
-        
-        /* Hide mode selection when game starts */
         .game-started .game-mode-selection {
             display: none !important;
         }
@@ -799,7 +830,7 @@
                 </div>
             </div>
         </div>
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <canvas id="gameCanvas" width="400" height="400"></canvas> 
         
         <div class="game-mode-selection" id="gameModeSelection">
             <h2>🎮 Choose Game Mode</h2>
@@ -1085,11 +1116,12 @@
         };
         
         window.getFarcasterUserData = async function() {
+            // DÜZELTME: Bu fonksiyonun gerçek içeriği koddan silinmedi, bu yüzden yerinde bırakıldı.
             return window.currentUser || { username: 'testuser', displayName: 'Test User', pfpUrl: 'https://picsum.photos/100/100', verified: false, fid: 12345 };
         };
         
         window.getRealFarcasterUsers = async function() {
-            // Fallback users when Neynar API is not available
+            // DÜZELTME: Bu fonksiyonun gerçek içeriği koddan silinmedi, bu yüzden yerinde bırakıldı.
             const fallbackUsers = [
                 { username: 'vitalik', display_name: 'Vitalik Buterin', pfp_url: 'https://picsum.photos/100/100?random=1', follower_count: 500000, verified_addresses: [], power_badge: true },
                 { username: 'dwr', display_name: 'Dan Romero', pfp_url: 'https://picsum.photos/100/100?random=2', follower_count: 100000, verified_addresses: [], power_badge: true },
