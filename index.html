@@ -90,24 +90,21 @@
     </script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         :root {
-            /* Core Colors */
-            --neon-green: #39FF14;      /* Player 1 / Main UI Color */
-            --neon-pink: #FF0080;       /* Player 2 Color */
-            --dark-bg: #0D1225;         /* Deep Space Dark */
-            --card-bg: #1A213B;         /* Card/Modal Background */
-            --text-primary: #E0E0FF;
-            --text-secondary: #B0B0C0;
-            
-            /* Effects */
-            --glow-green: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
-            --glow-pink: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
-            --border-default: 2px solid var(--neon-green);
-            --shadow-dark: 0 15px 30px rgba(0, 0, 0, 0.7);
-            
-            --neon-color: var(--neon-green); /* Backward compatibility */
+            --primary-color: #8B5CF6;
+            --secondary-color: #06B6D4;
+            --accent-color: #F59E0B;
+            --success-color: #10B981;
+            --danger-color: #EF4444;
+            --dark-bg: #0F0F23;
+            --card-bg: #1A1A2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --border-color: #27272A;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
         }
         
         * {
@@ -117,8 +114,8 @@
         }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at center, var(--dark-bg) 0%, #080C1A 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #16213E 50%, var(--dark-bg) 100%);
             min-height: 100vh;
             height: 100vh;
             color: var(--text-primary);
@@ -126,46 +123,45 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 0;
+            padding: 0;
         }
-        
         .game-container {
             position: relative;
             width: 100vw;
             height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 10px;
         }
-        
-        /* --- Canvas & Game Area --- */
         #gameCanvas {
-            /* DÜZELTME 1: Canvas boyutları ve görünürlük kısıtlamaları kaldırıldı. */
-            border: 2px solid var(--neon-color);
-            border-radius: 12px;
-            background: #050B15;
-            box-shadow: var(--shadow-dark);
-            filter: drop-shadow(var(--glow-green));
-            
-            /* Canvas'ın orijinal HTML boyutu geçerli olmalı: width="400" height="400" */
-            display: block; 
-            margin: 20px auto; 
-            transition: all 0.5s ease;
-            
-            /* Hatalı kısıtlamalar kaldırıldı: */
-            /* width: 400px !important; */
-            /* height: 400px !important; */
-            /* max-width: 400px !important; */
-            /* max-height: 400px !important; */
+            border: 3px solid var(--neon-color);
+            border-radius: 15px;
+            background: #001100;
+            box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
+            width: 400px !important;
+            height: 400px !important;
+            max-width: 400px !important;
+            max-height: 400px !important;
+            min-width: 400px !important;
+            min-height: 400px !important;
+            display: block;
+            margin: 20px;
         }
         
-        /* Bu class, canvas'ın boyutunu dinamik değiştirdiği için kaldırıldı. */
-        /* .game-started #gameCanvas { 
-            width: 350px !important;
-            height: 600px !important;
-        } */
-        
+        /* Game started - square/circular canvas (Düzeltme: Dairesel alan geri getirildi) */
+        .game-started #gameCanvas {
+            width: 400px !important;
+            height: 400px !important;
+            max-width: 400px !important;
+            max-height: 400px !important;
+            min-width: 400px !important;
+            min-height: 400px !important;
+            border-radius: 50% !important; /* Çember şeklini geri getir */
+        }
         .ui-overlay {
             position: absolute;
             top: 0;
@@ -176,18 +172,17 @@
             z-index: 10;
         }
         
-        /* --- Scoreboard --- */
+        /* Beautiful Horizontal Scoreboard (Düzeltme: Mesafe azaltıldı) */
         .scoreboard-container {
             position: absolute;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            /* DÜZELTME 2: Maksimum genişlik 550px'ten 450px'e düşürüldü. */
-            max-width: 450px; 
+            width: auto; /* Genişliği içeriğe göre ayarla */
+            max-width: 90%;
             z-index: 20;
             display: none;
-            pointer-events: all;
+            margin-left: 0; /* Gereksiz margin kaldırıldı */
         }
         
         .scoreboard-container.show {
@@ -195,160 +190,294 @@
         }
         
         .scoreboard-rectangle {
-            background: rgba(10, 10, 25, 0.7);
-            border: 1px solid var(--neon-color); /* Neon yeşil border kullanıldı */
-            border-radius: 10px;
-            padding: 10px 15px;
+            background: linear-gradient(135deg, #001100, #002200);
+            border: 2px solid var(--neon-color);
+            border-radius: 15px;
+            padding: 15px 20px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* space-between yerine center kullanıldı */
             align-items: center;
-            backdrop-filter: blur(5px);
-            box-shadow: var(--shadow-dark);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
             margin-bottom: 10px;
-            gap: 5px; /* DÜZELTME 2: Boşluk azaltıldı */
+            gap: 15px; /* Skorkart öğeleri arasına boşluk eklendi */
         }
         
         .player-section {
             display: flex;
             align-items: center;
-            gap: 5px; /* DÜZELTME 2: Boşluk azaltıldı */
+            gap: 10px;
         }
         
         .player-avatar {
-            width: 35px; /* DÜZELTME 2: Avatar boyutu 40px'ten 35px'e düşürüldü */
-            height: 35px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
+            border: 3px solid #00ff00;
             object-fit: cover;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-            transition: all 0.3s;
+            box-shadow: 0 0 8px #00ff00;
         }
         
         .player-avatar.player1 {
-            border: 2px solid var(--neon-green);
-            box-shadow: var(--glow-green);
+            border-color: #00ff00;
+            box-shadow: 0 0 8px #00ff00;
         }
         
         .player-avatar.player2 {
-            border: 2px solid var(--neon-pink);
-            box-shadow: var(--glow-pink);
+            border-color: #ff0080;
+            box-shadow: 0 0 8px #ff0080;
         }
         
         .player-name {
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 13px; /* DÜZELTME 2: Yazı boyutu 14px'ten 13px'e düşürüldü */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 80px; /* DÜZELTME 2: İsim uzunluğu kısıtlandı */
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
         }
         
         .player-score {
-            color: var(--neon-green);
-            font-family: 'Orbitron', monospace;
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
             font-weight: bold;
-            font-size: 22px; /* DÜZELTME 2: Skor boyutu 24px'ten 22px'e düşürüldü */
+            font-size: 18px;
             min-width: 25px;
             text-align: center;
-            text-shadow: 0 0 5px var(--neon-green);
-        }
-        
-        #score2 {
-            color: var(--neon-pink);
-            text-shadow: 0 0 5px var(--neon-pink);
         }
         
         .score-divider {
-            color: var(--text-secondary);
-            font-family: 'Orbitron', monospace;
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
             font-weight: bold;
-            font-size: 18px; /* DÜZELTME 2: Ayırıcı boyutu 20px'ten 18px'e düşürüldü */
-            margin: 0 5px;
+            font-size: 20px;
+            margin: 0 10px; /* Boşluk azaltıldı */
         }
         
         .timer-container {
-            position: absolute;
-            top: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
             text-align: center;
         }
         
         .timer-text {
             color: var(--neon-color);
-            font-family: 'Orbitron', monospace;
+            font-family: 'Courier New', monospace;
             font-weight: bold;
-            font-size: 16px; /* DÜZELTME 2: Zamanlayıcı boyutu 18px'ten 16px'e düşürüldü */
-            background: rgba(10, 10, 25, 0.8);
+            font-size: 16px;
+            background: rgba(0, 17, 0, 0.8);
             padding: 5px 15px;
             border-radius: 10px;
             border: 1px solid var(--neon-color);
-            box-shadow: var(--glow-green);
-            display: inline-block;
+        }
+        .score-display {
+            color: var(--neon-color);
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
         }
         
-        /* --- Modals (Game Mode Selection & Game Over) --- */
-        .game-modal {
-            position: absolute;
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+        }
+        
+        .player-name {
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 60px;
+        }
+        
+        .player-score {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .vs-divider {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 4px 0;
+            opacity: 0.8;
+        }
+        .timer-display {
+            color: var(--neon-color);
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
+        }
+        .game-over {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(10, 10, 25, 0.95);
-            color: var(--text-primary);
-            padding: 40px;
+            background: linear-gradient(135deg, #001100, #002200);
+            color: var(--neon-color);
+            padding: 30px;
             border-radius: 20px;
-            border: 2px solid var(--neon-color);
+            border: 3px solid var(--neon-color);
             text-align: center;
-            z-index: 20;
-            box-shadow: var(--shadow-dark), 0 0 15px rgba(57, 255, 20, 0.8);
+            display: none;
             backdrop-filter: blur(15px);
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow-y: auto;
+            box-shadow: 0 0 30px var(--neon-color);
+            width: 90%;
+            max-width: 400px;
+            z-index: 1000;
         }
         
+        .final-scoreboard {
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .final-player-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .final-player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #00ff00;
+            object-fit: cover;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .final-player-avatar.player1 {
+            border-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .final-player-avatar.player2 {
+            border-color: #ff0080;
+            box-shadow: 0 0 10px #ff0080;
+        }
+        
+        .final-player-name {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .final-player-score {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 24px;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .final-score-divider {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 28px;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .winner-display {
+            margin: 20px 0;
+        }
+        
+        .winner-display h3 {
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 0 0 15px #ffd700;
+            margin: 0;
+        }
+        
+        .game-over-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .game-over h2 {
+            margin: 0 0 20px 0;
+            font-size: 32px;
+            text-shadow: 0 0 15px var(--neon-color);
+            font-weight: 700;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--neon-color), #00cc00);
+            color: #000;
+            border: none;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'SF Pro Display', 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.8px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
+            text-transform: uppercase;
+        }
+        .restart-btn:hover {
+            background: linear-gradient(135deg, #00cc00, var(--neon-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 255, 0, 0.6);
+        }
+        
+        /* Game Mode Selection Styles */
         .game-mode-selection {
-            /* Copied from .game-modal */
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(10, 10, 25, 0.95);
-            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--neon-color);
             padding: 40px;
             border-radius: 20px;
-            border: 2px solid var(--neon-color);
+            border: 3px solid var(--neon-color);
             text-align: center;
             z-index: 20;
-            box-shadow: var(--shadow-dark), 0 0 15px rgba(57, 255, 20, 0.8);
+            box-shadow: 0 0 30px var(--neon-color);
             backdrop-filter: blur(15px);
             max-width: 90vw;
             max-height: 90vh;
             overflow-y: auto;
-            
-            display: block; /* Original display rule */
         }
         
         .game-mode-selection h2 {
             margin: 0 0 30px 0;
             font-size: 32px;
-            font-family: 'Orbitron', sans-serif;
             text-shadow: 0 0 15px var(--neon-color);
             font-weight: 700;
-            letter-spacing: 1px;
         }
         
-        /* --- User Info Card --- */
         .user-info-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
-            border-radius: 12px;
-            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-color);
+            border-radius: 15px;
+            padding: 20px;
             margin-bottom: 30px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
         }
         
         .user-info-content {
@@ -359,44 +488,37 @@
         }
         
         .user-avatar {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 3px solid var(--neon-green);
-            box-shadow: var(--glow-green);
-            transition: all 0.3s;
+            border: 2px solid var(--neon-color);
         }
         
         .user-details h3 {
-            margin: 0 0 3px 0;
+            margin: 0 0 5px 0;
             font-size: 20px;
-            font-weight: 700;
-            color: var(--neon-green);
-            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
         }
         
         .user-status {
             font-size: 14px;
-            color: var(--text-secondary);
-            opacity: 0.9;
+            opacity: 0.8;
         }
         
-        /* --- Mode Buttons --- */
         .mode-buttons {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             justify-content: center;
             flex-direction: row;
             align-items: stretch;
-            flex-wrap: wrap; /* Esneklik için eklendi */
         }
         
         .mode-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--neon-color);
+            background: transparent;
+            border: 2px solid var(--neon-color);
             color: var(--neon-color);
-            padding: 20px;
-            border-radius: 12px;
+            padding: 25px 20px;
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
             min-width: 200px;
@@ -407,326 +529,96 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            font-family: 'Inter', sans-serif;
         }
         
         .mode-btn:hover {
             background: var(--neon-color);
-            color: var(--dark-bg);
-            box-shadow: var(--glow-green);
-            transform: translateY(-5px) scale(1.02);
+            color: #000;
+            box-shadow: 0 0 25px var(--neon-color);
+            transform: translateY(-3px);
         }
         
         .mode-icon {
             font-size: 48px;
             margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-        
-        .mode-btn:hover .mode-icon {
-            filter: none;
+            filter: drop-shadow(0 0 10px var(--neon-color));
         }
         
         .mode-title {
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 600;
             margin-bottom: 5px;
-            text-transform: uppercase;
         }
         
         .mode-desc {
-            font-size: 13px;
-            opacity: 0.7;
+            font-size: 14px;
+            opacity: 0.8;
             line-height: 1.4;
         }
         
-        /* --- Game Over Screen --- */
-        .game-over {
-            /* Copied from .game-modal */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(10, 10, 25, 0.95);
-            color: var(--text-primary);
-            padding: 40px;
-            border-radius: 20px;
-            border: 2px solid var(--neon-color);
-            text-align: center;
-            z-index: 20;
-            box-shadow: var(--shadow-dark), 0 0 15px rgba(57, 255, 20, 0.8);
-            backdrop-filter: blur(15px);
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow-y: auto;
+        
+        /* Hide canvas initially */
+        #gameCanvas {
+            display: none !important;
+        }
+        
+        /* Show canvas when game starts */
+        .game-started #gameCanvas {
+            display: block !important;
+        }
+        
+        /* Show game mode selection initially */
+        .game-mode-selection {
+            display: block;
+        }
+        
+        /* Hide mode selection when game starts */
+        .game-started .game-mode-selection {
+            display: none !important;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 5px;
+            }
             
-            display: none; /* Original display rule */
-        }
-        
-        .game-over h2 {
-            margin: 0 0 20px 0;
-            font-size: 36px;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 20px gold;
-            font-weight: 800;
-            color: gold;
-        }
-        
-        .final-scoreboard {
-            padding: 15px 10px; /* DÜZELTME 2: Padding azaltıldı */
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px; /* DÜZELTME 2: Gap azaltıldı */
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
-            flex-wrap: wrap; /* DÜZELTME 2: Mobil uyumluluk için eklendi */
-        }
-        
-        .final-player-section {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .final-player-avatar {
-            width: 50px; /* DÜZELTME 2: Avatar boyutu 60px'ten 50px'e düşürüldü */
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        
-        .final-player-avatar.player1 {
-            border: 4px solid var(--neon-green);
-            box-shadow: var(--glow-green);
-        }
-        
-        .final-player-avatar.player2 {
-            border: 4px solid var(--neon-pink);
-            box-shadow: var(--glow-pink);
-        }
-        
-        .final-player-name {
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
-            max-width: 100px; /* İsim uzunluğu kısıtlandı */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .final-player-score {
-            font-family: 'Orbitron', monospace;
-            font-weight: bold;
-            font-size: 30px; /* DÜZELTME 2: Skor boyutu 36px'ten 30px'e düşürüldü */
-            min-width: 30px;
-            text-align: center;
-        }
-        
-        #finalScore1 {
-            color: var(--neon-green);
-            text-shadow: 0 0 10px var(--neon-green);
-        }
-        
-        #finalScore2 {
-            color: var(--neon-pink);
-            text-shadow: 0 0 10px var(--neon-pink);
-        }
-        
-        .final-score-divider {
-            color: var(--text-secondary);
-            font-family: 'Orbitron', monospace;
-            font-weight: bold;
-            font-size: 24px; /* DÜZELTME 2: Ayırıcı boyutu 30px'ten 24px'e düşürüldü */
-            margin: 0 5px;
-        }
-        
-        .winner-display h3 {
-            color: gold;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            font-size: 24px; /* DÜZELTME 2: Başlık boyutu 28px'ten 24px'e düşürüldü */
-            text-shadow: 0 0 15px gold;
-            margin: 0;
-            word-wrap: break-word; /* Uzun isimler için kelime kırmayı etkinleştir */
-            max-width: 300px;
-        }
-        
-        .game-over-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .restart-btn {
-            background: var(--neon-green);
-            color: var(--dark-bg);
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 800;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 0.5px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(57, 255, 20, 0.4);
-            text-transform: uppercase;
-        }
-        
-        .restart-btn:last-child {
-            background: var(--neon-pink);
-            color: var(--dark-bg);
-            box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4);
-        }
-        
-        .restart-btn:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 25px var(--neon-color);
-            opacity: 0.9;
-        }
-        
-        /* --- Farcaster Duel Search Modal Styles (for JS injection) --- */
-        .duel-modal-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-        
-        .duel-search-box {
-            background: var(--dark-bg);
-            border: 2px solid var(--neon-color);
-            border-radius: 15px;
-            padding: 25px;
-            width: 350px;
-            max-width: 90vw;
-            box-shadow: var(--shadow-dark), 0 0 10px rgba(57, 255, 20, 0.8);
-        }
-        
-        .duel-title {
-            color: var(--neon-color);
-            text-align: center;
-            margin-bottom: 20px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            text-shadow: 0 0 8px var(--neon-color);
-        }
-        
-        .duel-input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--neon-color);
-            border-radius: 8px;
-            color: var(--neon-color);
-            font-family: 'Inter', sans-serif;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-        
-        .duel-input::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.7;
-        }
-        
-        .duel-input:focus {
-            outline: none;
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 10px var(--neon-pink);
-        }
-        
-        .duel-close-btn {
-            width: 100%;
-            padding: 10px;
-            background: var(--card-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .duel-close-btn:hover {
-            background: var(--neon-pink);
-            color: var(--dark-bg);
-            border-color: var(--neon-pink);
-        }
-        
-        .duel-search-results {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 15px;
-        }
-        
-        .duel-search-results::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .duel-search-results::-webkit-scrollbar-thumb {
-            background-color: var(--neon-green);
-            border-radius: 3px;
-        }
-        
-        .duel-user-div {
-            padding: 8px;
-            border: 1px solid var(--neon-color); /* Border rengi düzeltildi */
-            border-radius: 8px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .duel-user-div:hover {
-            background: rgba(57, 255, 20, 0.1);
-            border-color: var(--neon-green);
-            box-shadow: 0 0 5px var(--neon-green);
-        }
-        
-        .duel-user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: 2px solid var(--neon-green);
-            object-fit: cover;
-        }
-        
-        .duel-username {
-            font-weight: bold;
-            color: var(--neon-green);
-        }
-        
-        .duel-fidsmall {
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-        
-        /* --- Mobile Responsiveness --- */
-        @media (max-width: 500px) { /* Mobil ekranlar için kısıtlamalar */
+            #gameCanvas {
+                width: min(90vw, 350px);
+                height: min(90vh, 500px);
+                margin: 10px;
+                border-width: 2px;
+            }
+            
+            .ui-overlay {
+                top: 5px;
+                left: 5px;
+                right: 5px;
+            }
+            
+            .score-display {
+                font-size: 12px;
+                padding: 6px 10px;
+                min-width: 140px;
+            }
+            
+            .player-name {
+                font-size: 10px;
+                min-width: 40px;
+            }
+            
+            .player-score {
+                font-size: 14px;
+            }
+            
+            .timer-display {
+                font-size: 16px;
+                padding: 6px 10px;
+            }
+            
             .game-mode-selection {
-                padding: 20px;
+                padding: 20px 15px;
+                margin: 10px;
             }
             
             .game-mode-selection h2 {
@@ -735,76 +627,50 @@
             
             .mode-buttons {
                 flex-direction: column;
-                gap: 10px;
+                gap: 12px;
             }
             
             .mode-btn {
-                min-width: 100%;
+                min-width: 180px;
                 padding: 15px;
             }
             
-            .scoreboard-rectangle {
-                padding: 8px;
-                flex-wrap: nowrap;
+            .mode-icon {
+                font-size: 36px;
             }
             
-            .player-avatar {
-                width: 30px;
-                height: 30px;
+            .mode-title {
+                font-size: 16px;
+            }
+            
+            .mode-desc {
+                font-size: 12px;
+            }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            #gameCanvas {
+                width: min(95vw, 95vh, 300px);
+                height: min(95vw, 95vh, 300px);
+                margin: 5px;
+            }
+            
+            .score-display {
+                font-size: 10px;
+                padding: 4px 8px;
+                min-width: 120px;
             }
             
             .player-name {
-                font-size: 11px;
-                max-width: 60px;
+                font-size: 9px;
+                min-width: 35px;
             }
             
-            .player-score {
-                font-size: 18px;
+            .timer-display {
+                font-size: 14px;
+                padding: 4px 8px;
             }
-            
-            .timer-text {
-                font-size: 13px;
-            }
-            
-            .final-scoreboard {
-                gap: 10px;
-                padding: 10px;
-                flex-wrap: wrap; /* İhtiyaç halinde sarmalama */
-            }
-            
-            .final-player-avatar {
-                width: 40px;
-                height: 40px;
-            }
-            
-            .final-player-name {
-                font-size: 12px;
-            }
-            
-            .final-player-score {
-                font-size: 24px;
-            }
-            
-            .final-score-divider {
-                font-size: 20px;
-            }
-            
-            .game-over h2 {
-                font-size: 24px;
-            }
-
-            .winner-display h3 {
-                font-size: 18px;
-            }
-        }
-        
-        /* DÜZELTME 1: Canvas gizleme/gösterme kuralları basitleştirildi. */
-        .game-started #gameCanvas {
-             /* Oyun başladığında kanvas zaten gösteriliyor olmalı, bu kuralı kaldırdık. */
-        }
-        
-        .game-started .game-mode-selection {
-            display: none !important;
         }
     </style>
 </head>
@@ -814,7 +680,7 @@
             <div class="scoreboard-container">
                 <div class="scoreboard-rectangle">
                     <div class="player-section">
-                        <img id="player1Avatar" class="player-avatar player1" src="" alt="Player 1">
+                        <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
                         <span id="player1Name" class="player-name">Player 1</span>
                         <span id="score1" class="player-score">0</span>
                     </div>
@@ -822,7 +688,7 @@
                     <div class="player-section">
                         <span id="score2" class="player-score">0</span>
                         <span id="player2Name" class="player-name">Opponent</span>
-                        <img id="player2Avatar" class="player-avatar player2" src="" alt="Player 2">
+                        <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
                     </div>
                 </div>
                 <div class="timer-container">
@@ -830,7 +696,7 @@
                 </div>
             </div>
         </div>
-        <canvas id="gameCanvas" width="400" height="400"></canvas> 
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
         
         <div class="game-mode-selection" id="gameModeSelection">
             <h2>🎮 Choose Game Mode</h2>
@@ -864,7 +730,7 @@
             <h2>🏆 Game Over! 🏆</h2>
             <div class="final-scoreboard">
                 <div class="final-player-section">
-                    <img id="finalPlayer1Avatar" class="final-player-avatar player1" src="" alt="Player 1">
+                    <img id="finalPlayer1Avatar" class="final-player-avatar" src="" alt="Player 1">
                     <span id="finalPlayer1Name" class="final-player-name">You</span>
                 </div>
                 <div class="final-score-divider">
@@ -873,7 +739,7 @@
                     <span id="finalScore2" class="final-player-score">0</span>
                 </div>
                 <div class="final-player-section">
-                    <img id="finalPlayer2Avatar" class="final-player-avatar player2" src="" alt="Player 2">
+                    <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
                     <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
                 </div>
             </div>
@@ -1013,32 +879,79 @@
             
             // Create search modal
             const modal = document.createElement('div');
-            modal.classList.add('duel-modal-bg'); // Apply new class for background and centering
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
             
             const searchBox = document.createElement('div');
-            searchBox.classList.add('duel-search-box'); // Apply new class for modal box styling
+            searchBox.style.cssText = `
+                background: #001100;
+                border: 2px solid var(--neon-color);
+                border-radius: 15px;
+                padding: 20px;
+                width: 300px;
+                max-width: 90vw;
+            `;
             
             const title = document.createElement('h3');
             title.textContent = '⚔️ Farcaster Duel';
-            title.classList.add('duel-title'); // Apply new class for title styling
+            title.style.cssText = `
+                color: var(--neon-color);
+                text-align: center;
+                margin-bottom: 15px;
+                font-family: 'Courier New', monospace;
+            `;
             
             const input = document.createElement('input');
             input.type = 'text';
             input.placeholder = 'Enter Farcaster username...';
-            input.classList.add('duel-input'); // Apply new class for input styling
+            input.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: #000;
+                border: 1px solid var(--neon-color);
+                border-radius: 5px;
+                color: var(--neon-color);
+                font-family: 'Courier New', monospace;
+                margin-bottom: 10px;
+            `;
+            
+            // Search button removed - using real-time search
             
             const closeBtn = document.createElement('button');
             closeBtn.textContent = 'Close';
-            closeBtn.classList.add('duel-close-btn'); // Apply new class for button styling
+            closeBtn.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: #333;
+                color: var(--neon-color);
+                border: 1px solid var(--neon-color);
+                border-radius: 5px;
+                font-family: 'Courier New', monospace;
+                cursor: pointer;
+            `;
             
             const results = document.createElement('div');
             results.id = 'search-results';
-            results.classList.add('duel-search-results'); // Apply new class for results area
+            results.style.cssText = `
+                max-height: 200px;
+                overflow-y: auto;
+                margin-top: 10px;
+            `;
             
             searchBox.appendChild(title);
             searchBox.appendChild(input);
-            searchBox.appendChild(results); // Changed order to match professional flow: Input, Results, Close
-            searchBox.appendChild(closeBtn); 
+            searchBox.appendChild(closeBtn);
+            searchBox.appendChild(results);
             modal.appendChild(searchBox);
             document.body.appendChild(modal);
             
@@ -1047,7 +960,7 @@
                 if (!query.trim()) return;
                 
                 console.log('🔍 Searching for user:', query);
-                results.innerHTML = '<div style="color: var(--neon-green); text-align: center; font-family: \'Inter\';">Searching...</div>';
+                results.innerHTML = '<div style="color: var(--neon-color); text-align: center;">Searching...</div>';
                 
                 try {
                     const response = await fetch(`https://bouncingballs.ataskira1.workers.dev/search?q=${encodeURIComponent(query)}`);
@@ -1060,15 +973,25 @@
                     if (data.result && data.result.users && data.result.users.length > 0) {
                         data.result.users.forEach(user => {
                             const userDiv = document.createElement('div');
-                            userDiv.classList.add('duel-user-div');
+                            userDiv.style.cssText = `
+                                padding: 10px;
+                                border: 1px solid var(--neon-color);
+                                border-radius: 5px;
+                                margin-bottom: 5px;
+                                cursor: pointer;
+                                background: #000;
+                                color: var(--neon-color);
+                            `;
                             
                             userDiv.innerHTML = `
-                                <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
-                                     class="duel-user-avatar">
-                                <div>
-                                    <div class="duel-username">${user.display_name || user.username}</div>
-                                    <div class="duel-fidsmall">@${user.username}</div>
-                                    <div class="duel-fidsmall">${user.follower_count || 0} followers</div>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
+                                         style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--neon-color);">
+                                    <div>
+                                        <div style="font-weight: bold; color: var(--neon-color);">${user.display_name || user.username}</div>
+                                        <div style="color: #888; font-size: 12px;">@${user.username}</div>
+                                        <div style="color: #666; font-size: 11px;">${user.follower_count || 0} followers</div>
+                                    </div>
                                 </div>
                             `;
                             
@@ -1083,17 +1006,19 @@
                                     verified: user.power_badge || false,
                                     fid: user.fid
                                 };
+                                
                                 document.body.removeChild(modal);
                                 window.startGame();
                             };
+                            
                             results.appendChild(userDiv);
                         });
                     } else {
-                        results.innerHTML = '<div style="color: var(--text-secondary); text-align: center; font-family: \'Inter\';">No users found</div>';
+                        results.innerHTML = '<div style="color: var(--neon-color); text-align: center;">No users found</div>';
                     }
                 } catch (error) {
                     console.error('🔍 Search error:', error);
-                    results.innerHTML = '<div style="color: var(--neon-pink); text-align: center; font-family: \'Inter\';">Search error: ' + error.message + '</div>';
+                    results.innerHTML = '<div style="color: red; text-align: center;">Search error: ' + error.message + '</div>';
                 }
             };
             
@@ -1116,282 +1041,190 @@
         };
         
         window.getFarcasterUserData = async function() {
-            // DÜZELTME: Bu fonksiyonun gerçek içeriği koddan silinmedi, bu yüzden yerinde bırakıldı.
             return window.currentUser || { username: 'testuser', displayName: 'Test User', pfpUrl: 'https://picsum.photos/100/100', verified: false, fid: 12345 };
         };
         
         window.getRealFarcasterUsers = async function() {
-            // DÜZELTME: Bu fonksiyonun gerçek içeriği koddan silinmedi, bu yüzden yerinde bırakıldı.
+            // Fallback users when Neynar API is not available
             const fallbackUsers = [
-                { username: 'vitalik', display_name: 'Vitalik Buterin', pfp_url: 'https://picsum.photos/100/100?random=1', follower_count: 500000, verified_addresses: [], power_badge: true },
-                { username: 'dwr', display_name: 'Dan Romero', pfp_url: 'https://picsum.photos/100/100?random=2', follower_count: 100000, verified_addresses: [], power_badge: true },
-                { username: 'jessepollak', display_name: 'Jesse Pollak', pfp_url: 'https://picsum.photos/100/100?random=3', follower_count: 50000, verified_addresses: [], power_badge: false },
-                { username: 'dankrad', display_name: 'Dankrad Feist', pfp_url: 'https://picsum.photos/100/100?random=4', follower_count: 25000, verified_addresses: [], power_badge: false }
+                {
+                    username: 'vitalik',
+                    display_name: 'Vitalik Buterin',
+                    pfp_url: 'https://picsum.photos/100/100?random=1',
+                    follower_count: 500000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'dwr',
+                    display_name: 'Dan Romero',
+                    pfp_url: 'https://picsum.photos/100/100?random=2',
+                    follower_count: 100000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'jessepollak',
+                    display_name: 'Jesse Pollak',
+                    pfp_url: 'https://picsum.photos/100/100?random=3',
+                    follower_count: 50000,
+                    verified_addresses: [],
+                    power_badge: false
+                },
+                {
+                    username: 'dankrad',
+                    display_name: 'Dankrad Feist',
+                    pfp_url: 'https://picsum.photos/100/100?random=4',
+                    follower_count: 25000,
+                    verified_addresses: [],
+                    power_badge: false
+                }
             ];
             
             try {
                 // Try Neynar API first
-                const response = await fetch(`https://bouncingballs.ataskira1.workers.dev/random`); // Assuming the worker is handling the random user fetch safely
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/random?api_key=${NEYNAR_API_KEY}`, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
                 if (response.ok) {
                     const data = await response.json();
-                    return data.users || [];
+                    return [data.user] || [];
                 } else {
-                    console.log('⚠️ Random user API failed, using fallback users');
+                    console.log('⚠️ Neynar API failed, using fallback users');
                     return fallbackUsers;
                 }
             } catch (error) {
-                console.log('⚠️ Random user API error, using fallback users:', error);
+                console.log('⚠️ Neynar API error, using fallback users:', error);
                 return fallbackUsers;
             }
         };
         
         window.startGame = function() {
             console.log('🎮 Starting game...');
-            // Logic to transition to game screen
-            document.body.classList.add('game-started');
-            document.getElementById('gameModeSelection').style.display = 'none';
+            // Add the 'game-started' class to the game-container to show the canvas and hide the menu
+            document.querySelector('.game-container').classList.add('game-started');
             document.querySelector('.scoreboard-container').classList.add('show');
-
-            // Set up player names and avatars
-            document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
-            document.getElementById('player1Name').textContent = window.currentUser.displayName || `@${window.currentUser.username}`;
-            document.getElementById('player2Avatar').src = window.opponentUser.pfpUrl;
-            document.getElementById('player2Name').textContent = window.opponentUser.displayName || `@${window.opponentUser.username}`;
-
-            // --- CANVAS LOGIC HERE (Simulated) ---
-            // In a real game, this would initialize the canvas engine
-            console.log('🏁 Game engine initialized. Game loop starts.');
             
-            // Simple game loop simulation for testing UI (replace with real game logic)
-            // Simulating a game duration
-            let gameTime = 60;
-            const timerEl = document.getElementById('timer');
-            const score1El = document.getElementById('score1');
-            const score2El = document.getElementById('score2');
+            // Your existing game initialization logic (e.g., creating a new Game object) should be called here
+            // Example: window.game = new Game('gameCanvas', window.currentUser, window.opponentUser);
+            // window.game.start();
             
-            let score1 = 0;
-            let score2 = 0;
-
-            const updateScores = () => {
-                score1El.textContent = score1;
-                score2El.textContent = score2;
-            };
-
-            const gameInterval = setInterval(() => {
-                gameTime--;
-                const minutes = Math.floor(gameTime / 60);
-                const seconds = gameTime % 60;
-                timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                // Simulate random scoring
-                if (Math.random() < 0.1 && gameTime > 0) {
-                    if (Math.random() > 0.5) {
-                        score1++;
-                    } else {
-                        score2++;
-                    }
-                    updateScores();
-                }
-
-                if (gameTime <= 0) {
-                    clearInterval(gameInterval);
-                    window.endGame(score1, score2);
-                }
-            }, 1000);
-
-            window.currentGameInterval = gameInterval;
+            alert('Game starting!'); // Remove this after integrating game logic
         };
-
-        window.endGame = function(finalScore1, finalScore2) {
-            console.log('🛑 Game ended.');
-            document.querySelector('.scoreboard-container').classList.remove('show');
-
-            // Show Game Over Modal
-            const gameOverModal = document.getElementById('gameOver');
-            gameOverModal.style.display = 'block';
-
-            // Update final scores and winner
-            document.getElementById('finalPlayer1Avatar').src = window.currentUser.pfpUrl;
-            document.getElementById('finalPlayer1Name').textContent = window.currentUser.displayName || `@${window.currentUser.username}`;
-            document.getElementById('finalScore1').textContent = finalScore1;
-
-            document.getElementById('finalPlayer2Avatar').src = window.opponentUser.pfpUrl;
-            document.getElementById('finalPlayer2Name').textContent = window.opponentUser.displayName || `@${window.opponentUser.username}`;
-            document.getElementById('finalScore2').textContent = finalScore2;
-
-            const winnerDisplay = document.getElementById('winnerDisplay');
-            const winnerText = document.getElementById('winnerText');
-
-            if (finalScore1 > finalScore2) {
-                winnerText.textContent = `🎉 WINNER! (${window.currentUser.displayName || `@${window.currentUser.username}`}) 🎉`;
-                winnerDisplay.style.display = 'block';
-            } else if (finalScore2 > finalScore1) {
-                winnerText.textContent = `😭 DEFEAT! (${window.opponentUser.displayName || `@${window.opponentUser.username}`}) 😭`;
-                winnerDisplay.style.display = 'block';
-            } else {
-                winnerText.textContent = `🤝 DRAW!`;
-                winnerDisplay.style.display = 'block';
-            }
-        }
-
+        
         window.restartGame = function() {
-            if (window.currentGameInterval) {
-                clearInterval(window.currentGameInterval);
-            }
-            document.body.classList.remove('game-started');
+            console.log('🔄 Restarting game...');
+            document.querySelector('.game-container').classList.remove('game-started');
             document.getElementById('gameOver').style.display = 'none';
             document.getElementById('gameModeSelection').style.display = 'block';
-            console.log('🔄 Game restarted. Mode selection screen active.');
-        }
-
+            document.querySelector('.scoreboard-container').classList.remove('show');
+            
+            // Reset scores and timer
+            document.getElementById('score1').textContent = '0';
+            document.getElementById('score2').textContent = '0';
+            document.getElementById('timer').textContent = '1:00';
+            
+            // Your existing game reset logic should be called here
+            // Example: if (window.game) window.game.reset();
+        };
+        
         window.shareToFarcaster = function() {
+            console.log('📤 Sharing result to Farcaster...');
+            
+            const player1Name = document.getElementById('finalPlayer1Name').textContent;
+            const player2Name = document.getElementById('finalPlayer2Name').textContent;
             const score1 = document.getElementById('finalScore1').textContent;
             const score2 = document.getElementById('finalScore2').textContent;
-            const user1 = window.currentUser.displayName || `@${window.currentUser.username}`;
-            const user2 = window.opponentUser.displayName || `@${window.opponentUser.username}`;
+            const winnerText = document.getElementById('winnerText').textContent;
             
-            let resultText = `I just played Bouncing Balls on Farcaster Mini Apps! I scored ${score1} against ${user2}'s ${score2}.`;
-            if (score1 > score2) resultText = `🔥 I dominated ${user2} (${score1}-${score2}) in Bouncing Balls!`;
-            if (score2 > score1) resultText = `😔 ${user2} beat me (${score2}-${score1}) in Bouncing Balls... Rematch?`;
-            
-            const shareUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(resultText)}&embeds[]=${encodeURIComponent('https://bouncingballsfarcaster.vercel.app')}`;
-            window.open(shareUrl, '_blank');
-        }
-        
-        window.updateUserInterface = function updateUserInterface() {
-            // Show user information in UI
-            const userNameEl = document.getElementById('userName');
-            const userAvatarEl = document.getElementById('userAvatar');
-            const userStatusEl = document.getElementById('userStatus');
-            
-            const userData = window.currentUser;
-
-            if (userData && userData.username) {
-                userNameEl.textContent = userData.displayName || `@${userData.username}`;
-                userAvatarEl.src = userData.pfpUrl || 'https://picsum.photos/100/100';
-                
-                if (userData.username !== 'testuser') {
-                    userStatusEl.textContent = `✅ Playing as @${userData.username}`;
-                } else {
-                    userStatusEl.textContent = '🎮 Ready to play!';
-                }
+            let castText;
+            if (winnerText.includes('WINNER')) {
+                const winner = score1 > score2 ? player1Name : player2Name;
+                castText = `Bouncing Balls'da büyük maç! 🏆 ${winner} kazandı! Skor: ${player1Name} ${score1} - ${score2} ${player2Name}. Hemen oyna!`;
             } else {
-                userNameEl.textContent = 'Guest Player';
-                userAvatarEl.src = 'https://picsum.photos/100/100';
-                userStatusEl.textContent = '⚠️ Farcaster connection failed, playing as Guest.';
+                castText = `Bouncing Balls'da heyecanlı maç! Berabere! Skor: ${player1Name} ${score1} - ${score2} ${player2Name}. Hemen oyna!`;
+            }
+            
+            const castURL = `https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}&embeds[]=${encodeURIComponent('https://bouncingballsfarcaster.vercel.app')}`;
+            
+            window.open(castURL, '_blank');
+        };
+        
+        window.updateUserInterface = function() {
+            const user = window.currentUser || {
+                username: 'Guest',
+                displayName: 'Guest Player',
+                pfpUrl: 'https://picsum.photos/100/100'
+            };
+            
+            document.getElementById('userAvatar').src = user.pfpUrl;
+            document.getElementById('userName').textContent = user.displayName;
+            document.getElementById('userStatus').textContent = `✅ Playing as @${user.username}`;
+            
+            // Update scoreboard names/avatars with current user (Player 1)
+            document.getElementById('player1Avatar').src = user.pfpUrl;
+            document.getElementById('player1Name').textContent = user.displayName;
+            
+            // Update scoreboard with opponent user (Player 2) on match start
+            if (window.opponentUser) {
+                document.getElementById('player2Avatar').src = window.opponentUser.pfpUrl;
+                document.getElementById('player2Name').textContent = window.opponentUser.displayName;
             }
         };
         
-        // Initialize Farcaster SDK and User Data
-        window.initializeFarcasterSDK = async function initializeFarcasterSDK() {
-            try {
-                console.log('🔄 Initializing Farcaster SDK...');
-                let attempts = 0;
-                while (!window.sdk && attempts < 20) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    attempts++;
-                    if (!window.sdk && attempts === 5) {
-                        await loadFarcasterSDK();
-                    }
-                }
-                
-                if (window.sdk && window.sdk.actions) {
-                    try {
-                        await window.sdk.actions.ready();
-                        console.log("✅ Farcaster SDK initialized successfully - app fully loaded");
-                    } catch (readyError) {
-                        console.error('Failed to initialize Farcaster SDK:', readyError);
-                        setTimeout(async () => {
-                            try {
-                                await window.sdk.actions.ready();
-                                console.log('✅ Farcaster SDK initialized on retry');
-                            } catch (retryError) {
-                                console.error('❌ Farcaster SDK retry failed:', retryError);
-                            }
-                        }, 1000);
-                    }
-                }
-
-                if (window.sdk) {
-                    console.log('✅ window.sdk ready!');
-                    try {
-                        let user = null;
-                        if (window.sdk && window.sdk.context) {
-                            try {
-                                const context = await window.sdk.context;
-                                if (context.user) {
-                                    user = { fid: context.user.fid, username: context.user.username, displayName: context.user.displayName, pfpUrl: context.user.pfpUrl };
-                                }
-                            } catch (e) {
-                                console.log('👤 Context access failed:', e);
-                            }
-                        }
-
-                        if (user) {
-                            const userData = user;
-                            if (userData) {
-                                window.currentUser = { 
-                                    username: userData.username || 'farcaster_user', 
-                                    displayName: userData.displayName || userData.username || 'Farcaster User', 
-                                    pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100', 
-                                    verified: userData.verified || false, 
-                                    fid: userData.fid || Math.floor(Math.random() * 10000) 
-                                };
-                                console.log('✅ Current user set:', window.currentUser);
-                                updateUserInterface();
-                                return;
-                            }
-                        }
-                    } catch (sdkError) {
-                        console.log('⚠️ window.sdk error:', sdkError);
-                    }
-                }
-
-                if (window.FarcasterFrame) {
-                    try {
-                        const sdk = await window.FarcasterFrame.init({ allowedOrigins: ['*'] });
-                        let user = null;
-                        if (sdk.getUser) { user = await sdk.getUser(); } else if (sdk.user) { user = sdk.user; } else if (window.farcaster && window.farcaster.user) { user = window.farcaster.user; }
-                        if (user) {
-                            window.currentUser = { username: user.username, displayName: user.displayName || user.username, pfpUrl: user.pfpUrl || user.pfp, verified: user.verified || false, fid: user.fid };
-                            updateUserInterface();
-                            return;
-                        }
-                    } catch (frameError) {
-                        console.log('⚠️ FarcasterFrame error:', frameError);
-                    }
-                }
-                
-                // Fallback to default user if no SDK user is found
-                window.currentUser = await window.getFarcasterUserData(); 
-                updateUserInterface();
-
-            } catch (error) {
-                console.log('❌ Farcaster SDK fatal error:', error);
-                window.currentUser = await window.getFarcasterUserData();
-                updateUserInterface();
+        // Neon color management (for aesthetic changes)
+        const neonColors = [
+            '#00ff00', // Green
+            '#ff0080', // Pink
+            '#00ccff', // Cyan
+            '#ffcc00', // Yellow
+            '#9933ff'  // Purple
+        ];
+        
+        function getRandomNeonColor() {
+            return neonColors[Math.floor(Math.random() * neonColors.length)];
+        }
+        
+        function applyNeonColor(color) {
+            document.documentElement.style.setProperty('--neon-color', color);
+            // Also apply to specific elements with fixed colors if needed
+            const player1Avatar = document.querySelector('.player-avatar.player1');
+            if (player1Avatar) {
+                player1Avatar.style.borderColor = color;
+                player1Avatar.style.boxShadow = `0 0 8px ${color}`;
             }
         }
-
+        
+        // Initialize Farcaster SDK and get user data
         window.initializeGame = async function initializeGame() {
-            await window.initializeFarcasterSDK();
-            console.log('🎮 Game initialized and ready.');
+            try {
+                await initializeFarcasterSDK();
+                
+                // Get user data automatically
+                const userData = await getFarcasterUserData();
+                window.currentUser = userData;
+                console.log('✅ User data loaded:', userData);
+                
+                if (userData && userData.username && userData.username !== 'testuser') {
+                    document.getElementById('userStatus').textContent = `✅ Playing as @${userData.username}`;
+                    console.log(`🎯 Takım adı = @${userData.username}`);
+                    console.log(`🖼️ Profil fotoğrafı = ${userData.pfpUrl}`);
+                    console.log('👤 Full user data:', userData);
+                } else {
+                    document.getElementById('userStatus').textContent = '🎮 Ready to play!';
+                    console.log('⚠️ User data not available or test user:', userData);
+                }
+            } catch (error) {
+                console.error('Error initializing:', error);
+                document.getElementById('userStatus').textContent = '🎮 Ready to play!';
+            }
         }
         
         // Select first random color when page loads
-        const getRandomNeonColor = () => {
-            const colors = ['#39FF14', '#FF0080', '#00FFFF', '#FFD700']; // Green, Pink, Cyan, Gold
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
-        
-        const applyNeonColor = (color) => {
-            document.documentElement.style.setProperty('--neon-color', color);
-            // Reapply glow based on the new color if needed
-            document.documentElement.style.setProperty('--glow-green', `0 0 10px ${color}, 0 0 20px ${color}`);
-        }
-
         const initialColor = getRandomNeonColor();
         applyNeonColor(initialColor);
+        console.log('🎨 Initial neon color:', initialColor);
         
         // Initialize game when page loads
         window.addEventListener('load', async () => {
