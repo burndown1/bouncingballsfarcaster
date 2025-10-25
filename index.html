@@ -2651,7 +2651,7 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw realistic flame trail effect - only when bouncing
+                // Draw realistic flame trail effect with smoke - only when bouncing
                 if ((ball.bouncing || ball.justBounced) && (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5)) {
                     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
                     const trailIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
@@ -2664,38 +2664,38 @@
                     const startX = ball.x + trailX * ball.radius;
                     const startY = ball.y + trailY * ball.radius;
                     
-                    // Create realistic flame trail with irregular shape
-                    for (let i = 0; i < 8; i++) {
-                        const fadeProgress = i / 8; // 0 to 1
-                        const trailLength = (ball.radius + 30) * trailIntensity * (1 - fadeProgress * 0.7);
+                    // Create realistic flame trail with irregular shape and smoke
+                    for (let i = 0; i < 10; i++) {
+                        const fadeProgress = i / 10; // 0 to 1
+                        const trailLength = (ball.radius + 45) * trailIntensity * (1 - fadeProgress * 0.7);
                         
                         // Add some randomness to make it look like real flame
-                        const randomOffsetX = (Math.random() - 0.5) * ball.radius * 0.5;
-                        const randomOffsetY = (Math.random() - 0.5) * ball.radius * 0.5;
+                        const randomOffsetX = (Math.random() - 0.5) * ball.radius * 0.6;
+                        const randomOffsetY = (Math.random() - 0.5) * ball.radius * 0.6;
                         
                         const trailXPos = startX + trailX * trailLength + randomOffsetX;
                         const trailYPos = startY + trailY * trailLength + randomOffsetY;
-                        const trailWidth = (ball.radius * 0.4) * (1 - fadeProgress) * trailIntensity;
+                        const trailWidth = (ball.radius * 0.6) * (1 - fadeProgress) * trailIntensity;
                         
-                        // Flame colors - realistic fire colors (more visible)
+                        // Flame colors - realistic fire colors (bigger and more visible)
                         let trailColor;
                         let alpha;
                         if (i < 2) {
                             trailColor = '#FFD700'; // Golden yellow core
-                            alpha = 0.5 - fadeProgress * 0.4;
+                            alpha = 0.7 - fadeProgress * 0.5;
                         } else if (i < 4) {
                             trailColor = '#FF6600'; // Orange
-                            alpha = 0.45 - fadeProgress * 0.35;
+                            alpha = 0.65 - fadeProgress * 0.45;
                         } else if (i < 6) {
                             trailColor = '#FF3300'; // Red-orange
-                            alpha = 0.4 - fadeProgress * 0.3;
+                            alpha = 0.6 - fadeProgress * 0.4;
                         } else {
                             trailColor = '#CC0000'; // Deep red
-                            alpha = 0.35 - fadeProgress * 0.25;
+                            alpha = 0.55 - fadeProgress * 0.35;
                         }
                         
                         // Apply soft fading effect
-                        alpha = Math.max(alpha, 0.15); // Higher minimum visibility
+                        alpha = Math.max(alpha, 0.2); // Higher minimum visibility
                         
                         // Create irregular flame shape using multiple circles
                         for (let j = 0; j < 3; j++) {
@@ -2715,14 +2715,33 @@
                             ctx.arc(flameX, flameY, flameSize, 0, Math.PI * 2);
                             ctx.fill();
                             
-                            // Add soft glow effect for flame
+                            // Add stronger glow effect for flame
                             ctx.shadowColor = trailColor;
-                            ctx.shadowBlur = 12 * (1 - fadeProgress);
-                            ctx.fillStyle = trailColor + Math.floor(alpha * 80).toString(16).padStart(2, '0');
+                            ctx.shadowBlur = 18 * (1 - fadeProgress);
+                            ctx.fillStyle = trailColor + Math.floor(alpha * 100).toString(16).padStart(2, '0');
                             ctx.beginPath();
                             ctx.arc(flameX, flameY, flameSize * 0.6, 0, Math.PI * 2);
                             ctx.fill();
                             ctx.shadowBlur = 0;
+                        }
+                        
+                        // Add smoke effect behind flame (only in outer segments)
+                        if (i > 4) {
+                            const smokeX = trailXPos + (Math.random() - 0.5) * trailWidth * 1.5;
+                            const smokeY = trailYPos + (Math.random() - 0.5) * trailWidth * 1.5;
+                            const smokeSize = trailWidth * 1.2;
+                            
+                            // Create smoke gradient
+                            const smokeGradient = ctx.createRadialGradient(smokeX, smokeY, 0, smokeX, smokeY, smokeSize);
+                            const smokeAlpha = (i / 10) * 0.15; // Subtle smoke
+                            smokeGradient.addColorStop(0, '#4A4A4A' + Math.floor(smokeAlpha * 255).toString(16).padStart(2, '0'));
+                            smokeGradient.addColorStop(0.5, '#3A3A3A' + Math.floor(smokeAlpha * 200).toString(16).padStart(2, '0'));
+                            smokeGradient.addColorStop(1, 'transparent');
+                            
+                            ctx.fillStyle = smokeGradient;
+                            ctx.beginPath();
+                            ctx.arc(smokeX, smokeY, smokeSize, 0, Math.PI * 2);
+                            ctx.fill();
                         }
                         
                         // Add flame flicker effect (more visible)
@@ -2731,9 +2750,9 @@
                             const flickerY = trailYPos + (Math.random() - 0.5) * trailWidth * 1.2;
                             const flickerSize = trailWidth * 0.3;
                             
-                            ctx.fillStyle = '#FFD700' + Math.floor(alpha * 100).toString(16).padStart(2, '0');
+                            ctx.fillStyle = '#FFD700' + Math.floor(alpha * 120).toString(16).padStart(2, '0');
                             ctx.shadowColor = '#FFD700';
-                            ctx.shadowBlur = 8;
+                            ctx.shadowBlur = 10;
                             ctx.beginPath();
                             ctx.arc(flickerX, flickerY, flickerSize, 0, Math.PI * 2);
                             ctx.fill();
