@@ -205,7 +205,7 @@
             max-width: 500px;
             z-index: 20;
             display: none;
-            margin-left: 5px;
+            margin-left: -2px;
         }
         
         .scoreboard-container.show {
@@ -214,22 +214,22 @@
         
         .scoreboard-rectangle {
             background: rgba(10, 10, 25, 0.7);
-            border: 1px solid var(--neon-green);
+            border: 1px solid var(--neon-color);
             border-radius: 10px;
-            padding: 8px 12px;
+            padding: 6px 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(5px);
             box-shadow: var(--shadow-dark);
             margin-bottom: 10px;
-            gap: 2px;
+            gap: 1px;
         }
         
         .player-section {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 3px;
         }
         
         .player-avatar {
@@ -290,15 +290,15 @@
         }
         
         .timer-text {
-            color: var(--neon-green);
+            color: var(--neon-color);
             font-family: 'Inter', monospace;
             font-weight: bold;
             font-size: 16px;
             background: rgba(10, 10, 25, 0.8);
             padding: 5px 15px;
             border-radius: 10px;
-            border: 1px solid var(--neon-green);
-            box-shadow: var(--glow-green);
+            border: 1px solid var(--neon-color);
+            box-shadow: 0 0 10px var(--neon-color);
             display: inline-block;
         }
         .score-display {
@@ -563,13 +563,13 @@
             background: var(--card-bg);
             border: 1px solid var(--neon-green);
             color: var(--neon-green);
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 180px;
+            min-width: 150px;
             flex: 0 1 auto;
-            max-width: 220px;
+            max-width: 180px;
             text-align: center;
             backdrop-filter: blur(10px);
             display: flex;
@@ -587,8 +587,8 @@
         }
         
         .mode-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 36px;
+            margin-bottom: 8px;
             transition: all 0.3s;
         }
         
@@ -597,16 +597,16 @@
         }
         
         .mode-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             text-transform: uppercase;
         }
         
         .mode-desc {
-            font-size: 13px;
+            font-size: 12px;
             opacity: 0.7;
-            line-height: 1.4;
+            line-height: 1.3;
         }
         
         
@@ -2645,10 +2645,10 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw rocket flame trail effect
+                // Draw realistic flame trail effect
                 if (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5) {
                     const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                    const trailIntensity = Math.min(speed / 6, 1); // Normalize speed to 0-1
+                    const trailIntensity = Math.min(speed / 4, 1); // Normalize speed to 0-1
                     
                     // Calculate trail direction (opposite to movement)
                     const trailX = -ball.vx / speed;
@@ -2658,84 +2658,80 @@
                     const startX = ball.x + trailX * ball.radius;
                     const startY = ball.y + trailY * ball.radius;
                     
-                    // Create flame trail with soft, wispy effect
-                    for (let i = 0; i < 15; i++) {
-                        const fadeProgress = i / 15; // 0 to 1
-                        const trailLength = (ball.radius + 40) * trailIntensity * (1 - fadeProgress * 0.9);
-                        const trailXPos = startX + trailX * trailLength;
-                        const trailYPos = startY + trailY * trailLength;
-                        const trailWidth = (ball.radius * 0.3) * (1 - fadeProgress) * trailIntensity;
+                    // Create realistic flame trail with irregular shape
+                    for (let i = 0; i < 8; i++) {
+                        const fadeProgress = i / 8; // 0 to 1
+                        const trailLength = (ball.radius + 25) * trailIntensity * (1 - fadeProgress * 0.7);
                         
-                        // Flame colors - soft and wispy
+                        // Add some randomness to make it look like real flame
+                        const randomOffsetX = (Math.random() - 0.5) * ball.radius * 0.3;
+                        const randomOffsetY = (Math.random() - 0.5) * ball.radius * 0.3;
+                        
+                        const trailXPos = startX + trailX * trailLength + randomOffsetX;
+                        const trailYPos = startY + trailY * trailLength + randomOffsetY;
+                        const trailWidth = (ball.radius * 0.4) * (1 - fadeProgress) * trailIntensity;
+                        
+                        // Flame colors - realistic fire colors
                         let trailColor;
                         let alpha;
-                        if (i < 4) {
+                        if (i < 2) {
                             trailColor = '#FFD700'; // Golden yellow core
-                            alpha = 0.4 - fadeProgress * 0.3;
-                        } else if (i < 8) {
+                            alpha = 0.6 - fadeProgress * 0.5;
+                        } else if (i < 4) {
                             trailColor = '#FF6600'; // Orange
-                            alpha = 0.3 - fadeProgress * 0.25;
-                        } else if (i < 12) {
+                            alpha = 0.5 - fadeProgress * 0.4;
+                        } else if (i < 6) {
                             trailColor = '#FF3300'; // Red-orange
-                            alpha = 0.25 - fadeProgress * 0.2;
+                            alpha = 0.4 - fadeProgress * 0.3;
                         } else {
                             trailColor = '#CC0000'; // Deep red
-                            alpha = 0.2 - fadeProgress * 0.15;
+                            alpha = 0.3 - fadeProgress * 0.2;
                         }
                         
                         // Apply soft fading effect
-                        alpha = Math.max(alpha, 0.05); // Very low minimum visibility
+                        alpha = Math.max(alpha, 0.1); // Minimum visibility
                         
-                        // Create soft radial gradient for flame effect
-                        const gradient = ctx.createRadialGradient(trailXPos, trailYPos, 0, trailXPos, trailYPos, trailWidth);
-                        gradient.addColorStop(0, trailColor + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
-                        gradient.addColorStop(0.2, trailColor + Math.floor(alpha * 150).toString(16).padStart(2, '0'));
-                        gradient.addColorStop(0.5, trailColor + Math.floor(alpha * 80).toString(16).padStart(2, '0'));
-                        gradient.addColorStop(1, 'transparent');
-                        
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.arc(trailXPos, trailYPos, trailWidth, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Add soft glow effect for flame
-                        ctx.shadowColor = trailColor;
-                        ctx.shadowBlur = 15 * (1 - fadeProgress);
-                        ctx.fillStyle = trailColor + Math.floor(alpha * 80).toString(16).padStart(2, '0');
-                        ctx.beginPath();
-                        ctx.arc(trailXPos, trailYPos, trailWidth * 0.5, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.shadowBlur = 0;
-                        
-                        // Add flame flicker effect
-                        if (Math.random() > 0.7 && i < 8) {
-                            const flickerX = trailXPos + (Math.random() - 0.5) * trailWidth * 1.2;
-                            const flickerY = trailYPos + (Math.random() - 0.5) * trailWidth * 1.2;
-                            const flickerSize = trailWidth * 0.4;
+                        // Create irregular flame shape using multiple circles
+                        for (let j = 0; j < 3; j++) {
+                            const flameX = trailXPos + (Math.random() - 0.5) * trailWidth * 0.8;
+                            const flameY = trailYPos + (Math.random() - 0.5) * trailWidth * 0.8;
+                            const flameSize = trailWidth * (0.5 + Math.random() * 0.5);
                             
-                            ctx.fillStyle = '#FFD700' + Math.floor(alpha * 100).toString(16).padStart(2, '0');
-                            ctx.shadowColor = '#FFD700';
-                            ctx.shadowBlur = 8;
+                            // Create soft radial gradient for flame effect
+                            const gradient = ctx.createRadialGradient(flameX, flameY, 0, flameX, flameY, flameSize);
+                            gradient.addColorStop(0, trailColor + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
+                            gradient.addColorStop(0.3, trailColor + Math.floor(alpha * 120).toString(16).padStart(2, '0'));
+                            gradient.addColorStop(0.7, trailColor + Math.floor(alpha * 60).toString(16).padStart(2, '0'));
+                            gradient.addColorStop(1, 'transparent');
+                            
+                            ctx.fillStyle = gradient;
                             ctx.beginPath();
-                            ctx.arc(flickerX, flickerY, flickerSize, 0, Math.PI * 2);
+                            ctx.arc(flameX, flameY, flameSize, 0, Math.PI * 2);
+                            ctx.fill();
+                            
+                            // Add soft glow effect for flame
+                            ctx.shadowColor = trailColor;
+                            ctx.shadowBlur = 12 * (1 - fadeProgress);
+                            ctx.fillStyle = trailColor + Math.floor(alpha * 60).toString(16).padStart(2, '0');
+                            ctx.beginPath();
+                            ctx.arc(flameX, flameY, flameSize * 0.6, 0, Math.PI * 2);
                             ctx.fill();
                             ctx.shadowBlur = 0;
                         }
                         
-                        // Add wispy motion blur effect
-                        if (i > 0) {
-                            const prevTrailLength = (ball.radius + 40) * trailIntensity * (1 - (i-1) / 15 * 0.9);
-                            const prevTrailXPos = startX + trailX * prevTrailLength;
-                            const prevTrailYPos = startY + trailY * prevTrailLength;
+                        // Add flame flicker effect
+                        if (Math.random() > 0.6 && i < 5) {
+                            const flickerX = trailXPos + (Math.random() - 0.5) * trailWidth * 1.5;
+                            const flickerY = trailYPos + (Math.random() - 0.5) * trailWidth * 1.5;
+                            const flickerSize = trailWidth * 0.3;
                             
-                            // Draw soft motion blur line
-                            ctx.strokeStyle = trailColor + Math.floor(alpha * 60).toString(16).padStart(2, '0');
-                            ctx.lineWidth = trailWidth * 0.2;
-                            ctx.lineCap = 'round';
+                            ctx.fillStyle = '#FFD700' + Math.floor(alpha * 80).toString(16).padStart(2, '0');
+                            ctx.shadowColor = '#FFD700';
+                            ctx.shadowBlur = 6;
                             ctx.beginPath();
-                            ctx.moveTo(prevTrailXPos, prevTrailYPos);
-                            ctx.lineTo(trailXPos, trailYPos);
-                            ctx.stroke();
+                            ctx.arc(flickerX, flickerY, flickerSize, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
                         }
                     }
                 }
