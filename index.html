@@ -2881,8 +2881,9 @@
             // Normal game end
             gameRunning = false;
             
-            // Hide scoreboard when game ends
+            // Hide scoreboard and canvas when game ends
             document.querySelector('.scoreboard-container').classList.remove('show');
+            document.getElementById('gameCanvas').style.display = 'none';
             
             // Stop background music removed as requested
             
