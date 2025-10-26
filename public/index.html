@@ -1110,10 +1110,10 @@
             </div>
             
             <div class="mode-buttons">
-                <button class="mode-btn" onclick="startRandomFarcasterMatch()">
-                    <div class="mode-icon">🎲</div>
-                    <div class="mode-title">Random Farcaster Match</div>
-                    <div class="mode-desc">Play with random Farcaster user</div>
+                <button class="mode-btn" onclick="startChallengeTopPlayers()">
+                    <div class="mode-icon">🏆</div>
+                    <div class="mode-title">Challenge Top Players</div>
+                    <div class="mode-desc">Play vs TOP 20 leaders</div>
                 </button>
                 <button class="mode-btn" onclick="startFarcasterDuel()">
                     <div class="mode-icon">⚔️</div>
@@ -2413,6 +2413,98 @@
                     displayName: 'CPU Player',
                     pfpUrl: 'https://picsum.photos/100/100'
                 };
+                startGame();
+            }
+        }
+
+        window.startChallengeTopPlayers = async function startChallengeTopPlayers() {
+            console.log('🏆 Starting challenge against TOP 20 players...');
+            
+            // Set game mode to duel (saves to leaderboard)
+            window.gameMode = 'duel';
+            
+            try {
+                // Get current user data
+                currentUser = await getFarcasterUserData();
+                if (!currentUser) {
+                    currentUser = {
+                        username: 'Guest',
+                        displayName: 'Guest Player',
+                        pfpUrl: 'https://picsum.photos/100/100',
+                        fid: 0
+                    };
+                }
+                
+                // Fetch leaderboard (TOP 20)
+                console.log('🏆 Fetching leaderboard...');
+                const response = await fetch('https://bouncingballs.ataskira1.workers.dev/leaderboard?period=30d');
+                const data = await response.json();
+                
+                console.log('🏆 Leaderboard data:', data);
+                
+                if (!data.leaderboard || data.leaderboard.length === 0) {
+                    console.log('⚠️ No players in leaderboard, using fallback');
+                    opponentUser = {
+                        username: 'CPU',
+                        displayName: 'CPU Player',
+                        pfpUrl: 'https://picsum.photos/100/100',
+                        fid: 999
+                    };
+                    window.opponentUser = opponentUser;
+                    startGame();
+                    return;
+                }
+                
+                // Get TOP 20 players
+                const top20 = data.leaderboard.slice(0, 20);
+                
+                // Filter out current user
+                const availableOpponents = top20.filter(player => player.fid !== currentUser.fid);
+                
+                if (availableOpponents.length === 0) {
+                    console.log('⚠️ No available opponents, using fallback');
+                    opponentUser = {
+                        username: 'CPU',
+                        displayName: 'CPU Player',
+                        pfpUrl: 'https://picsum.photos/100/100',
+                        fid: 999
+                    };
+                    window.opponentUser = opponentUser;
+                    startGame();
+                    return;
+                }
+                
+                // Select random opponent from TOP 20
+                const randomIndex = Math.floor(Math.random() * availableOpponents.length);
+                const selectedPlayer = availableOpponents[randomIndex];
+                
+                console.log('🏆 Selected opponent:', selectedPlayer);
+                
+                opponentUser = {
+                    username: selectedPlayer.username,
+                    displayName: selectedPlayer.displayName || selectedPlayer.username,
+                    pfpUrl: selectedPlayer.pfpUrl || 'https://picsum.photos/100/100',
+                    fid: selectedPlayer.fid
+                };
+                
+                window.opponentUser = opponentUser;
+                
+                console.log('👤 Current user:', currentUser);
+                console.log('👤 Opponent user (TOP 20):', opponentUser);
+                
+                // Start the game
+                startGame();
+                
+            } catch (error) {
+                console.error('❌ Error starting challenge:', error);
+                // Fallback
+                opponentUser = {
+                    username: 'CPU',
+                    displayName: 'CPU Player',
+                    pfpUrl: 'https://picsum.photos/100/100',
+                    fid: 999
+                };
+                window.opponentUser = opponentUser;
                 startGame();
             }
         }
