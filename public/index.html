@@ -1,0 +1,3417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Balls</title>
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Bouncing Balls">
+    <meta property="og:description" content="An arcade football game with bouncing balls">
+    <meta property="og:image" content="https://bouncingballsfarcaster.vercel.app/app-icon-512.png">
+    <meta property="og:url" content="https://bouncingballsfarcaster.vercel.app">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bouncing Balls">
+    
+    <!-- Frame Meta Tags -->
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="https://bouncingballsfarcaster.vercel.app/app-icon-512.png" />
+    <meta property="fc:frame:button:1" content="Play Game" />
+    <meta property="fc:frame:button:1:action" content="link" />
+    <meta property="fc:frame:button:1:target" content="https://bouncingballsfarcaster.vercel.app" />
+    <meta property="fc:frame:post_url" content="https://bouncingballsfarcaster.vercel.app" />
+    <meta property="fc:frame:button:1:post_url" content="https://bouncingballsfarcaster.vercel.app" />
+    
+    <!-- Additional Meta Tags -->
+    <meta name="description" content="An arcade football game with bouncing balls" />
+    <meta name="keywords" content="football, bouncing, balls, arcade" />
+    <meta name="author" content="Bouncing Balls" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Bouncing Balls" />
+    <meta name="twitter:description" content="An arcade football game with bouncing balls" />
+    <meta name="twitter:image" content="https://bouncingballsfarcaster.vercel.app/app-icon-512.png" />
+    
+    <!-- Mini App Specific Meta Tags -->
+    <meta name="farcaster:mini-app" content="true">
+    <meta name="farcaster:app-name" content="Bouncing Balls">
+    <meta name="farcaster:app-description" content="An arcade football game with bouncing balls">
+    <meta name="farcaster:app-icon" content="https://bouncingballsfarcaster.vercel.app/app-icon-512.png">
+    
+    <!-- Farcaster Mini App Embed Meta Tags -->
+    <meta name="farcaster:mini-app:name" content="Bouncing Balls">
+    <meta name="farcaster:mini-app:description" content="An arcade football game with bouncing balls">
+    <meta name="farcaster:mini-app:icon" content="https://bouncingballsfarcaster.vercel.app/app-icon-512.png">
+    <meta name="farcaster:mini-app:url" content="https://bouncingballsfarcaster.vercel.app">
+    <meta name="farcaster:mini-app:version" content="1.0.0">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Farcaster Mini App SDK -->
+    <script src="https://unpkg.com/@farcaster/miniapps@latest/dist/index.js"></script>
+    <script src="https://unpkg.com/@farcaster/frame-sdk@latest/dist/frame-sdk.js"></script>
+    <script>
+        // Debug: Check if SDKs are loading
+        window.addEventListener('load', () => {
+            console.log('🔍 SDK Debug - window.FarcasterMiniApps:', window.FarcasterMiniApps);
+            console.log('🔍 SDK Debug - window.FarcasterFrame:', window.FarcasterFrame);
+            console.log('🔍 SDK Debug - window.farcaster:', window.farcaster);
+            console.log('🔍 SDK Debug - window.sdk:', window.sdk);
+            console.log('🔍 SDK Debug - All window properties:', Object.keys(window).filter(key => key.toLowerCase().includes('farcaster')));
+        });
+    </script>
+    <meta name="theme-color" content="#00ff00">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bouncing Balls">
+    
+    <!-- Farcaster Hosted Manifest -->
+    <meta name="farcaster:manifest" content="https://bouncingballsfarcaster.vercel.app/.well-known/farcaster.json">
+    <meta name="farcaster:app-version" content="1.0.0">
+    <meta name="farcaster:app-category" content="games">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/app-icon-192.png">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bouncing Balls",
+      "description": "Play football with Farcaster users! Balls bounce in circle, goal rotates, score goals!",
+      "url": "https://bouncingballsfarcaster.vercel.app",
+      "image": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+      "applicationCategory": "Game",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Bouncing Balls"
+      },
+      "screenshot": "https://bouncingballsfarcaster.vercel.app/app-icon-512.svg",
+      "softwareVersion": "1.0.0"
+    }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            /* Core Colors */
+            --neon-green: #39FF14;      /* Player 1 / Main UI Color */
+            --neon-pink: #FF0080;       /* Player 2 Color */
+            --dark-bg: #0D1225;         /* Deep Space Dark */
+            --card-bg: #1A213B;         /* Card/Modal Background */
+            --text-primary: #E0E0FF;
+            --text-secondary: #B0B0C0;
+            
+            /* Effects */
+            --glow-green: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+            --glow-pink: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+            --border-default: 2px solid var(--neon-green);
+            --shadow-dark: 0 15px 30px rgba(0, 0, 0, 0.7);
+            
+            --neon-color: var(--neon-green); /* Backward compatibility */
+            --accent-color: var(--neon-green);
+            
+            /* Legacy colors for compatibility */
+            --primary-color: var(--neon-green);
+            --secondary-color: var(--neon-pink);
+            --success-color: var(--neon-green);
+            --danger-color: var(--neon-pink);
+            --border-color: var(--neon-green);
+            --shadow: var(--shadow-dark);
+            --shadow-lg: var(--shadow-dark);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at center, var(--dark-bg) 0%, #080C1A 100%);
+            min-height: 100vh;
+            height: 100vh;
+            color: var(--text-primary);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #gameCanvas {
+            border: 3px solid var(--neon-color);
+            border-radius: 15px;
+            background: #001100;
+            box-shadow: 0 0 25px var(--neon-color), inset 0 0 20px rgba(0, 255, 0, 0.1);
+            width: 400px !important;
+            height: 400px !important;
+            max-width: 400px !important;
+            max-height: 400px !important;
+            min-width: 400px !important;
+            min-height: 400px !important;
+            display: block;
+            margin: 20px;
+        }
+        
+        /* Game started - rectangular canvas */
+        .game-started #gameCanvas {
+            width: 350px !important;
+            height: 600px !important;
+            max-width: 350px !important;
+            max-height: 600px !important;
+            min-width: 350px !important;
+            min-height: 600px !important;
+        }
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        /* Beautiful Horizontal Scoreboard */
+        .scoreboard-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            z-index: 20;
+            display: none;
+            margin-left: -2px;
+        }
+        
+        .scoreboard-container.show {
+            display: block;
+        }
+        
+        .scoreboard-rectangle {
+            background: rgba(10, 10, 25, 0.7);
+            border: 1px solid var(--neon-color);
+            border-radius: 10px;
+            padding: 4px 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            box-shadow: var(--shadow-dark);
+            margin-bottom: 10px;
+            gap: 8px;
+        }
+        
+        .player-section {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .player-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
+        }
+        
+        .player-avatar.player1 {
+            border: 2px solid var(--neon-green);
+            box-shadow: var(--glow-green);
+        }
+        
+        .player-avatar.player2 {
+            border: 2px solid var(--neon-pink);
+            box-shadow: var(--glow-pink);
+        }
+        
+        .player-name {
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80px;
+        }
+        
+        .player-score {
+            color: var(--neon-green);
+            font-family: 'Inter', monospace;
+            font-weight: bold;
+            font-size: 22px;
+            min-width: 25px;
+            text-align: center;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        #score2 {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+        
+        .score-divider {
+            color: var(--text-secondary);
+            font-family: 'Inter', monospace;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 0;
+        }
+        
+        .timer-container {
+            text-align: center;
+        }
+        
+        .timer-text {
+            color: var(--neon-color);
+            font-family: 'Inter', monospace;
+            font-weight: bold;
+            font-size: 16px;
+            background: rgba(10, 10, 25, 0.8);
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--neon-color);
+            box-shadow: 0 0 10px var(--neon-color);
+            display: inline-block;
+        }
+        .score-display {
+            color: var(--neon-color);
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+        }
+        
+        .player-name {
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 60px;
+        }
+        
+        .player-score {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .vs-divider {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 4px 0;
+            opacity: 0.8;
+        }
+        .timer-display {
+            color: var(--neon-color);
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-color);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--neon-color);
+            backdrop-filter: blur(10px);
+        }
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #001100, #002200);
+            color: var(--neon-color);
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid var(--neon-color);
+            text-align: center;
+            display: none;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px var(--neon-color);
+            width: 90%;
+            max-width: 500px;
+            z-index: 1000;
+        }
+        
+        /* Hide canvas when game over is visible */
+        #gameOver[style*="display: block"] ~ * #gameCanvas,
+        .game-over.show #gameCanvas,
+        #gameCanvas.hide,
+        #gameCanvas.game-over-hidden {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+        
+        /* Alternative: Hide canvas container when game over */
+        .game-container:has(#gameOver[style*="display: block"]) #gameCanvas {
+            display: none !important;
+        }
+        
+        .final-scoreboard {
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .final-player-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .final-player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #00ff00;
+            object-fit: cover;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .final-player-avatar.player1 {
+            border-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .final-player-avatar.player2 {
+            border-color: #ff0080;
+            box-shadow: 0 0 10px #ff0080;
+        }
+        
+        .final-player-name {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .final-player-score {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 24px;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .final-score-divider {
+            color: var(--neon-color);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 28px;
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .winner-display {
+            margin: 20px 0;
+        }
+        
+        .winner-display h3 {
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 0 0 15px #ffd700;
+            margin: 0;
+        }
+        
+        .game-over-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .game-over h2 {
+            margin: 0 0 20px 0;
+            font-size: 32px;
+            text-shadow: 0 0 15px var(--neon-color);
+            font-weight: 700;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--neon-color), #00cc00);
+            color: #000;
+            border: none;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'SF Pro Display', 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.8px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
+            text-transform: uppercase;
+        }
+        .restart-btn:hover {
+            background: linear-gradient(135deg, #00cc00, var(--neon-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 255, 0, 0.6);
+        }
+        
+        /* Leaderboard Modal Styles */
+        .leaderboard-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .leaderboard-content {
+            background: linear-gradient(135deg, #001100, #002200);
+            border: 3px solid var(--neon-color);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.5);
+        }
+        
+        .leaderboard-content h2 {
+            color: var(--neon-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px var(--neon-color);
+        }
+        
+        .period-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .period-btn {
+            background: transparent;
+            border: 2px solid var(--neon-color);
+            color: var(--neon-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .period-btn.active {
+            background: var(--neon-color);
+            color: #000;
+        }
+        
+        .period-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+        }
+        
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid var(--neon-color);
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .leaderboard-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+            transform: translateX(5px);
+            cursor: pointer;
+        }
+        
+        .leaderboard-rank {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--neon-color);
+            min-width: 40px;
+        }
+        
+        .leaderboard-rank.first {
+            color: gold;
+        }
+        
+        .leaderboard-rank.second {
+            color: silver;
+        }
+        
+        .leaderboard-rank.third {
+            color: #cd7f32;
+        }
+        
+        .leaderboard-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-color);
+            object-fit: cover;
+        }
+        
+        .leaderboard-info {
+            flex: 1;
+        }
+        
+        .leaderboard-username {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--neon-color);
+            margin-bottom: 5px;
+        }
+        
+        .leaderboard-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .leaderboard-points {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--neon-color);
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        .close-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--neon-color), #00cc00);
+            color: #000;
+            border: none;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.8px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
+            text-transform: uppercase;
+        }
+        
+        .close-btn:hover {
+            background: linear-gradient(135deg, #00cc00, var(--neon-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 255, 0, 0.6);
+        }
+        
+        /* Game Mode Selection Styles */
+        .game-mode-selection {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 25, 0.95);
+            color: var(--text-primary);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--neon-green);
+            text-align: center;
+            z-index: 20;
+            box-shadow: var(--shadow-dark), 0 0 15px rgba(57, 255, 20, 0.8);
+            backdrop-filter: blur(15px);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: block;
+        }
+        
+        .game-mode-selection h2 {
+            margin: 0 0 30px 0;
+            font-size: 32px;
+            font-family: 'Inter', sans-serif;
+            text-shadow: 0 0 15px var(--neon-green);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .user-info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--neon-green);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .user-info-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid var(--neon-green);
+            box-shadow: var(--glow-green);
+            transition: all 0.3s;
+        }
+        
+        .user-details h3 {
+            margin: 0 0 3px 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--neon-green);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .user-status {
+            font-size: 14px;
+            color: var(--text-secondary);
+            opacity: 0.9;
+        }
+        
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-direction: row;
+            align-items: stretch;
+            flex-wrap: nowrap;
+        }
+        
+        .mode-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            flex: 0 1 auto;
+            max-width: 120px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .mode-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            box-shadow: var(--glow-green);
+            transform: translateY(-5px) scale(1.02);
+        }
+        
+        .mode-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn:hover .mode-icon {
+            filter: none;
+        }
+        
+        .mode-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+        
+        .mode-desc {
+            font-size: 9px;
+            opacity: 0.7;
+            line-height: 1.1;
+        }
+        
+        
+        /* Hide canvas initially */
+        #gameCanvas {
+            display: none !important;
+        }
+        
+        /* Show canvas when game starts */
+        .game-started #gameCanvas {
+            display: block !important;
+        }
+        
+        /* Show game mode selection initially */
+        .game-mode-selection {
+            display: block;
+        }
+        
+        /* Hide mode selection when game starts */
+        .game-started .game-mode-selection {
+            display: none !important;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 5px;
+            }
+            
+            #gameCanvas {
+                width: min(90vw, 350px);
+                height: min(90vh, 500px);
+                margin: 10px;
+                border-width: 2px;
+            }
+            
+            .ui-overlay {
+                top: 5px;
+                left: 5px;
+                right: 5px;
+            }
+            
+            .score-display {
+                font-size: 12px;
+                padding: 6px 10px;
+                min-width: 140px;
+            }
+            
+            .player-name {
+                font-size: 10px;
+                min-width: 40px;
+            }
+            
+            .player-score {
+                font-size: 14px;
+            }
+            
+            .timer-display {
+                font-size: 16px;
+                padding: 6px 10px;
+            }
+            
+            .game-mode-selection {
+                padding: 20px 15px;
+                margin: 10px;
+            }
+            
+            .game-mode-selection h2 {
+                font-size: 20px;
+            }
+            
+            .mode-buttons {
+                gap: 10px;
+            }
+            
+            .mode-btn {
+                min-width: 100px;
+                padding: 8px;
+            }
+            
+            .mode-icon {
+                font-size: 20px;
+            }
+            
+            .mode-title {
+                font-size: 12px;
+            }
+            
+            .mode-desc {
+                font-size: 9px;
+            }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            #gameCanvas {
+                width: min(95vw, 95vh, 300px);
+                height: min(95vw, 95vh, 300px);
+                margin: 5px;
+            }
+            
+            .score-display {
+                font-size: 10px;
+                padding: 4px 8px;
+                min-width: 120px;
+            }
+            
+            .player-name {
+                font-size: 9px;
+                min-width: 35px;
+            }
+            
+            .timer-display {
+                font-size: 14px;
+                padding: 4px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="ui-overlay">
+            <!-- Beautiful Horizontal Scoreboard -->
+            <div class="scoreboard-container">
+                <div class="scoreboard-rectangle">
+                    <div class="player-section">
+                        <img id="player1Avatar" class="player-avatar" src="" alt="Player 1">
+                        <span id="player1Name" class="player-name">Player 1</span>
+                        <span id="score1" class="player-score">0</span>
+                    </div>
+                    <div class="score-divider">-</div>
+                    <div class="player-section">
+                        <span id="score2" class="player-score">0</span>
+                        <span id="player2Name" class="player-name">Opponent</span>
+                        <img id="player2Avatar" class="player-avatar" src="" alt="Player 2">
+                    </div>
+                </div>
+                <div class="timer-container">
+                    <span id="timer" class="timer-text">1:00</span>
+                </div>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        
+        <!-- Game Mode Selection -->
+        <div class="game-mode-selection" id="gameModeSelection">
+            <h2>🎮 Choose Game Mode</h2>
+            
+            <!-- Farcaster User Information -->
+            <div class="user-info-card" id="userInfo">
+                <div class="user-info-content">
+                    <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                    <div class="user-details">
+                        <h3 id="userName">Loading...</h3>
+                        <div id="userStatus" class="user-status">Connecting Farcaster account...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mode-buttons">
+                <button class="mode-btn" onclick="startRandomFarcasterMatch()">
+                    <div class="mode-icon">🎲</div>
+                    <div class="mode-title">Random Farcaster Match</div>
+                    <div class="mode-desc">Play with random Farcaster user</div>
+                </button>
+                <button class="mode-btn" onclick="startFarcasterDuel()">
+                    <div class="mode-icon">⚔️</div>
+                    <div class="mode-title">Farcaster Duel</div>
+                    <div class="mode-desc">Challenge specific Farcaster user</div>
+                </button>
+                <button class="mode-btn" onclick="showLeaderboard()">
+                    <div class="mode-icon">🏆</div>
+                    <div class="mode-title">Leaderboard</div>
+                    <div class="mode-desc">View top players</div>
+                </button>
+            </div>
+            
+        </div>
+        
+        <!-- Leaderboard Modal -->
+        <div class="leaderboard-modal" id="leaderboardModal" style="display: none;">
+            <div class="leaderboard-content">
+                <h2>🏆 Leaderboard</h2>
+                <div class="period-selector">
+                    <button class="period-btn active" onclick="changeLeaderboardPeriod('1d')">Today</button>
+                    <button class="period-btn" onclick="changeLeaderboardPeriod('7d')">7 Days</button>
+                    <button class="period-btn" onclick="changeLeaderboardPeriod('30d')">All Time</button>
+                </div>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <!-- Leaderboard items will be populated here -->
+                </div>
+                <button class="close-btn" onclick="closeLeaderboard()">Close</button>
+            </div>
+        </div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>🏆 Game Over! 🏆</h2>
+            <div class="final-scoreboard">
+                <div class="final-player-section">
+                    <img id="finalPlayer1Avatar" class="final-player-avatar" src="" alt="Player 1">
+                    <span id="finalPlayer1Name" class="final-player-name">You</span>
+                </div>
+                <div class="final-score-divider">
+                    <span id="finalScore1" class="final-player-score">0</span>
+                    <span>-</span>
+                    <span id="finalScore2" class="final-player-score">0</span>
+                </div>
+                <div class="final-player-section">
+                    <img id="finalPlayer2Avatar" class="final-player-avatar" src="" alt="Player 2">
+                    <span id="finalPlayer2Name" class="final-player-name">Opponent</span>
+                </div>
+            </div>
+            <div class="winner-display" id="winnerDisplay" style="display: none;">
+                <h3 id="winnerText">🎉 WINNER! 🎉</h3>
+            </div>
+            <div class="game-over-buttons">
+                <button class="restart-btn" onclick="restartGame()">🔄 Play Again</button>
+                <button class="restart-btn" onclick="shareToFarcaster()">📤 Share Result</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Farcaster Mini App SDK -->
+    <script>
+        // Global variables
+        window.currentUser = null;
+        window.sdk = null;
+        window.farcasterInitialized = false;
+        
+        // Load Farcaster SDK dynamically
+        async function loadFarcasterSDK() {
+            try {
+                const { sdk } = await import('https://esm.sh/@farcaster/miniapp-sdk');
+                window.sdk = sdk;
+                console.log('✅ Farcaster SDK loaded:', sdk);
+                return sdk;
+            } catch (error) {
+                console.error('❌ Failed to load Farcaster SDK:', error);
+                return null;
+            }
+        }
+        
+        // Load SDK immediately
+        loadFarcasterSDK();
+        
+        // Test function to verify script is loading
+        window.testFunction = function() {
+            console.log('✅ Script is loading correctly!');
+            return true;
+        };
+        
+        // Define functions immediately so they're available
+        window.startRandomFarcasterMatch = async function() {
+            console.log('🎲 Starting random Farcaster match...');
+            
+            try {
+                // Get current user data
+                const currentUser = await window.getFarcasterUserData();
+                if (!currentUser) {
+                    window.currentUser = {
+                        username: 'Guest',
+                        displayName: 'Guest Player',
+                        pfpUrl: 'https://picsum.photos/100/100'
+                    };
+                }
+                
+                // Get random Farcaster user from API with aggressive cache busting
+                console.log('🎲 Fetching random Farcaster user from API...');
+                const timestamp = Date.now();
+                const randomParam = Math.floor(Math.random() * 1000000);
+                const response = await fetch(`https://bouncingballs.ataskira1.workers.dev/random?t=${timestamp}&r=${randomParam}&cache=${Math.random()}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                const data = await response.json();
+                
+                console.log('🎲 API Response:', data);
+                
+                let trendingUsers;
+                if (data.users && data.users.length > 0) {
+                    const randomUser = data.users[0];
+                    console.log('🎲 Random user found:', randomUser);
+                    
+                    trendingUsers = [{
+                        username: randomUser.username,
+                        display_name: randomUser.display_name,
+                        pfp_url: randomUser.pfp_url,
+                        follower_count: randomUser.follower_count,
+                        verified_addresses: randomUser.verified_addresses,
+                        power_badge: randomUser.power_badge
+                    }];
+                } else {
+                    console.log('🎲 No users found, using fallback');
+                    trendingUsers = [
+                        {
+                            username: 'vitalik',
+                            display_name: 'Vitalik Buterin',
+                            pfp_url: 'https://picsum.photos/100/100?random=1',
+                            follower_count: 500000,
+                            verified_addresses: [],
+                            power_badge: true
+                        }
+                    ];
+                }
+                
+                console.log('🎲 Users loaded:', trendingUsers.length);
+                console.log('🎲 Trending users:', trendingUsers);
+                
+                if (trendingUsers.length > 0) {
+                    const randomUser = trendingUsers[0];
+                    console.log('🎲 Selected user:', randomUser);
+                    console.log('🎲 User details:', {
+                        username: randomUser.username,
+                        display_name: randomUser.display_name,
+                        pfp_url: randomUser.pfp_url
+                    });
+                    
+                    window.opponentUser = {
+                        username: randomUser.username,
+                        displayName: randomUser.display_name || randomUser.username,
+                        pfpUrl: randomUser.pfp_url || 'https://picsum.photos/100/100',
+                        followerCount: randomUser.follower_count,
+                        verified: randomUser.power_badge || false,
+                        fid: randomUser.fid || Math.floor(Math.random() * 100000)
+                    };
+                    
+                    console.log('🎲 Opponent user set globally:', window.opponentUser);
+                    
+                    // Start the game
+                    console.log('👤 Current user:', window.currentUser);
+                    console.log('👤 Opponent user:', window.opponentUser);
+                    
+                    window.startGame();
+                }
+            } catch (error) {
+                console.error('🎲 Random match error:', error);
+                alert('Error starting random match: ' + error.message);
+            }
+        };
+        
+        window.startFarcasterDuel = async function() {
+            console.log('⚔️ Starting Farcaster duel...');
+            
+            // Create search modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            const searchBox = document.createElement('div');
+            searchBox.style.cssText = `
+                background: #001100;
+                border: 2px solid var(--neon-color);
+                border-radius: 15px;
+                padding: 20px;
+                width: 300px;
+                max-width: 90vw;
+            `;
+            
+            const title = document.createElement('h3');
+            title.textContent = '⚔️ Farcaster Duel';
+            title.style.cssText = `
+                color: var(--neon-color);
+                text-align: center;
+                margin-bottom: 15px;
+                font-family: 'Courier New', monospace;
+            `;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Enter Farcaster username...';
+            input.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: #000;
+                border: 1px solid var(--neon-color);
+                border-radius: 5px;
+                color: var(--neon-color);
+                font-family: 'Courier New', monospace;
+                margin-bottom: 10px;
+            `;
+            
+            // Search button removed - using real-time search
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: #333;
+                color: var(--neon-color);
+                border: 1px solid var(--neon-color);
+                border-radius: 5px;
+                font-family: 'Courier New', monospace;
+                cursor: pointer;
+            `;
+            
+            const results = document.createElement('div');
+            results.id = 'search-results';
+            results.style.cssText = `
+                max-height: 200px;
+                overflow-y: auto;
+                margin-top: 10px;
+            `;
+            
+            searchBox.appendChild(title);
+            searchBox.appendChild(input);
+            searchBox.appendChild(closeBtn);
+            searchBox.appendChild(results);
+            modal.appendChild(searchBox);
+            document.body.appendChild(modal);
+            
+            // Search function
+            const searchUsers = async (query) => {
+                if (!query.trim()) return;
+                
+                console.log('🔍 Searching for user:', query);
+                results.innerHTML = '<div style="color: var(--neon-color); text-align: center;">Searching...</div>';
+                
+                try {
+                    const response = await fetch(`https://bouncingballs.ataskira1.workers.dev/search?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    
+                    console.log('🔍 Search response:', data);
+                    
+                    results.innerHTML = '';
+                    
+                    if (data.result && data.result.users && data.result.users.length > 0) {
+                        data.result.users.forEach(user => {
+                            const userDiv = document.createElement('div');
+                            userDiv.style.cssText = `
+                                padding: 10px;
+                                border: 1px solid var(--neon-color);
+                                border-radius: 5px;
+                                margin-bottom: 5px;
+                                cursor: pointer;
+                                background: #000;
+                                color: var(--neon-color);
+                            `;
+                            
+                            userDiv.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="${user.pfp_url || 'https://picsum.photos/40/40'}" 
+                                         style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--neon-color);">
+                                    <div>
+                                        <div style="font-weight: bold; color: var(--neon-color);">${user.display_name || user.username}</div>
+                                        <div style="color: #888; font-size: 12px;">@${user.username}</div>
+                                        <div style="color: #666; font-size: 11px;">${user.follower_count || 0} followers</div>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            userDiv.onclick = () => {
+                                console.log('🎯 Selected user:', user);
+                                
+                                window.opponentUser = {
+                        username: user.username,
+                                    displayName: user.display_name || user.username,
+                                    pfpUrl: user.pfp_url || 'https://picsum.photos/100/100',
+                                    followerCount: user.follower_count,
+                                    verified: user.power_badge || false,
+                        fid: user.fid
+                    };
+                    
+                                document.body.removeChild(modal);
+                                window.startGame();
+                            };
+                    
+                            results.appendChild(userDiv);
+                        });
+                } else {
+                        results.innerHTML = '<div style="color: var(--neon-color); text-align: center;">No users found</div>';
+                    }
+                } catch (error) {
+                    console.error('🔍 Search error:', error);
+                    results.innerHTML = '<div style="color: red; text-align: center;">Search error: ' + error.message + '</div>';
+                }
+            };
+            
+            // Real-time search with debouncing
+            let searchTimeout;
+            input.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    results.innerHTML = '';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    searchUsers(query);
+                }, 300); // 300ms delay
+            });
+            
+            // Event listeners
+            closeBtn.onclick = () => document.body.removeChild(modal);
+        };
+        
+        window.getFarcasterUserData = async function() {
+            return window.currentUser || {
+                username: 'testuser',
+                displayName: 'Test User',
+                pfpUrl: 'https://picsum.photos/100/100',
+                verified: false,
+                fid: 12345
+            };
+        };
+        
+        window.getRealFarcasterUsers = async function() {
+            // Fallback users when Neynar API is not available
+            const fallbackUsers = [
+                {
+                    username: 'vitalik',
+                    display_name: 'Vitalik Buterin',
+                    pfp_url: 'https://picsum.photos/100/100?random=1',
+                    follower_count: 500000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'dwr',
+                    display_name: 'Dan Romero',
+                    pfp_url: 'https://picsum.photos/100/100?random=2',
+                    follower_count: 100000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'jessepollak',
+                    display_name: 'Jesse Pollak',
+                    pfp_url: 'https://picsum.photos/100/100?random=3',
+                    follower_count: 50000,
+                    verified_addresses: [],
+                    power_badge: false
+                },
+                {
+                    username: 'dankrad',
+                    display_name: 'Dankrad Feist',
+                    pfp_url: 'https://picsum.photos/100/100?random=4',
+                    follower_count: 25000,
+                    verified_addresses: [],
+                    power_badge: false
+                }
+            ];
+            
+            try {
+                // Try Neynar API first
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/random?api_key=${NEYNAR_API_KEY}`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return [data.user] || [];
+                } else {
+                    console.log('⚠️ Neynar API failed, using fallback users');
+                    return fallbackUsers;
+                }
+            } catch (error) {
+                console.log('⚠️ Neynar API error, using fallback users:', error);
+                return fallbackUsers;
+            }
+        };
+        
+        window.startGame = function() {
+            console.log('🎮 Starting game...');
+            alert('Game starting!');
+        };
+        
+        window.updateUserInterface = function() {
+            console.log('🎨 Updating UI...');
+        };
+        
+        console.log('✅ Script loaded, functions available:', {
+            startRandomFarcasterMatch: typeof window.startRandomFarcasterMatch,
+            startFarcasterDuel: typeof window.startFarcasterDuel,
+            testFunction: typeof window.testFunction
+        });
+        
+        // Initialize SDK - IMMEDIATELY!
+        window.initializeFarcasterSDK = async function initializeFarcasterSDK() {
+            try {
+                console.log('🔄 Initializing Farcaster SDK...');
+                
+                // Wait for SDK to be available
+                let attempts = 0;
+                while (!window.sdk && attempts < 20) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    attempts++;
+                    console.log(`⏳ Waiting for SDK... attempt ${attempts}`);
+                    
+                    // Try to load SDK if it's not available
+                    if (!window.sdk && attempts === 5) {
+                        console.log('🔄 Attempting to reload SDK...');
+                        await loadFarcasterSDK();
+                    }
+                }
+                
+                // Initialize SDK like the other AI's code
+                if (window.sdk && window.sdk.actions) {
+                    try {
+                        await window.sdk.actions.ready();
+                        console.log("✅ Farcaster SDK initialized successfully - app fully loaded");
+                } catch (readyError) {
+                        console.error('Failed to initialize Farcaster SDK:', readyError);
+                        setTimeout(async () => {
+                            try {
+                                await window.sdk.actions.ready();
+                                console.log('✅ Farcaster SDK initialized on retry');
+                            } catch (retryError) {
+                                console.error('❌ Farcaster SDK retry failed:', retryError);
+                            }
+                        }, 1000);
+                    }
+                }
+                
+                // Try window.sdk first (the actual SDK that's loaded)
+                if (window.sdk) {
+                    console.log('✅ window.sdk ready!');
+                    try {
+                        // Try to get user from window.sdk - CORRECT WAY from other AI!
+                        let user = null;
+                        if (window.sdk && window.sdk.context) {
+                            console.log('👤 Getting context from window.sdk...');
+                            try {
+                                const context = await window.sdk.context;
+                                console.log('✅ Context loaded:', context);
+                                
+                                if (context.user) {
+                                    user = {
+                                        fid: context.user.fid,
+                                        username: context.user.username,
+                                        displayName: context.user.displayName,
+                                        pfpUrl: context.user.pfpUrl,
+                                    };
+                                    console.log('👤 User data:', user);
+                                } else {
+                                    console.log('👤 No user data available in context');
+                                }
+                            } catch (e) {
+                                console.log('👤 Context access failed:', e);
+                            }
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster user from window.sdk:', user);
+                            console.log('👤 User type:', typeof user);
+                            console.log('👤 User keys:', Object.keys(user));
+                            
+                            // User data should be a proper object now
+                            console.log('👤 User data received:', user);
+                            const userData = user;
+                            
+                            if (userData) {
+            window.currentUser = {
+                                    username: userData.username || 'farcaster_user',
+                                    displayName: userData.displayName || userData.username || 'Farcaster User',
+                                    pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100',
+                                    verified: userData.verified || false,
+                                    fid: userData.fid || Math.floor(Math.random() * 10000)
+                                };
+                                
+                                console.log('✅ Current user set:', window.currentUser);
+            updateUserInterface();
+                                return;
+                            }
+                        }
+                    } catch (sdkError) {
+                        console.log('⚠️ window.sdk error:', sdkError);
+                    }
+                }
+                
+                // Try FarcasterFrame first
+                if (window.FarcasterFrame) {
+                    console.log('✅ FarcasterFrame SDK ready!');
+                    try {
+                        const sdk = await window.FarcasterFrame.init({
+                            allowedOrigins: ['*']
+                        });
+                        
+                        // Try different methods to get user
+                        let user = null;
+                        if (sdk.getUser) {
+                            user = await sdk.getUser();
+                        } else if (sdk.user) {
+                            user = sdk.user;
+                        } else if (window.farcaster && window.farcaster.user) {
+                            user = window.farcaster.user;
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster user from FarcasterFrame:', user);
+                    window.currentUser = {
+                        username: user.username,
+                        displayName: user.displayName || user.username,
+                                pfpUrl: user.pfpUrl || user.pfp,
+                        verified: user.verified || false,
+                        fid: user.fid
+                    };
+                    
+                    updateUserInterface();
+                            return;
+                        }
+                    } catch (frameError) {
+                        console.log('⚠️ FarcasterFrame error:', frameError);
+                    }
+                }
+                
+                // Try FarcasterMiniApps
+                if (window.FarcasterMiniApps) {
+                    console.log('✅ FarcasterMiniApps SDK ready!');
+                    try {
+                        await window.FarcasterMiniApps.init();
+                        
+                        // Try to get user from MiniApps context
+                        let user = null;
+                        if (window.FarcasterMiniApps.getUser) {
+                            user = await window.FarcasterMiniApps.getUser();
+                        } else if (window.FarcasterMiniApps.user) {
+                            user = window.FarcasterMiniApps.user;
+                        } else if (window.FarcasterMiniApps.context && window.FarcasterMiniApps.context.user) {
+                            user = window.FarcasterMiniApps.context.user;
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster user from FarcasterMiniApps:', user);
+            window.currentUser = {
+                                username: user.username,
+                                displayName: user.displayName || user.username,
+                                pfpUrl: user.pfpUrl || user.pfp,
+                                verified: user.verified || false,
+                                fid: user.fid
+                            };
+                            
+            updateUserInterface();
+                            return;
+                        }
+                    } catch (miniAppsError) {
+                        console.log('⚠️ FarcasterMiniApps error:', miniAppsError);
+                    }
+                }
+                
+                console.log('⚠️ Farcaster SDK not available');
+                
+            } catch (error) {
+                console.log('❌ Farcaster SDK error:', error);
+                console.log('⚠️ Farcaster SDK not available');
+            }
+        }
+        
+        
+        window.updateUserInterface = function updateUserInterface() {
+            // Show user information in UI
+            const userNameEl = document.getElementById('userName');
+            const userStatusEl = document.getElementById('userStatus');
+            const userAvatarEl = document.getElementById('userAvatar');
+            
+            if (userNameEl) {
+                userNameEl.textContent = window.currentUser.username;
+            }
+            
+            if (userStatusEl) {
+                userStatusEl.textContent = window.currentUser.verified ? '✅ Verified Farcaster User' : '🔗 Farcaster User';
+            }
+            
+            if (userAvatarEl && window.currentUser.pfpUrl) {
+                userAvatarEl.src = window.currentUser.pfpUrl;
+            }
+            
+            // Update scoreboard
+            if (document.getElementById('player1Name')) {
+                document.getElementById('player1Name').textContent = window.currentUser.username;
+                document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
+            }
+            
+            // Show game mode selection screen
+            const gameModeDiv = document.getElementById('gameModeSelection');
+            if (gameModeDiv) {
+                gameModeDiv.style.display = 'block';
+            }
+            
+            console.log('🎨 UI updated:', window.currentUser);
+            
+            // Auto-prompt to add Mini App to Farcaster after UI is ready
+            setTimeout(async () => {
+                try {
+                    console.log('➕ Auto-prompting to add Mini App to Farcaster...');
+                    await window.sdk.actions.addMiniApp();
+                    console.log('✅ Mini App added to Farcaster!');
+                } catch (error) {
+                    console.log('ℹ️ Add Mini App prompt:', error.name);
+                    // Don't show error alerts for user rejection or domain issues
+                    if (error.name !== 'RejectedByUser' && error.name !== 'InvalidDomainManifestJson') {
+                        console.log('❌ Unexpected error:', error);
+                    }
+                }
+            }, 3000); // Wait 3 seconds after UI is ready
+        }
+        
+        function updateGameModeDisplay() {
+            // Update game mode selection screen
+            const gameModeDiv = document.getElementById('gameModeSelection');
+            if (gameModeDiv) {
+                gameModeDiv.style.display = 'block';
+            }
+        }
+        
+        // Initialize SDK IMMEDIATELY - critical for Mini App!
+        console.log('🚀 Initializing Farcaster SDK immediately...');
+        initializeFarcasterSDK();
+        
+        // Alternative: try when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.farcasterInitialized) {
+                console.log('🔄 DOM ready, retrying SDK initialization...');
+                initializeFarcasterSDK();
+            }
+        });
+        
+        // Also try on window load event
+        window.addEventListener('load', () => {
+            if (!window.farcasterInitialized) {
+                console.log('🔄 Window load, retrying SDK initialization...');
+                initializeFarcasterSDK();
+            }
+        });
+    </script>
+    <script>
+        // Random neon color system
+        const neonColors = [
+            '#00ff00', // Green
+            '#ff0080', // Pink
+            '#0080ff', // Blue
+            '#ff8000', // Orange
+            '#8000ff', // Purple
+            '#00ffff', // Cyan
+            '#ff4000', // Red-orange
+            '#40ff00', // Light green
+            '#ff00ff', // Magenta
+            '#00ff80', // Green-blue
+            '#ff8000', // Gold
+            '#8000ff'  // Dark purple
+        ];
+        
+        let currentNeonColor = neonColors[Math.floor(Math.random() * neonColors.length)];
+        
+        // Player ball colors - different for each player
+        let player1BallColor = '#00ff00'; // Green for player 1
+        let player2BallColor = '#ff0080'; // Pink for player 2
+        
+        function getRandomNeonColor() {
+            return neonColors[Math.floor(Math.random() * neonColors.length)];
+        }
+        
+        function applyNeonColor(color) {
+            // Update CSS variables
+            document.documentElement.style.setProperty('--neon-color', color);
+            
+            // Color for canvas drawing
+            currentNeonColor = color;
+        }
+        let gameMode = 'cpu'; // 'cpu' or 'multiplayer'
+        let cpuControlled = false; // CPU control active
+        // Canvas and context variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false; // Game starts paused
+        let timeLeft = 60;
+        let score1 = 0;
+        let score2 = 0;
+        
+        // Farcaster API integration
+        let currentUser = null;
+        let opponentUser = null;
+        
+        // Cloudflare Workers proxy URL
+        const PROXY_URL = 'https://bouncingballs.ataskira1.workers.dev';
+        
+        // Neynar API configuration
+        const NEYNAR_API_KEY = '947A9234-D36B-4230-AB2D-3BE5987A8369';
+        console.log('🔑 Neynar API Key:', NEYNAR_API_KEY);
+        const NEYNAR_BASE_URL = 'https://api.neynar.com/v2/farcaster';
+        
+        // Neynar API functions
+        async function getFarcasterUserDataFromNeynar(walletAddress) {
+            try {
+                const response = await fetch(`${NEYNAR_BASE_URL}/user/bulk-by-address?addresses=${walletAddress}`, {
+                    headers: {
+                        'api_key': NEYNAR_API_KEY
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.users && data.users.length > 0) {
+                        const user = data.users[0];
+                        return {
+                            username: user.username,
+                            displayName: user.display_name,
+                            pfpUrl: user.pfp_url,
+                            followerCount: user.follower_count,
+                            verified: user.verified_addresses && user.verified_addresses.length > 0,
+                            powerBadge: user.power_badge
+                        };
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching user data from Neynar:', error);
+                return null;
+            }
+        }
+
+        window.getRealFarcasterUsers = async function getRealFarcasterUsers() {
+            // Fallback users when Neynar API is not available
+            const fallbackUsers = [
+                {
+                    username: 'vitalik',
+                    display_name: 'Vitalik Buterin',
+                    pfp_url: 'https://picsum.photos/100/100?random=1',
+                    follower_count: 500000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'dwr',
+                    display_name: 'Dan Romero',
+                    pfp_url: 'https://picsum.photos/100/100?random=2',
+                    follower_count: 100000,
+                    verified_addresses: [],
+                    power_badge: true
+                },
+                {
+                    username: 'jessepollak',
+                    display_name: 'Jesse Pollak',
+                    pfp_url: 'https://picsum.photos/100/100?random=3',
+                    follower_count: 50000,
+                    verified_addresses: [],
+                    power_badge: false
+                },
+                {
+                    username: 'dankrad',
+                    display_name: 'Dankrad Feist',
+                    pfp_url: 'https://picsum.photos/100/100?random=4',
+                    follower_count: 25000,
+                    verified_addresses: [],
+                    power_badge: false
+                }
+            ];
+            
+            try {
+                // Try Neynar API via proxy
+                const response = await fetch(`${PROXY_URL}/random`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Neynar API success:', data);
+                    console.log('✅ Users from API:', data.users?.length);
+                    if (data.users && data.users.length > 0) {
+                        return data.users;
+                    } else {
+                        console.log('⚠️ No users in response, using fallback');
+                    }
+                } else {
+                    console.log('⚠️ Neynar API failed:', response.status, response.statusText);
+                    if (response.status === 402) {
+                        console.log('💳 Neynar API: Payment Required - Using fallback users');
+                    }
+                }
+                
+                // Fallback to trending users
+                const trendingResponse = await fetch(`${NEYNAR_BASE_URL}/user/trending?limit=20&api_key=${NEYNAR_API_KEY}`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (trendingResponse.ok) {
+                    const trendingData = await trendingResponse.json();
+                    console.log('✅ Neynar trending API success:', trendingData.users?.length);
+                    return trendingData.users || [];
+                } else {
+                    console.log('⚠️ Neynar trending API failed:', trendingResponse.status, trendingResponse.statusText);
+                    if (trendingResponse.status === 402) {
+                        console.log('💳 Neynar API: Payment Required - Using fallback users');
+                    }
+                }
+                
+                // Return fallback users
+                console.log('🎲 Using fallback users:', fallbackUsers.length);
+                return fallbackUsers;
+                
+            } catch (error) {
+                console.log('⚠️ Neynar API error, using fallback users:', error);
+                return fallbackUsers;
+            }
+        }
+
+        window.getFarcasterUserData = async function getFarcasterUserData() {
+            try {
+                console.log('🔄 Getting real Farcaster user data...');
+                console.log('🔍 window.farcaster:', window.farcaster);
+                console.log('🔍 window.FarcasterFrame:', window.FarcasterFrame);
+                console.log('🔍 window.FarcasterMiniApps:', window.FarcasterMiniApps);
+                console.log('🔍 window.location:', window.location);
+                console.log('🔍 document.referrer:', document.referrer);
+                
+                // Try Farcaster Mini App context (doğru method)
+                if (window.farcaster && window.farcaster.user) {
+                    const user = window.farcaster.user;
+                    console.log('👤 Farcaster context user:', user);
+                    return {
+                        username: user.username,
+                        displayName: user.displayName || user.username,
+                        pfpUrl: user.pfpUrl,
+                        verified: user.verified || false,
+                        fid: user.fid
+                    };
+                }
+                
+                // Try Farcaster Mini Apps SDK
+                if (window.FarcasterMiniApps) {
+                    try {
+                        // Try different methods to get user from MiniApps
+                        let user = null;
+                        
+                        if (window.FarcasterMiniApps.useFarcasterIdentity) {
+                            const identity = window.FarcasterMiniApps.useFarcasterIdentity();
+                            if (identity && identity.user) {
+                                user = identity.user;
+                            }
+                        } else if (window.FarcasterMiniApps.getUser) {
+                            user = await window.FarcasterMiniApps.getUser();
+                        } else if (window.FarcasterMiniApps.user) {
+                            user = window.FarcasterMiniApps.user;
+                        } else if (window.FarcasterMiniApps.context && window.FarcasterMiniApps.context.user) {
+                            user = window.FarcasterMiniApps.context.user;
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster Mini Apps user:', user);
+                        return {
+                            username: user.username,
+                            displayName: user.displayName || user.username,
+                                pfpUrl: user.pfpUrl || user.pfp,
+                            verified: user.verified || false,
+                            fid: user.fid
+                        };
+                        }
+                    } catch (error) {
+                        console.log('⚠️ Farcaster Mini Apps SDK failed:', error);
+                    }
+                }
+                
+                // Try Farcaster Mini App context
+                if (window.FarcasterFrame && window.FarcasterFrame.getUser) {
+                    try {
+                        const user = await window.FarcasterFrame.getUser();
+                        console.log('👤 Farcaster Mini App user:', user);
+                        return {
+                            username: user.username,
+                            displayName: user.displayName || user.username,
+                            pfpUrl: user.pfpUrl,
+                            verified: user.verified || false,
+                            fid: user.fid
+                        };
+                    } catch (error) {
+                        console.log('⚠️ Farcaster Mini App getUser failed:', error);
+                    }
+                }
+                
+                // Try Farcaster context
+                if (window.farcaster && window.farcaster.user) {
+                    const user = window.farcaster.user;
+                    console.log('👤 Farcaster context user:', user);
+                    return {
+                        username: user.username,
+                        displayName: user.displayName || user.username,
+                        pfpUrl: user.pfpUrl,
+                        verified: user.verified || false,
+                        fid: user.fid
+                    };
+                }
+                
+                
+                // Try window.sdk (the actual SDK that's loaded)
+                if (window.sdk) {
+                    try {
+                        let user = null;
+                        if (window.sdk && window.sdk.context) {
+                            console.log('👤 Getting context from window.sdk...');
+                            try {
+                                const context = await window.sdk.context;
+                                console.log('✅ Context loaded:', context);
+                                
+                                if (context.user) {
+                                    user = {
+                                        fid: context.user.fid,
+                                        username: context.user.username,
+                                        displayName: context.user.displayName,
+                                        pfpUrl: context.user.pfpUrl,
+                                    };
+                                    console.log('👤 User data:', user);
+                                } else {
+                                    console.log('👤 No user data available in context');
+                                }
+                            } catch (e) {
+                                console.log('👤 Context access failed:', e);
+                            }
+                        }
+                        
+                        if (user) {
+                            console.log('👤 Farcaster SDK user:', user);
+                            console.log('👤 User type:', typeof user);
+                            
+                            // User data should be a proper object now
+                            console.log('👤 User data received:', user);
+                            const userData = user;
+                            
+                            if (userData) {
+                                return {
+                                    username: userData.username || 'farcaster_user',
+                                    displayName: userData.displayName || userData.username || 'Farcaster User',
+                                    pfpUrl: userData.pfpUrl || userData.pfp || 'https://picsum.photos/100/100',
+                                    verified: userData.verified || false,
+                                    fid: userData.fid || Math.floor(Math.random() * 10000)
+                                };
+                            }
+                        }
+                    } catch (error) {
+                        console.log('⚠️ window.sdk error:', error);
+                    }
+                }
+                
+                // Try to get from URL parameters (Farcaster Mini App)
+                const urlParams = new URLSearchParams(window.location.search);
+                const fid = urlParams.get('fid');
+                const username = urlParams.get('username');
+                
+                if (fid && username) {
+                    console.log('👤 Farcaster URL params user:', { fid, username });
+                    return {
+                        username: username,
+                        displayName: username,
+                        pfpUrl: `https://res.cloudinary.com/merkle-manufactory/image/fetch/c_fill,f_png,w_144/${encodeURIComponent(`https://warpcast.com/avatar/${username}`)}`,
+                        verified: false,
+                        fid: fid
+                    };
+                }
+                
+                // Try to get from window.farcaster (Farcaster Mini App context)
+                if (window.farcaster) {
+                    console.log('🔍 Checking window.farcaster:', window.farcaster);
+                    
+                    // Check if user data is available in different properties
+                    if (window.farcaster.user) {
+                        console.log('👤 Found user in window.farcaster.user:', window.farcaster.user);
+                        return {
+                            username: window.farcaster.user.username,
+                            displayName: window.farcaster.user.displayName || window.farcaster.user.username,
+                            pfpUrl: window.farcaster.user.pfpUrl || window.farcaster.user.pfp,
+                            verified: window.farcaster.user.verified || false,
+                            fid: window.farcaster.user.fid
+                        };
+                    }
+                    
+                    // Check if user data is in window.farcaster.data
+                    if (window.farcaster.data && window.farcaster.data.user) {
+                        console.log('👤 Found user in window.farcaster.data.user:', window.farcaster.data.user);
+                        return {
+                            username: window.farcaster.data.user.username,
+                            displayName: window.farcaster.data.user.displayName || window.farcaster.data.user.username,
+                            pfpUrl: window.farcaster.data.user.pfpUrl || window.farcaster.data.user.pfp,
+                            verified: window.farcaster.data.user.verified || false,
+                            fid: window.farcaster.data.user.fid
+                        };
+                    }
+                }
+                
+                // Try to get from URL parameters (Farcaster Mini App context)
+                const urlParams2 = new URLSearchParams(window.location.search);
+                const fid2 = urlParams2.get('fid');
+                const username2 = urlParams2.get('username');
+                const pfp = urlParams2.get('pfp');
+                
+                if (fid2 && username2) {
+                    console.log('👤 Found user in URL params:', { fid: fid2, username: username2, pfp });
+                    return {
+                        username: username2,
+                        displayName: username2,
+                        pfpUrl: pfp || null,
+                        verified: false,
+                        fid: parseInt(fid2)
+                    };
+                }
+                
+                // Try to get from document.referrer (Farcaster Mini App context)
+                if (document.referrer && document.referrer.includes('farcaster')) {
+                    console.log('🔍 Farcaster referrer detected:', document.referrer);
+                    // Try to extract user data from referrer or other sources
+                }
+                
+                // Fallback to test user
+                console.log('⚠️ No Farcaster user data found, using test user');
+                return {
+                    username: 'testuser',
+                    displayName: 'Test User',
+                    pfpUrl: 'https://picsum.photos/100/100',
+                    verified: false
+                };
+                
+            } catch (error) {
+                console.log('❌ Farcaster API error:', error);
+                // Fallback to test user
+                return {
+                    username: 'testuser',
+                    displayName: 'Test User',
+                    pfpUrl: 'https://picsum.photos/100/100',
+                    verified: false
+                };
+            }
+        }
+        
+        // Test data (for development)
+        function getTestUserData() {
+            return {
+                username: 'testuser',
+                displayName: 'Test User',
+                profileImage: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=T',
+                verified: false,
+                fid: Math.floor(Math.random() * 10000) // Random FID
+            };
+        }
+        
+        // Multiplayer Matching System
+        let matchingInProgress = false;
+        let matchmakingQueue = [];
+        
+        // Simple Farcaster matching system
+        async function findFarcasterOpponent() {
+            console.log('🔍 Looking for Farcaster user...');
+            
+            // Real Farcaster users list (popular users)
+            const realFarcasterUsers = [
+                { username: 'dwr', displayName: 'Dan Romero', verified: true },
+                { username: 'vitalik', displayName: 'Vitalik Buterin', verified: true },
+                { username: 'jessepollak', displayName: 'Jesse Pollak', verified: true },
+                { username: 'rish', displayName: 'Rish', verified: true },
+                { username: 'mason', displayName: 'Mason', verified: true },
+                { username: 'alice', displayName: 'Alice', verified: false },
+                { username: 'bob', displayName: 'Bob', verified: false },
+                { username: 'charlie', displayName: 'Charlie', verified: true },
+                { username: 'diana', displayName: 'Diana', verified: false },
+                { username: 'eve', displayName: 'Eve', verified: true }
+            ];
+            
+            // Select random user
+            const randomUser = realFarcasterUsers[Math.floor(Math.random() * realFarcasterUsers.length)];
+            
+            return {
+                username: randomUser.username,
+                displayName: randomUser.displayName,
+                profileImage: `https://via.placeholder.com/40x40/${getRandomColor()}/ffffff?text=${randomUser.username[0].toUpperCase()}`,
+                verified: randomUser.verified,
+                fid: Math.floor(Math.random() * 10000)
+            };
+        }
+        
+        // Generate random color
+        function getRandomColor() {
+            const colors = ['ff0080', '0080ff', 'ff8000', '8000ff', '00ff80'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // Update player info - REAL Farcaster data
+        async function updatePlayerInfo() {
+            try {
+                // Get real Farcaster user data
+                window.currentUser = await getFarcasterUserData();
+                console.log('✅ Real Farcaster user:', window.currentUser);
+                
+                // Update player info
+                if (document.getElementById('player1Name')) {
+                    document.getElementById('player1Name').textContent = window.currentUser.username;
+                }
+                
+                // Update UI
+                updateUserInterface();
+                
+            } catch (error) {
+                console.log('❌ Real Farcaster user data not available:', error);
+                
+                // Show error info to user
+                if (document.getElementById('userStatus')) {
+                    document.getElementById('userStatus').textContent = '❌ Farcaster account connection failed';
+                }
+            }
+        }
+        
+        // Game mode functions
+        window.startRandomFarcasterMatch = async function startRandomFarcasterMatch() {
+            console.log('🎲 Starting random Farcaster match...');
+            
+            try {
+                // Get current user data
+                currentUser = await getFarcasterUserData();
+                if (!currentUser) {
+                    currentUser = {
+                        username: 'Guest',
+                        displayName: 'Guest Player',
+                        pfpUrl: 'https://picsum.photos/100/100'
+                    };
+                }
+                
+                // Get random Farcaster user from API with aggressive cache busting
+                console.log('🎲 Fetching random Farcaster user from API...');
+                const timestamp = Date.now();
+                const randomParam = Math.floor(Math.random() * 1000000);
+                const response = await fetch(`https://bouncingballs.ataskira1.workers.dev/random?t=${timestamp}&r=${randomParam}&cache=${Math.random()}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                const data = await response.json();
+                
+                console.log('🎲 API Response:', data);
+                
+                let trendingUsers;
+                if (data.users && data.users.length > 0) {
+                    const randomUser = data.users[0];
+                    console.log('🎲 Random user found:', randomUser);
+                    
+                    trendingUsers = [{
+                        username: randomUser.username,
+                        display_name: randomUser.display_name,
+                        pfp_url: randomUser.pfp_url,
+                        follower_count: randomUser.follower_count,
+                        verified_addresses: randomUser.verified_addresses,
+                        power_badge: randomUser.power_badge
+                    }];
+                } else {
+                    console.log('🎲 No users found, using fallback');
+                    trendingUsers = [
+                        {
+                            username: 'vitalik',
+                            display_name: 'Vitalik Buterin',
+                            pfp_url: 'https://picsum.photos/100/100?random=1',
+                            follower_count: 500000,
+                            verified_addresses: [],
+                            power_badge: true
+                        }
+                    ];
+                }
+                console.log('🎲 Users loaded:', trendingUsers.length);
+                console.log('🎲 Trending users:', trendingUsers);
+                
+                if (trendingUsers.length > 0) {
+                    const randomUser = trendingUsers[0]; // API'den gelen tek kullanıcı
+                    console.log('🎲 Selected user:', randomUser);
+                    console.log('🎲 User details:', {
+                        username: randomUser.username,
+                        display_name: randomUser.display_name,
+                        pfp_url: randomUser.pfp_url
+                    });
+                    opponentUser = {
+                        username: randomUser.username,
+                        displayName: randomUser.display_name || randomUser.username,
+                        pfpUrl: randomUser.pfp_url || 'https://picsum.photos/100/100',
+                        followerCount: randomUser.follower_count,
+                        verified: randomUser.verified_addresses && randomUser.verified_addresses.length > 0,
+                        powerBadge: randomUser.power_badge
+                    };
+                    console.log('🎲 Opponent user pfpUrl set to:', opponentUser.pfpUrl);
+                    // Set globally
+                    window.opponentUser = opponentUser;
+                    console.log('🎲 Opponent user set globally:', window.opponentUser);
+                } else {
+                    console.log('⚠️ No trending users, using CPU');
+                    opponentUser = {
+                        username: 'CPU',
+                        displayName: 'CPU Player',
+                        pfpUrl: 'https://picsum.photos/100/100'
+                    };
+                    window.opponentUser = opponentUser;
+                }
+                
+                console.log('👤 Current user:', currentUser);
+                console.log('👤 Opponent user:', opponentUser);
+                
+                // Start the game
+                startGame();
+                
+            } catch (error) {
+                console.error('❌ Error starting random match:', error);
+                // Still try to start the game with fallback data
+                currentUser = currentUser || {
+                    username: 'Guest',
+                    displayName: 'Guest Player',
+                    pfpUrl: 'https://picsum.photos/100/100'
+                };
+                opponentUser = {
+                    username: 'CPU',
+                    displayName: 'CPU Player',
+                    pfpUrl: 'https://picsum.photos/100/100'
+                };
+                startGame();
+            }
+        }
+
+        // Duplicate function removed - using the first one
+
+
+        function startGameWithCPU() {
+            gameMode = 'cpu';
+            cpuControlled = true;
+            
+            // Find random Farcaster user for CPU
+            findFarcasterOpponent().then(opponent => {
+                opponentUser = opponent;
+                console.log('🤖 CPU opponent:', opponentUser);
+                
+                if (document.getElementById('player2Name')) {
+                    document.getElementById('player2Name').textContent = opponentUser.username;
+                    document.getElementById('player2Avatar').src = opponentUser.profileImage;
+                }
+                
+                // Start game immediately
+                setTimeout(() => {
+                    startGame();
+                }, 500);
+            });
+        }
+        
+        function startMultiplayerGame() {
+            gameMode = 'multiplayer';
+            cpuControlled = false;
+            
+            // Start matching
+            startMatchmaking();
+        }
+        
+        // Simple Farcaster matching system
+        async function startMatchmaking() {
+            console.log('🔍 Starting Farcaster matching...');
+            
+            // Update UI
+            if (document.getElementById('userStatus')) {
+                document.getElementById('userStatus').textContent = '🔍 Looking for Farcaster user...';
+            }
+            
+            // Find real Farcaster user
+            opponentUser = await findFarcasterOpponent();
+            console.log('✅ Farcaster opponent found:', opponentUser);
+            
+            // Update opponent info
+            if (document.getElementById('player2Name')) {
+                document.getElementById('player2Name').textContent = opponentUser.username;
+                document.getElementById('player2Avatar').src = opponentUser.profileImage;
+            }
+            
+            // Update UI
+            if (document.getElementById('userStatus')) {
+                document.getElementById('userStatus').textContent = `✅ Matched with ${opponentUser.username}!`;
+            }
+            
+            // Start game
+            setTimeout(() => {
+                startGame();
+            }, 1000);
+        }
+        
+        window.startGame = function startGame() {
+            console.log('🎮 Starting game...');
+            
+            // Hide game mode selection
+            document.getElementById('gameModeSelection').style.display = 'none';
+            
+            // Show scoreboard
+            document.querySelector('.scoreboard-container').classList.add('show');
+            
+            document.querySelector('.game-container').classList.add('game-started');
+            gameRunning = true;
+            timeLeft = 60; // Reset time
+            
+            // Update canvas size and circle position for rectangular canvas
+            const canvas = document.getElementById('gameCanvas');
+            canvas.width = 350;
+            canvas.height = 600;
+            
+            // Update circle position to center of rectangular canvas
+            circle.x = canvas.width / 2;
+            circle.y = canvas.height / 2;
+            circle.radius = Math.min(canvas.width, canvas.height) * 0.45; // 45% of smaller dimension
+            
+            // Set fixed colors for each player
+            player1BallColor = '#00ff00'; // Green for player 1
+            player2BallColor = '#ff0080'; // Pink for player 2
+            
+            console.log('🎨 Player 1 ball color:', player1BallColor);
+            console.log('🎨 Player 2 ball color:', player2BallColor);
+            
+            // Update UI with user data
+            console.log('🎯 Updating UI with user data:', window.currentUser);
+            if (window.currentUser) {
+                const username = window.currentUser.username || 'You';
+                document.getElementById('player1Name').textContent = username;
+                console.log('✅ Player 1 name set to:', username);
+                if (window.currentUser.pfpUrl) {
+                    document.getElementById('player1Avatar').src = window.currentUser.pfpUrl;
+                    console.log('✅ Player 1 avatar set to:', window.currentUser.pfpUrl);
+                }
+                
+                // Set player 1 avatar border color
+                document.getElementById('player1Avatar').classList.add('player1');
+                document.documentElement.style.setProperty('--player1-color', player1BallColor);
+            } else {
+                console.log('⚠️ No currentUser data available');
+                document.getElementById('player1Name').textContent = 'Guest';
+            }
+            
+            // Set opponent user globally if not set
+            if (!window.opponentUser && opponentUser) {
+                window.opponentUser = opponentUser;
+            }
+            
+            // Use global opponentUser
+            const currentOpponent = window.opponentUser || opponentUser;
+            if (currentOpponent) {
+                console.log('🎯 Setting opponent name in scoreboard:', currentOpponent.username);
+                console.log('🎯 Setting opponent avatar in scoreboard:', currentOpponent.pfpUrl);
+                document.getElementById('player2Name').textContent = currentOpponent.username || 'Opponent';
+                if (currentOpponent.pfpUrl) {
+                    document.getElementById('player2Avatar').src = currentOpponent.pfpUrl;
+                    console.log('✅ Player 2 avatar set to:', currentOpponent.pfpUrl);
+                }
+                
+                // Set player 2 avatar border color
+                document.getElementById('player2Avatar').classList.add('player2');
+                document.documentElement.style.setProperty('--player2-color', player2BallColor);
+            } else {
+                console.log('⚠️ No opponentUser available in startGame()');
+                // Fallback to CPU
+                document.getElementById('player2Name').textContent = 'CPU';
+                document.getElementById('player2Avatar').src = 'https://picsum.photos/100/100';
+                document.getElementById('player2Avatar').classList.add('player2');
+                document.documentElement.style.setProperty('--player2-color', player2BallColor);
+            }
+            
+            // Recreate balls with user data
+            balls = createBalls();
+            console.log('⚽ Balls created:', balls);
+            
+            // Select new random neon color for circle
+            const newColor = getRandomNeonColor();
+            applyNeonColor(newColor);
+            console.log('🎨 New neon color:', newColor);
+            
+            // Reset timer style
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
+            
+            // Play referee whistle when game starts
+            setTimeout(() => {
+                playRefereeWhistle();
+            }, 500);
+            
+            // Start background music removed as requested
+            
+            updateTimer();
+            gameLoop();
+            
+            console.log('✅ Game started!');
+        }
+        // Create balls with user data
+        function createBalls() {
+            // Safe user data
+            const player1 = window.currentUser || {
+                username: 'Player 1',
+                displayName: 'Player 1',
+                pfpUrl: 'https://via.placeholder.com/40x40/00ff00/ffffff?text=P1',
+                verified: false,
+                fid: 1
+            };
+            
+            const player2 = window.opponentUser || opponentUser || {
+                username: 'Player 2',
+                displayName: 'Player 2',
+                pfpUrl: 'https://via.placeholder.com/40x40/ff0000/ffffff?text=P2',
+                verified: false,
+                fid: 2
+            };
+            
+            return [
+                {
+                    x: 150, y: 200, vx: 3, vy: -2, radius: 20, 
+                    team: 'juventus', color: '#ffffff',
+                    user: player1,
+                    ballColor: player1BallColor // Player 1's unique ball color
+                },
+                {
+                    x: 250, y: 200, vx: -3, vy: 2, radius: 20, 
+                    team: 'atalanta', color: '#0066cc',
+                    user: player2,
+                    ballColor: player2BallColor // Player 2's unique ball color
+                }
+            ];
+        }
+        
+        let balls = createBalls();
+        const circle = {x: 200, y: 200, radius: 150};
+        let circleAngle = 0;
+        const friction = 0.99;
+        const bounce = 0.8;
+        const gravity = 0.1;
+        const wallBounce = 1.2;
+        const maxSpeed = 8;
+        
+        // Titreme efekti için değişkenler
+        let screenShake = 0;
+        let goalText = '';
+        let goalTextTimer = 0;
+        
+        // Ses efekti için AudioContext
+        let audioContext = null;
+        let soundEnabled = false;
+        const minSpeed = 0.5;
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            // Titreme efekti
+            if (screenShake > 0) {
+                ctx.save();
+                const shakeX = (Math.random() - 0.5) * screenShake;
+                const shakeY = (Math.random() - 0.5) * screenShake;
+                ctx.translate(shakeX, shakeY);
+                screenShake *= 0.9; // Titreme azalıyor
+            }
+            
+            ctx.fillStyle = '#001a00';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawCircle();
+            drawGoal();
+            updateBalls();
+            drawBalls();
+            checkCollisions();
+            checkGoals();
+            
+            // Gol yazısı
+            if (goalTextTimer > 0) {
+                drawGoalText();
+                goalTextTimer--;
+            }
+            
+            // End screen shake effect
+            if (screenShake > 0) {
+                ctx.restore();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function drawCircle() {
+            circleAngle += 0.015;
+            ctx.strokeStyle = currentNeonColor;
+            ctx.lineWidth = 3;
+            ctx.shadowColor = currentNeonColor;
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        
+        function drawGoal() {
+            // Goal attached to circle - goal rotates with circle
+            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // Attached to circle
+            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // Attached to circle
+            
+            const goalWidth = 60; // Reduced: 80 → 60
+            const goalHeight = 40; // Reduced: 50 → 40
+            const postWidth = 6;
+            
+            // Goal attached to circle - goal rotates with circle
+            // Goal opening always faces outward from center
+            ctx.save();
+            ctx.translate(goalX, goalY);
+            ctx.rotate(circleAngle + Math.PI/2); // Goal opening faces outside circle
+            
+            // Goal frame - Neon white effect
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = postWidth;
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 25;
+            
+            // Left post - attached to circle
+            ctx.beginPath();
+            ctx.moveTo(-goalWidth/2, -goalHeight/2);
+            ctx.lineTo(-goalWidth/2, goalHeight/2);
+            ctx.stroke();
+            
+            // Right post - attached to circle
+            ctx.beginPath();
+            ctx.moveTo(goalWidth/2, -goalHeight/2);
+            ctx.lineTo(goalWidth/2, goalHeight/2);
+            ctx.stroke();
+            
+            // Top post - attached to circle
+            ctx.beginPath();
+            ctx.moveTo(-goalWidth/2, -goalHeight/2);
+            ctx.lineTo(goalWidth/2, -goalHeight/2);
+            ctx.stroke();
+            
+            // Goal line physically absent - empty space or net visible
+            ctx.shadowBlur = 0;
+            
+            // Goal net - Neon white grid pattern (THIN)
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1; // Thinned: 2 → 1
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 10; // Thinned: 15 → 10
+            
+            // Vertical net lines
+            for (let i = 1; i < 6; i++) {
+                const x = -goalWidth/2 + (goalWidth / 6) * i;
+            ctx.beginPath();
+                ctx.moveTo(x, -goalHeight/2);
+                ctx.lineTo(x, goalHeight/2);
+            ctx.stroke();
+            }
+            
+            // Horizontal net lines
+            for (let i = 1; i < 4; i++) {
+                const y = -goalHeight/2 + (goalHeight / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(-goalWidth/2, y);
+                ctx.lineTo(goalWidth/2, y);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+        
+        function playRefereeWhistle() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Real referee whistle sound - metallic and sharp
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                const distortion = audioContext.createWaveShaper();
+                
+                oscillator.connect(distortion);
+                distortion.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Referee whistle frequency (very high and sharp)
+                oscillator.frequency.setValueAtTime(2000, audioContext.currentTime);
+                oscillator.frequency.linearRampToValueAtTime(3000, audioContext.currentTime + 0.05);
+                oscillator.frequency.linearRampToValueAtTime(2500, audioContext.currentTime + 0.2);
+                oscillator.frequency.linearRampToValueAtTime(1800, audioContext.currentTime + 0.6);
+                
+                // Sound shape (like metallic whistle)
+                oscillator.type = 'sawtooth';
+                
+                // Distortion (for metallic sound)
+                const distortionAmount = 50;
+                const samples = 44100;
+                const curve = new Float32Array(samples);
+                for (let i = 0; i < samples; i++) {
+                    const x = (i * 2) / samples - 1;
+                    curve[i] = Math.tanh(x * distortionAmount);
+                }
+                distortion.curve = curve;
+                distortion.oversample = '4x';
+                
+                // Filter (sharp whistle characteristic)
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(2500, audioContext.currentTime);
+                filter.Q.setValueAtTime(5, audioContext.currentTime);
+                
+                // Sound level
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.02);
+                gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.3);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.8);
+                
+                console.log('Real referee whistle played!');
+                
+            } catch (error) {
+                console.log('Referee whistle could not be played:', error);
+            }
+        }
+        
+        function playGoalSound() {
+            console.log('🎯 Goal sound function called!');
+            
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Fallback synthesized crowd sound
+                const createCrowdVoice = (baseFreq, delay, duration, voiceType) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        const filter = audioContext.createBiquadFilter();
+                        
+                        oscillator.connect(filter);
+                        filter.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        // Human-like frequency variation
+                        oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 1.5, audioContext.currentTime + 0.1);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 1.2, audioContext.currentTime + 0.3);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 0.8, audioContext.currentTime + duration * 0.7);
+                        oscillator.frequency.linearRampToValueAtTime(baseFreq * 0.6, audioContext.currentTime + duration);
+                        
+                        // Sound shape (human-like)
+                        oscillator.type = 'triangle';
+                        
+                        // Filter (human voice characteristic)
+                        filter.type = 'bandpass';
+                        filter.frequency.setValueAtTime(baseFreq * 2, audioContext.currentTime);
+                        filter.Q.setValueAtTime(1.5, audioContext.currentTime);
+                        
+                        // Sound level (like crowd)
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.05);
+                        gainNode.gain.linearRampToValueAtTime(0.6, audioContext.currentTime + 0.2);
+                        gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + duration * 0.5);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + duration);
+                    }, delay);
+                };
+                
+                // Realistic crowd sound layers
+                createCrowdVoice(60, 0, 2.5, 'deep_male');      // Deep male voice
+                createCrowdVoice(80, 50, 2.2, 'male');          // Medium male voice
+                createCrowdVoice(100, 100, 2.0, 'high_male');   // High male voice
+                createCrowdVoice(120, 150, 1.8, 'female');      // Female voice
+                createCrowdVoice(140, 200, 1.6, 'high_female'); // High female voice
+                createCrowdVoice(160, 250, 1.4, 'child');       // Child voice
+                createCrowdVoice(180, 300, 1.2, 'high_child');  // High child voice
+                
+                // Additional sound layers (more crowd)
+                createCrowdVoice(70, 400, 1.8, 'extra_male');  // Extra male voice
+                createCrowdVoice(110, 450, 1.6, 'extra_female'); // Extra female voice
+                createCrowdVoice(130, 500, 1.4, 'extra_high');  // Extra high voice
+                
+                console.log('Synthesized crowd sound played!');
+                
+            } catch (error) {
+                console.log('Sound effect could not be played:', error);
+                console.log('🎉 GOOOAAAL!!! 🎉');
+            }
+        }
+        
+        function drawGoalText() {
+            // Shaking explosion effect
+            const shakeIntensity = Math.max(0, 60 - goalTextTimer) * 2;
+            const shakeX = (Math.random() - 0.5) * shakeIntensity;
+            const shakeY = (Math.random() - 0.5) * shakeIntensity;
+            
+            // Growth effect
+            const scale = 1 + (60 - goalTextTimer) * 0.02;
+            
+            ctx.save();
+            ctx.translate(canvas.width/2 + shakeX, canvas.height/2 - 100 + shakeY);
+            ctx.scale(scale, scale);
+            
+            // Cool font and colors
+            ctx.fillStyle = '#ff0000';
+            ctx.font = 'bold 64px Impact, Arial Black, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.strokeStyle = '#ffff00';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 30;
+            
+            // Draw text
+            ctx.strokeText(goalText, 0, 0);
+            ctx.fillText(goalText, 0, 0);
+            
+            // Glow effect
+            ctx.shadowBlur = 50;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 72px Impact, Arial Black, sans-serif';
+            ctx.fillText(goalText, 0, 0);
+            
+            ctx.restore();
+        }
+        
+        // CPU control algorithm - Simple and working version
+        let cpuClickTimer = 0;
+        let cpuClickInterval = 60 + Math.random() * 120; // Random between 1-3 seconds
+        
+        function updateCPUControl(cpuBall) {
+            // CPU click mechanics (same as player)
+            cpuClickTimer++;
+            if (cpuClickTimer >= cpuClickInterval) {
+                // Simulate click to random point
+                const randomX = circle.x + (Math.random() - 0.5) * circle.radius * 1.5;
+                const randomY = circle.y + (Math.random() - 0.5) * circle.radius * 1.5;
+                
+                // CPU ball click effect (same as player)
+                const dx = randomX - cpuBall.x;
+                const dy = randomY - cpuBall.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < cpuBall.radius * 2) { // If close to CPU ball
+                    cpuBall.vx = (randomX - circle.x) * 0.1;
+                    cpuBall.vy = (randomY - circle.y) * 0.1;
+                }
+                
+                // Reset timer and set new random interval
+                cpuClickTimer = 0;
+                cpuClickInterval = 60 + Math.random() * 120;
+            }
+            
+            // Normal physics applied (gravity, friction etc. in updateBalls)
+        }
+        
+        function updateBalls() {
+            balls.forEach((ball, index) => {
+                // CPU control (only for second ball)
+                if (cpuControlled && index === 1) {
+                    updateCPUControl(ball);
+                }
+                
+                ball.vy += gravity;
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+                ball.vx *= friction;
+                
+                const dx = ball.x - circle.x;
+                const dy = ball.y - circle.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance + ball.radius > circle.radius) {
+                    const angle = Math.atan2(dy, dx);
+                    ball.x = circle.x + Math.cos(angle) * (circle.radius - ball.radius);
+                    ball.y = circle.y + Math.sin(angle) * (circle.radius - ball.radius);
+                    
+                    const normalX = dx / distance;
+                    const normalY = dy / distance;
+                    const dot = ball.vx * normalX + ball.vy * normalY;
+                    
+                    ball.vx -= 2 * dot * normalX * wallBounce;
+                    ball.vy -= 2 * dot * normalY * wallBounce;
+                    
+                    // Set bouncing flag for flame effect
+                    ball.justBounced = true;
+                    setTimeout(() => {
+                        ball.justBounced = false;
+                    }, 400); // Show flame for 400ms after bounce
+                    
+                    // Screen shake effect
+                    screenShake = 10;
+                    
+                    // Sound effect removed as requested
+                }
+                
+                const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                if (speed < minSpeed) {
+                    ball.vx += (Math.random() - 0.5) * 0.5;
+                    ball.vy += (Math.random() - 0.5) * 0.5;
+                }
+            });
+        }
+        
+        // Store loaded images globally
+        const loadedImages = {};
+        
+        function drawBalls() {
+            balls.forEach((ball, index) => {
+                // Draw profile picture if available
+                const user = ball.user; // Use ball.user instead of currentUser/opponentUser
+                
+                if (user && user.pfpUrl) {
+                    // Check if image is already loaded
+                    if (loadedImages[user.pfpUrl]) {
+                        // Draw the loaded image
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                        ctx.clip();
+                        ctx.drawImage(loadedImages[user.pfpUrl], ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
+                        ctx.restore();
+                    } else {
+                        // Load image if not loaded yet
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = function() {
+                            loadedImages[user.pfpUrl] = img;
+                            console.log('✅ Profile picture loaded for ball', index, user.username);
+                        };
+                        img.onerror = function() {
+                            console.log('❌ Failed to load profile picture for ball', index);
+                        };
+                        img.src = user.pfpUrl;
+                        
+                        // Draw colored circle while loading
+                        ctx.fillStyle = ball.color;
+                        ctx.shadowColor = ball.color;
+                        ctx.shadowBlur = 15;
+                        ctx.beginPath();
+                        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                } else {
+                    // Fallback: Colored circle
+                ctx.fillStyle = ball.color;
+                ctx.shadowColor = ball.color;
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                }
+                
+                // Ball frame - each player has different color
+                ctx.strokeStyle = ball.ballColor || currentNeonColor;
+                ctx.lineWidth = 4;
+                ctx.shadowColor = ball.ballColor || currentNeonColor;
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                
+                // Draw realistic flame trail effect with smoke - only when bouncing
+                if ((ball.bouncing || ball.justBounced) && (Math.abs(ball.vx) > 0.5 || Math.abs(ball.vy) > 0.5)) {
+                    const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                    const trailIntensity = Math.min(speed / 5, 1); // Normalize speed to 0-1
+                    
+                    // Calculate trail direction (opposite to movement)
+                    const trailX = -ball.vx / speed;
+                    const trailY = -ball.vy / speed;
+                    
+                    // Start trail from the edge of the ball
+                    const startX = ball.x + trailX * ball.radius;
+                    const startY = ball.y + trailY * ball.radius;
+                    
+                    // Create realistic flame trail with irregular shape and smoke
+                    for (let i = 0; i < 10; i++) {
+                        const fadeProgress = i / 10; // 0 to 1
+                        const trailLength = (ball.radius + 45) * trailIntensity * (1 - fadeProgress * 0.7);
+                        
+                        // Add some randomness to make it look like real flame
+                        const randomOffsetX = (Math.random() - 0.5) * ball.radius * 0.6;
+                        const randomOffsetY = (Math.random() - 0.5) * ball.radius * 0.6;
+                        
+                        const trailXPos = startX + trailX * trailLength + randomOffsetX;
+                        const trailYPos = startY + trailY * trailLength + randomOffsetY;
+                        const trailWidth = (ball.radius * 0.6) * (1 - fadeProgress) * trailIntensity;
+                        
+                        // Flame colors - realistic fire colors (bigger and more visible)
+                        let trailColor;
+                        let alpha;
+                        if (i < 2) {
+                            trailColor = '#FFD700'; // Golden yellow core
+                            alpha = 0.7 - fadeProgress * 0.5;
+                        } else if (i < 4) {
+                            trailColor = '#FF6600'; // Orange
+                            alpha = 0.65 - fadeProgress * 0.45;
+                        } else if (i < 6) {
+                            trailColor = '#FF3300'; // Red-orange
+                            alpha = 0.6 - fadeProgress * 0.4;
+                        } else {
+                            trailColor = '#CC0000'; // Deep red
+                            alpha = 0.55 - fadeProgress * 0.35;
+                        }
+                        
+                        // Apply soft fading effect
+                        alpha = Math.max(alpha, 0.2); // Higher minimum visibility
+                        
+                        // Create irregular flame shape using multiple circles
+                        for (let j = 0; j < 3; j++) {
+                            const flameX = trailXPos + (Math.random() - 0.5) * trailWidth * 0.8;
+                            const flameY = trailYPos + (Math.random() - 0.5) * trailWidth * 0.8;
+                            const flameSize = trailWidth * (0.5 + Math.random() * 0.5);
+                            
+                            // Create soft radial gradient for flame effect
+                            const gradient = ctx.createRadialGradient(flameX, flameY, 0, flameX, flameY, flameSize);
+                            gradient.addColorStop(0, trailColor + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
+                            gradient.addColorStop(0.3, trailColor + Math.floor(alpha * 150).toString(16).padStart(2, '0'));
+                            gradient.addColorStop(0.7, trailColor + Math.floor(alpha * 80).toString(16).padStart(2, '0'));
+                            gradient.addColorStop(1, 'transparent');
+                            
+                            ctx.fillStyle = gradient;
+                            ctx.beginPath();
+                            ctx.arc(flameX, flameY, flameSize, 0, Math.PI * 2);
+                            ctx.fill();
+                            
+                            // Add stronger glow effect for flame
+                            ctx.shadowColor = trailColor;
+                            ctx.shadowBlur = 18 * (1 - fadeProgress);
+                            ctx.fillStyle = trailColor + Math.floor(alpha * 100).toString(16).padStart(2, '0');
+                            ctx.beginPath();
+                            ctx.arc(flameX, flameY, flameSize * 0.6, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
+                        
+                        // Add smoke effect behind flame (only in outer segments)
+                        if (i > 4) {
+                            const smokeX = trailXPos + (Math.random() - 0.5) * trailWidth * 1.5;
+                            const smokeY = trailYPos + (Math.random() - 0.5) * trailWidth * 1.5;
+                            const smokeSize = trailWidth * 1.2;
+                            
+                            // Create smoke gradient
+                            const smokeGradient = ctx.createRadialGradient(smokeX, smokeY, 0, smokeX, smokeY, smokeSize);
+                            const smokeAlpha = (i / 10) * 0.15; // Subtle smoke
+                            smokeGradient.addColorStop(0, '#4A4A4A' + Math.floor(smokeAlpha * 255).toString(16).padStart(2, '0'));
+                            smokeGradient.addColorStop(0.5, '#3A3A3A' + Math.floor(smokeAlpha * 200).toString(16).padStart(2, '0'));
+                            smokeGradient.addColorStop(1, 'transparent');
+                            
+                            ctx.fillStyle = smokeGradient;
+                            ctx.beginPath();
+                            ctx.arc(smokeX, smokeY, smokeSize, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        
+                        // Add flame flicker effect (more visible)
+                        if (Math.random() > 0.6 && i < 4) {
+                            const flickerX = trailXPos + (Math.random() - 0.5) * trailWidth * 1.2;
+                            const flickerY = trailYPos + (Math.random() - 0.5) * trailWidth * 1.2;
+                            const flickerSize = trailWidth * 0.3;
+                            
+                            ctx.fillStyle = '#FFD700' + Math.floor(alpha * 120).toString(16).padStart(2, '0');
+                            ctx.shadowColor = '#FFD700';
+                            ctx.shadowBlur = 10;
+                            ctx.beginPath();
+                            ctx.arc(flickerX, flickerY, flickerSize, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
+                    }
+                }
+                
+                // No team letter - profile picture is enough
+            });
+        }
+        
+        function checkCollisions() {
+            const ball1 = balls[0];
+            const ball2 = balls[1];
+            const dx = ball2.x - ball1.x;
+            const dy = ball2.y - ball1.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < ball1.radius + ball2.radius && distance > 0) {
+                // Separate balls - safer method
+                const overlap = (ball1.radius + ball2.radius) - distance;
+                const separationX = (dx / distance) * overlap * 0.5;
+                const separationY = (dy / distance) * overlap * 0.5;
+                
+                ball1.x -= separationX;
+                ball1.y -= separationY;
+                ball2.x += separationX;
+                ball2.y += separationY;
+                
+                const tempVx = ball1.vx;
+                const tempVy = ball1.vy;
+                ball1.vx = ball2.vx * bounce;
+                ball1.vy = ball2.vy * bounce;
+                ball2.vx = tempVx * bounce;
+                ball2.vy = tempVy * bounce;
+                
+                const speed1 = Math.sqrt(ball1.vx * ball1.vx + ball1.vy * ball1.vy);
+                const speed2 = Math.sqrt(ball2.vx * ball2.vx + ball2.vy * ball2.vy);
+                
+                if (speed1 > maxSpeed) {
+                    ball1.vx = (ball1.vx / speed1) * maxSpeed;
+                    ball1.vy = (ball1.vy / speed1) * maxSpeed;
+                }
+                
+                if (speed2 > maxSpeed) {
+                    ball2.vx = (ball2.vx / speed2) * maxSpeed;
+                    ball2.vy = (ball2.vy / speed2) * maxSpeed;
+                }
+            }
+        }
+        
+        function checkGoals() {
+            // Goal on circle - goal rotates with circle
+            const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // On circle
+            const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // On circle
+            const goalWidth = 60; // Reduced: 80 → 60
+            const goalHeight = 40; // Reduced: 50 → 40
+            
+            balls.forEach(ball => {
+                const inGoalX = ball.x >= goalX - goalWidth/2 && ball.x <= goalX + goalWidth/2;
+                const inGoalY = ball.y >= goalY - goalHeight/2 && ball.y <= goalY + goalHeight/2;
+                
+                if (inGoalX && inGoalY) {
+                    if (ball.team === 'juventus') {
+                        score1++;
+                        document.getElementById('score1').textContent = score1;
+                    } else {
+                        score2++;
+                        document.getElementById('score2').textContent = score2;
+                    }
+                    
+                    // Show goal text
+                    goalText = 'GOOOAAAL!!!';
+                    goalTextTimer = 60; // Show for 1 second
+                    
+                    // Play sound effect
+                    playGoalSound();
+                    
+                    ball.x = circle.x + (Math.random() - 0.5) * 100;
+                    ball.y = circle.y + (Math.random() - 0.5) * 100;
+                    ball.vx = (Math.random() - 0.5) * 6;
+                    ball.vy = (Math.random() - 0.5) * 6;
+                }
+            });
+        }
+        
+        function updateTimer() {
+            if (!gameRunning) return;
+            timeLeft--;
+            if (timeLeft <= 0) {
+                document.getElementById('timer').textContent = 'TIME UP!';
+                document.getElementById('timer').style.color = '#ff0000';
+                document.getElementById('timer').style.fontSize = '20px';
+                document.getElementById('timer').style.fontWeight = 'bold';
+                endGame();
+            } else {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+                document.getElementById('timer').style.color = '';
+                document.getElementById('timer').style.fontSize = '';
+                document.getElementById('timer').style.fontWeight = '';
+                setTimeout(updateTimer, 1000);
+            }
+        }
+        
+        function endGame() {
+            // Give extra time in case of tie
+            if (score1 === score2) {
+                console.log('⚽ Tie! Adding extra 15 seconds...');
+                timeLeft = 15; // 15 seconds extra time
+                document.getElementById('timer').textContent = '0:15';
+                document.getElementById('timer').style.color = '#ff6600'; // Orange color
+                
+                // Show extra time message
+                const timerElement = document.getElementById('timer');
+                timerElement.style.fontSize = '20px';
+                timerElement.style.fontWeight = 'bold';
+                
+                // Restart timer
+                setTimeout(updateTimer, 1000);
+                return;
+            }
+            
+            // Normal game end
+            gameRunning = false;
+            
+            // Save game result to leaderboard
+            saveGameResult();
+            
+            // Hide scoreboard and canvas when game ends
+            document.querySelector('.scoreboard-container').classList.remove('show');
+            const canvas = document.getElementById('gameCanvas');
+            canvas.classList.add('hide', 'game-over-hidden');
+            canvas.style.display = 'none';
+            
+            // Stop background music removed as requested
+            
+            document.getElementById('finalScore1').textContent = score1;
+            document.getElementById('finalScore2').textContent = score2;
+            
+            // Set final scoreboard with avatars and names
+            if (window.currentUser) {
+                document.getElementById('finalPlayer1Name').textContent = window.currentUser.username;
+                document.getElementById('finalPlayer1Avatar').src = window.currentUser.pfpUrl || 'https://picsum.photos/50/50';
+                document.getElementById('finalPlayer1Avatar').classList.add('player1');
+            }
+            
+            if (window.opponentUser) {
+                document.getElementById('finalPlayer2Name').textContent = window.opponentUser.username;
+                document.getElementById('finalPlayer2Avatar').src = window.opponentUser.pfpUrl || 'https://picsum.photos/50/50';
+                document.getElementById('finalPlayer2Avatar').classList.add('player2');
+            }
+            
+            // Show winner
+            const winnerDisplay = document.getElementById('winnerDisplay');
+            const winnerText = document.getElementById('winnerText');
+            
+            if (score1 > score2) {
+                winnerText.textContent = `🎉 ${window.currentUser?.username || 'You'} WON!!! 🎉`;
+                winnerDisplay.style.display = 'block';
+            } else if (score2 > score1) {
+                winnerText.textContent = `🎉 ${window.opponentUser?.username || 'Opponent'} WON!!! 🎉`;
+                winnerDisplay.style.display = 'block';
+            } else {
+                winnerText.textContent = `🤝 DRAW! 🤝`;
+                winnerDisplay.style.display = 'block';
+            }
+            
+            document.getElementById('gameOver').style.display = 'block';
+            
+            // Reset timer color to normal
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
+            
+            // Play referee whistle when game ends
+            setTimeout(() => {
+                playRefereeWhistle();
+            }, 500);
+        }
+        
+        function restartGame() {
+            // Return to game mode selection
+            document.querySelector('.game-container').classList.remove('game-started');
+            document.getElementById('gameModeSelection').style.display = 'block';
+            document.getElementById('gameOver').style.display = 'none';
+            const canvas = document.getElementById('gameCanvas');
+            canvas.classList.remove('hide', 'game-over-hidden');
+            canvas.style.display = '';
+            
+            // Reset scores
+            score1 = 0;
+            score2 = 0;
+            document.getElementById('score1').textContent = '0';
+            document.getElementById('score2').textContent = '0';
+            document.getElementById('timer').textContent = '1:00';
+            
+            // Reset timer style
+            document.getElementById('timer').style.color = currentNeonColor;
+            document.getElementById('timer').style.fontSize = '18px';
+            document.getElementById('timer').style.fontWeight = 'normal';
+            
+            // Return balls to starting position
+            balls[0].x = 150;
+            balls[0].y = 200;
+            balls[0].vx = 3;
+            balls[0].vy = -2;
+            balls[1].x = 250;
+            balls[1].y = 200;
+            balls[1].vx = -3;
+            balls[1].vy = 2;
+        }
+        
+        async function addToFarcaster() {
+            console.log('➕ Adding to Farcaster...');
+            
+            try {
+                // Try to use Farcaster SDK if available
+                if (window.sdk && window.sdk.actions && window.sdk.actions.addMiniApp) {
+                    await window.sdk.actions.addMiniApp();
+                    console.log('✅ Mini App added to Farcaster!');
+                } else {
+                    console.log('⚠️ Farcaster SDK not available');
+                    alert('Farcaster SDK not available. Please open this app from Warpcast!');
+                }
+            } catch (error) {
+                console.log('❌ Failed to add Mini App:', error);
+                if (error.name === 'RejectedByUser') {
+                    alert('Mini App add request was rejected by user.');
+                } else if (error.name === 'InvalidDomainManifestJson') {
+                    alert('Domain mismatch. Please ensure the app is deployed to the correct domain.');
+                } else {
+                    alert('Failed to add Mini App: ' + error.message);
+                }
+            }
+        }
+
+        async function shareToFarcaster() {
+            console.log('📤 Sharing to Farcaster...');
+            
+            try {
+                // Get final scores and player names
+                const finalScore1 = parseInt(document.getElementById('finalScore1').textContent);
+                const finalScore2 = parseInt(document.getElementById('finalScore2').textContent);
+                const player1Name = document.getElementById('finalPlayer1Name').textContent;
+                const player2Name = document.getElementById('finalPlayer2Name').textContent;
+                
+                // Determine winner and create share text
+                let shareText;
+                if (finalScore1 > finalScore2) {
+                    // Player 1 won
+                    shareText = `🏆 I've beaten @${player2Name} ${finalScore1}-${finalScore2} at Bouncing Balls and grabbed my 3 points! Can you dare to beat me? ⚽🎮`;
+                } else if (finalScore2 > finalScore1) {
+                    // Player 2 won
+                    shareText = `😤 I've lost against @${player2Name} ${finalScore1}-${finalScore2} at Bouncing Balls and lost 3 points, but I'm ready for the revenge! ⚽🎮`;
+                } else {
+                    // Draw
+                    shareText = `🤝 Draw! @${player2Name} and I tied ${finalScore1}-${finalScore2} at Bouncing Balls! Ready for a rematch? ⚽🎮`;
+                }
+                
+                // Try to use Farcaster SDK if available
+                if (window.sdk && window.sdk.actions && window.sdk.actions.composeCast) {
+                    const result = await window.sdk.actions.composeCast({
+                        text: shareText,
+                        embeds: ['https://farcaster.xyz/miniapps/6Cn8Z1DiToCH/bouncing-balls']
+                    });
+                    
+                    if (result?.cast) {
+                        console.log('✅ Cast posted successfully:', result.cast.hash);
+                    } else {
+                        console.log('📝 Cast was cancelled by user');
+                    }
+                } else {
+                    console.log('⚠️ Farcaster SDK not available');
+                    // Fallback to copy to clipboard
+                    navigator.clipboard.writeText(shareText);
+                    alert('Game result copied to clipboard! Share it on Farcaster!');
+                }
+            } catch (error) {
+                console.log('❌ Failed to share:', error);
+                // Fallback to copy to clipboard
+                const fallbackText = `I just played Bouncing Balls! Final score: ${finalScore1}-${finalScore2}. Can you beat me? 🎮⚽`;
+                navigator.clipboard.writeText(fallbackText);
+                alert('Game result copied to clipboard! Share it on Farcaster!');
+            }
+        }
+        
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            balls.forEach(ball => {
+                const dx = x - ball.x;
+                const dy = y - ball.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < ball.radius) {
+                    ball.vx = (x - circle.x) * 0.1;
+                    ball.vy = (y - circle.y) * 0.1;
+                }
+            });
+        });
+        
+        async function initializeGame() {
+            console.log('🎮 Initializing game...');
+            
+            // Farcaster Mini App initialization
+            try {
+                if (window.FarcasterFrame) {
+                    await window.FarcasterFrame.init({
+                        allowedOrigins: ['*']
+                    });
+                    console.log('✅ Farcaster Mini App SDK initialized');
+                }
+            } catch (error) {
+                console.log('⚠️ Farcaster Mini App SDK not available:', error);
+            }
+            
+            // Wait a bit for Farcaster context to load
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('🔍 After wait - window.farcaster:', window.farcaster);
+            
+            // Get user data automatically (ChatGPT önerisi)
+            try {
+                const userData = await getFarcasterUserData();
+                window.currentUser = userData;
+                console.log('✅ User data loaded:', userData);
+                
+                if (userData && userData.username && userData.username !== 'testuser') {
+                    document.getElementById('userStatus').textContent = `✅ Playing as @${userData.username}`;
+                    console.log(`🎯 Takım adı = @${userData.username}`);
+                    console.log(`🖼️ Profil fotoğrafı = ${userData.pfpUrl}`);
+                    console.log('👤 Full user data:', userData);
+                } else {
+                    document.getElementById('userStatus').textContent = '🎮 Ready to play!';
+                    console.log('⚠️ User data not available or test user:', userData);
+                }
+            } catch (error) {
+                console.error('Error initializing:', error);
+                document.getElementById('userStatus').textContent = '🎮 Ready to play!';
+            }
+        }
+        
+        // Select first random color when page loads
+        const initialColor = getRandomNeonColor();
+        applyNeonColor(initialColor);
+        console.log('🎨 Initial neon color:', initialColor);
+        
+        // Leaderboard functions
+        let currentLeaderboardPeriod = '30d';
+        
+        async function saveGameResult() {
+            try {
+                const gameResult = {
+                    winnerFid: score1 > score2 ? window.currentUser?.fid : window.opponentUser?.fid,
+                    loserFid: score1 > score2 ? window.opponentUser?.fid : window.currentUser?.fid,
+                    winnerUsername: score1 > score2 ? window.currentUser?.username : window.opponentUser?.username,
+                    loserUsername: score1 > score2 ? window.opponentUser?.username : window.currentUser?.username,
+                    winnerDisplayName: score1 > score2 ? window.currentUser?.displayName : window.opponentUser?.displayName,
+                    loserDisplayName: score1 > score2 ? window.opponentUser?.displayName : window.currentUser?.displayName,
+                    winnerPfpUrl: score1 > score2 ? window.currentUser?.pfpUrl : window.opponentUser?.pfpUrl,
+                    loserPfpUrl: score1 > score2 ? window.opponentUser?.pfpUrl : window.currentUser?.pfpUrl,
+                    winnerScore: score1 > score2 ? score1 : score2,
+                    loserScore: score1 > score2 ? score2 : score1,
+                };
+                
+                await fetch('https://bouncingballsfarcaster.vercel.app/api/game-result', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(gameResult)
+                });
+                
+                console.log('✅ Game result saved to leaderboard');
+            } catch (error) {
+                console.error('❌ Failed to save game result:', error);
+                console.error('Error details:', error.message);
+            }
+        }
+        
+        async function showLeaderboard() {
+            document.getElementById('leaderboardModal').style.display = 'flex';
+            await loadLeaderboard(currentLeaderboardPeriod);
+        }
+        
+        function closeLeaderboard() {
+            document.getElementById('leaderboardModal').style.display = 'none';
+        }
+        
+        async function changeLeaderboardPeriod(period) {
+            currentLeaderboardPeriod = period;
+            document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            await loadLeaderboard(period);
+        }
+        
+        async function loadLeaderboard(period) {
+            try {
+                console.log('📊 Loading leaderboard for period:', period);
+                const response = await fetch(`https://bouncingballsfarcaster.vercel.app/api/leaderboard?period=${period}`);
+                console.log('📊 Response status:', response.status);
+                const data = await response.json();
+                console.log('📊 Leaderboard data:', data);
+                
+                const leaderboardList = document.getElementById('leaderboardList');
+                leaderboardList.innerHTML = '';
+                
+                if (!data.leaderboard || data.leaderboard.length === 0) {
+                    leaderboardList.innerHTML = '<p style="text-align: center; color: #ccc; padding: 20px;">No players yet. Be the first!</p>';
+                    return;
+                }
+                
+                data.leaderboard.forEach((player, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'leaderboard-item';
+                    item.onclick = () => challengePlayer(player);
+                    
+                    const rankClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+                    
+                    item.innerHTML = `
+                        <div class="leaderboard-rank ${rankClass}">${index + 1}</div>
+                        <img src="${player.pfpUrl}" alt="${player.username}" class="leaderboard-avatar">
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-username">@${player.username}</div>
+                            <div class="leaderboard-stats">
+                                <span>🏆 ${player.wins}W</span>
+                                <span>❌ ${player.losses}L</span>
+                                <span>⚽ ${player.goalsScored}G</span>
+                            </div>
+                        </div>
+                        <div class="leaderboard-points">${player.points}</div>
+                    `;
+                    
+                    leaderboardList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('❌ Failed to load leaderboard:', error);
+                console.error('Error details:', error.message);
+                console.error('Stack:', error.stack);
+                document.getElementById('leaderboardList').innerHTML = '<p style="text-align: center; color: red; padding: 20px;">Failed to load leaderboard: ' + error.message + '</p>';
+            }
+        }
+        
+        function challengePlayer(player) {
+            if (confirm(`Do you want to challenge @${player.username}?`)) {
+                // Start duel with this player
+                window.challengeFid = player.fid;
+                window.challengeUsername = player.username;
+                closeLeaderboard();
+                startFarcasterDuel();
+            }
+        }
+        
+        // Initialize game when page loads
+        window.addEventListener('load', async () => {
+            await initializeGame();
+        });
+    </script>
+</body>
+</html>
