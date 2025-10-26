@@ -563,66 +563,69 @@
         .leaderboard-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: rgba(0, 255, 0, 0.15);
+            gap: 8px;
+            background: rgba(0, 255, 0, 0.1);
             border: 1px solid var(--neon-color);
-            border-radius: 10px;
-            padding: 10px 15px;
-            margin-bottom: 10px;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--neon-color);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         
-        .leaderboard-rank-header,
+        .leaderboard-rank-header {
+            min-width: 30px;
+        }
+        
         .leaderboard-avatar-header {
-            min-width: 40px;
+            min-width: 28px;
         }
         
         .leaderboard-username-header {
-            min-width: 120px;
+            min-width: 100px;
+            flex: 1;
         }
         
         .leaderboard-stat-header {
-            min-width: 40px;
+            min-width: 28px;
             text-align: center;
         }
         
         .leaderboard-points-header {
-            min-width: 50px;
+            min-width: 35px;
             text-align: center;
         }
         
         .leaderboard-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 4px;
         }
         
         .leaderboard-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: rgba(0, 255, 0, 0.05);
-            border: 1px solid var(--neon-color);
-            border-radius: 10px;
-            padding: 15px;
-            transition: all 0.3s ease;
+            gap: 8px;
+            background: rgba(0, 255, 0, 0.03);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 6px;
+            padding: 6px 10px;
+            transition: all 0.2s ease;
         }
         
         .leaderboard-item:hover {
-            background: rgba(0, 255, 0, 0.1);
-            transform: translateX(5px);
+            background: rgba(0, 255, 0, 0.08);
             cursor: pointer;
         }
         
         .leaderboard-rank {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 600;
             color: var(--neon-color);
-            min-width: 40px;
+            min-width: 30px;
         }
         
         .leaderboard-rank.first {
@@ -638,37 +641,38 @@
         }
         
         .leaderboard-avatar {
-            width: 40px;
-            height: 40px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            border: 2px solid var(--neon-color);
+            border: 1px solid var(--neon-color);
             object-fit: cover;
         }
         
         .leaderboard-username {
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--neon-color);
-            min-width: 120px;
+            min-width: 100px;
+            flex: 1;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         
         .leaderboard-stat {
-            font-size: 13px;
-            color: #ccc;
-            min-width: 40px;
+            font-size: 11px;
+            color: #aaa;
+            min-width: 28px;
             text-align: center;
-            font-weight: 600;
+            font-weight: 500;
         }
         
         .leaderboard-points {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: bold;
             color: var(--neon-color);
-            min-width: 50px;
+            min-width: 35px;
             text-align: center;
         }
         
@@ -1015,12 +1019,12 @@
                     <div class="leaderboard-rank-header"></div>
                     <div class="leaderboard-avatar-header"></div>
                     <div class="leaderboard-username-header">Player</div>
-                    <div class="leaderboard-stat-header">GP</div>
+                    <div class="leaderboard-stat-header">MP</div>
                     <div class="leaderboard-stat-header">W</div>
                     <div class="leaderboard-stat-header">L</div>
-                    <div class="leaderboard-stat-header">GS</div>
-                    <div class="leaderboard-stat-header">GC</div>
-                    <div class="leaderboard-points-header">P</div>
+                    <div class="leaderboard-stat-header">GF</div>
+                    <div class="leaderboard-stat-header">GA</div>
+                    <div class="leaderboard-points-header">Pts</div>
                 </div>
                 <div class="leaderboard-list" id="leaderboardList">
                     <!-- Leaderboard items will be populated here -->
