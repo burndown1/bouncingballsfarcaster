@@ -13,8 +13,9 @@
   "types": "./index.d.ts",
   "scripts": {
     "dev": "node scripts/dev.js",
-    "build": "next build",
+    "build": "next build && npm run copy-public",
     "build:raw": "next build",
+    "copy-public": "cp -r public/. .next/out/public/",
     "start": "next start",
     "lint": "next lint",
     "deploy:vercel": "tsx scripts/deploy.ts",
