@@ -1,4 +1,6 @@
 {
-  "buildCommand": "next build",
+  "buildCommand": "cd bouncing-balls && npm install && next build",
+  "outputDirectory": "bouncing-balls/.next",
+  "installCommand": "cd bouncing-balls && npm install",
   "framework": "nextjs"
-} 
+}
