@@ -3762,11 +3762,53 @@
             }
         }
         
+        // Track if game result has been saved to prevent duplicate saves
+        window.gameResultSaved = false;
+        
+        // Save game result if player closes during a game (forfeit)
+        function handleForfeitGame() {
+            // Only if game is running, not already saved, and is a duel
+            if (window.gameRunning && window.currentUser && window.opponentUser && window.gameMode === 'duel' && !window.gameResultSaved) {
+                try {
+                    console.log('⚠️ Player closed during game - counting as forfeit');
+                    
+                    // Current user loses, opponent wins with 5-0 score
+                    const gameResult = {
+                        winnerFid: window.opponentUser.fid,
+                        loserFid: window.currentUser.fid,
+                        winnerUsername: window.opponentUser.username,
+                        loserUsername: window.currentUser.username,
+                        winnerDisplayName: window.opponentUser.displayName || window.opponentUser.username,
+                        loserDisplayName: window.currentUser.displayName || window.currentUser.username,
+                        winnerPfpUrl: window.opponentUser.pfpUrl,
+                        loserPfpUrl: window.currentUser.pfpUrl,
+                        winnerScore: 5,
+                        loserScore: 0,
+                        forfeit: true
+                    };
+                    
+                    // Use sendBeacon for reliable delivery when page is closing
+                    const blob = new Blob([JSON.stringify(gameResult)], {
+                        type: 'application/json'
+                    });
+                    navigator.sendBeacon('https://bouncingballs.ataskira1.workers.dev/game-result', blob);
+                    
+                    window.gameResultSaved = true;
+                    console.log('✅ Forfeit game result saved');
+                } catch (error) {
+                    console.error('❌ Failed to save forfeit result:', error);
+                }
+            }
+        }
+        
         // Initialize game when page loads
         window.addEventListener('load', async () => {
             await initializeGame();
             await loadMiniLeaderboard(); // Load mini leaderboard on page load
         });
+        
+        // Handle forfeit when player closes during game
+        window.addEventListener('pagehide', handleForfeitGame);
     </script>
 </body>
 </html>
