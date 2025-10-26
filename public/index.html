@@ -2387,9 +2387,69 @@
         }
         
         // Generate random color
+        // Global random color for the session
+        window.sessionColor = null;
+        
         function getRandomColor() {
-            const colors = ['ff0080', '0080ff', 'ff8000', '8000ff', '00ff80'];
-            return colors[Math.floor(Math.random() * colors.length)];
+            if (!window.sessionColor) {
+                const colors = ['ff0080', '0080ff', 'ff8000', '8000ff', '00ff80'];
+                window.sessionColor = colors[Math.floor(Math.random() * colors.length)];
+            }
+            return window.sessionColor;
+        }
+        
+        // Apply random color to all UI elements
+        function applyRandomColor() {
+            const color = getRandomColor();
+            const rgbColor = hexToRgb(color);
+            
+            // Set CSS variable for neon color
+            document.documentElement.style.setProperty('--neon-color', `#${color}`);
+            document.documentElement.style.setProperty('--neon-green', `#${color}`);
+            
+            // Apply to all border colors
+            const style = document.createElement('style');
+            style.textContent = `
+                .game-mode-selection,
+                .user-info-card,
+                .mode-btn,
+                #leaderboardBtn,
+                .scoreboard-rectangle,
+                .timer-display,
+                .player-avatar,
+                .last-game-avatar,
+                .mini-avatar,
+                .leaderboard-item img,
+                .final-player-avatar {
+                    border-color: #${color} !important;
+                    box-shadow: 0 0 10px rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.5) !important;
+                }
+                
+                .game-mode-selection {
+                    border: 2px solid #${color} !important;
+                    box-shadow: var(--shadow-dark), 0 0 15px rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.8) !important;
+                }
+                
+                .mode-btn {
+                    border-color: #${color} !important;
+                    color: #${color} !important;
+                }
+                
+                .mode-btn:hover {
+                    background: #${color} !important;
+                    box-shadow: 0 0 20px rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.8) !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 255, b: 0 };
         }
         
         // Update player info - REAL Farcaster data
@@ -2689,6 +2749,13 @@
         
         window.startGame = function startGame() {
             console.log('🎮 Starting game...');
+            
+            // Prevent self-play - check before starting
+            if (window.currentUser?.fid && window.opponentUser?.fid && window.currentUser.fid === window.opponentUser.fid) {
+                alert('❌ You cannot play against yourself! Please select a different opponent.');
+                console.log('❌ Blocked self-play');
+                return;
+            }
             
             // Hide game mode selection
             document.getElementById('gameModeSelection').style.display = 'none';
@@ -3962,6 +4029,7 @@
         
         // Initialize game when page loads
         window.addEventListener('load', async () => {
+            applyRandomColor(); // Apply random color to all UI elements
             await initializeGame();
             await loadMiniLeaderboard(); // Load mini leaderboard on page load
             await loadLastGames(); // Load last 5 games on page load
