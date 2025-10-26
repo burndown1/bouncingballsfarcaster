@@ -96,7 +96,7 @@ export async function getUserStats(fid: number): Promise<GameStats | null> {
   }
   const value = localStore.get(key);
   if (value && typeof value === 'object' && 'fid' in value) {
-    return value as GameStats;
+    return value as unknown as GameStats;
   }
   return null;
 }
