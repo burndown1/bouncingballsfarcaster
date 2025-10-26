@@ -3671,7 +3671,7 @@
                 data.leaderboard.forEach((player, index) => {
                     const item = document.createElement('div');
                     item.className = 'leaderboard-item';
-                    item.onclick = () => challengePlayer(player);
+                    item.style.cursor = 'pointer';
                     
                     const rankClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
                     
@@ -3687,6 +3687,9 @@
                         <div class="leaderboard-points">${player.points}</div>
                     `;
                     
+                    // Set onclick AFTER innerHTML to prevent it from being removed
+                    item.onclick = () => challengePlayer(player);
+                    
                     leaderboardList.appendChild(item);
                 });
             } catch (error) {
@@ -3699,8 +3702,16 @@
         
         function challengePlayer(player) {
             console.log('🎯 challengePlayer called with:', player);
+            
+            if (!player || !player.username) {
+                console.error('❌ Invalid player data:', player);
+                return;
+            }
+            
+            // Show confirmation
             if (confirm(`Do you want to challenge @${player.username}?`)) {
                 console.log('✅ User confirmed challenge');
+                
                 // Set game mode to duel
                 window.gameMode = 'duel';
                 
@@ -3717,8 +3728,8 @@
                 // Close leaderboard modal
                 closeLeaderboard();
                 
-                // Start duel
-                window.startFarcasterDuel();
+                // Start game directly instead of opening duel search modal
+                window.startGame();
             }
         }
         
