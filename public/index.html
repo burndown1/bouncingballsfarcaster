@@ -896,6 +896,7 @@
             border-radius: 50%;
             border: 1px solid var(--neon-color);
             object-fit: cover;
+            flex-shrink: 0;
         }
         
         .last-game-username {
@@ -903,8 +904,12 @@
             font-size: 10px;
             font-weight: 600;
             color: var(--neon-color);
-            min-width: 75px;
+            width: 80px;
             text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         
         .last-game-score {
@@ -912,8 +917,9 @@
             font-size: 11px;
             font-weight: bold;
             color: var(--neon-color);
-            width: 35px;
+            width: 50px;
             text-align: center;
+            flex-shrink: 0;
         }
         
         .last-game-vs {
@@ -922,6 +928,7 @@
             color: #aaa;
             width: 20px;
             text-align: center;
+            flex-shrink: 0;
         }
         
         /* Mini Leaderboard Styles */
