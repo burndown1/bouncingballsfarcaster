@@ -3,7 +3,7 @@ import { Redis } from '@upstash/redis';
 import { APP_NAME } from './constants';
 
 // In-memory fallback storage
-const localStore = new Map<string, MiniAppNotificationDetails>();
+const localStore = new Map<string, any>();
 
 // Use Redis if KV env vars are present, otherwise use in-memory
 const useRedis = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN;
