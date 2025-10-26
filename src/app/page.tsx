@@ -1,5 +1,8 @@
-import { redirect } from 'next/navigation';
+'use client';
 
 export default function Home() {
-  redirect('/index.html');
+  if (typeof window !== 'undefined') {
+    window.location.href = '/index.html';
+  }
+  return <div>Loading...</div>;
 }
