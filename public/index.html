@@ -657,6 +657,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
         }
         
         .leaderboard-stat {
@@ -933,6 +934,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
         }
         
         .mini-stat {
@@ -3604,12 +3606,27 @@
         }
         
         function challengePlayer(player) {
+            console.log('🎯 challengePlayer called with:', player);
             if (confirm(`Do you want to challenge @${player.username}?`)) {
-                // Start duel with this player
-                window.challengeFid = player.fid;
-                window.challengeUsername = player.username;
+                console.log('✅ User confirmed challenge');
+                // Set game mode to duel
+                window.gameMode = 'duel';
+                
+                // Set opponent user
+                window.opponentUser = {
+                    username: player.username,
+                    displayName: player.displayName || player.username,
+                    pfpUrl: player.pfpUrl,
+                    fid: player.fid
+                };
+                
+                console.log('🎯 Opponent user set:', window.opponentUser);
+                
+                // Close leaderboard modal
                 closeLeaderboard();
-                startFarcasterDuel();
+                
+                // Start duel
+                window.startFarcasterDuel();
             }
         }
         
