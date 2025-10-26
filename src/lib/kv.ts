@@ -94,7 +94,11 @@ export async function getUserStats(fid: number): Promise<GameStats | null> {
   if (redis) {
     return await redis.get<GameStats>(key);
   }
-  return localStore.get(key) || null;
+  const value = localStore.get(key);
+  if (value && typeof value === 'object' && 'fid' in value) {
+    return value as GameStats;
+  }
+  return null;
 }
 
 // Update user stats after a game
