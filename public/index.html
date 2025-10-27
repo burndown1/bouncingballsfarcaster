@@ -3007,6 +3007,60 @@
         
         function drawCircle() {
             circleAngle += 0.015;
+            
+            // Create animated fire effect
+            const time = Date.now() * 0.005;
+            const layers = 8;
+            
+            // Draw multiple layers with animated gradient to create fire effect
+            for (let i = 0; i < layers; i++) {
+                const offset = (time + i * 0.3) % (Math.PI * 2);
+                const radius = circle.radius + Math.sin(offset) * 3;
+                
+                // Create gradient for each layer
+                const gradient = ctx.createRadialGradient(
+                    circle.x, circle.y, radius - 10,
+                    circle.x, circle.y, radius + 10
+                );
+                
+                // Fire colors: red → orange → yellow
+                const hue = (time * 50 + i * 20) % 360;
+                const alpha = 0.3 + Math.sin(time + i) * 0.2;
+                
+                gradient.addColorStop(0, `hsla(${hue}, 100%, 60%, ${alpha})`);
+                gradient.addColorStop(0.5, `hsla(${(hue + 30) % 360}, 100%, 50%, ${alpha * 0.7})`);
+                gradient.addColorStop(1, `hsla(${(hue + 60) % 360}, 100%, 40%, 0)`);
+                
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 4 - i * 0.3;
+                ctx.shadowColor = `hsla(${hue}, 100%, 50%, 0.8)`;
+                ctx.shadowBlur = 20;
+                
+                ctx.beginPath();
+                ctx.arc(circle.x, circle.y, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            
+            // Outer fire particles
+            for (let j = 0; j < 20; j++) {
+                const angle = (time * 0.1 + j * 0.3) % (Math.PI * 2);
+                const particleRadius = circle.radius + Math.sin(time + j) * 8;
+                const x = circle.x + Math.cos(angle) * particleRadius;
+                const y = circle.y + Math.sin(angle) * particleRadius;
+                
+                const size = 2 + Math.sin(time + j) * 2;
+                const alpha = 0.4 + Math.sin(time + j * 2) * 0.3;
+                
+                ctx.fillStyle = `hsla(${(time * 50 + j * 15) % 360}, 100%, 60%, ${alpha})`;
+                ctx.shadowColor = `hsla(${(time * 50 + j * 15) % 360}, 100%, 50%, 0.8)`;
+                ctx.shadowBlur = 10;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Main circle outline
             ctx.strokeStyle = currentNeonColor;
             ctx.lineWidth = 3;
             ctx.shadowColor = currentNeonColor;
