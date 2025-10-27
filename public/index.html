@@ -2480,6 +2480,26 @@
                     border-color: ${selectedColors.player2} !important;
                     box-shadow: 0 0 10px ${selectedColors.player2}50 !important;
                 }
+                
+                /* Last games and mini leaderboard use theme color */
+                .last-games {
+                    background: rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.03) !important;
+                    border-color: #${color} !important;
+                }
+                
+                .last-game-item {
+                    background: rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.02) !important;
+                    border-color: rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.15) !important;
+                }
+                
+                .mini-leaderboard {
+                    background: rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.03) !important;
+                    border-color: #${color} !important;
+                }
+                
+                .mini-leaderboard-item {
+                    border-color: rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.15) !important;
+                }
             `;
             document.head.appendChild(style);
         }
