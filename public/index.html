@@ -2398,7 +2398,7 @@
             return window.sessionColor;
         }
         
-        // Apply random color to all UI elements
+        // Apply random color to all UI elements except scoreboard avatars
         function applyRandomColor() {
             const color = getRandomColor();
             const rgbColor = hexToRgb(color);
@@ -2407,7 +2407,20 @@
             document.documentElement.style.setProperty('--neon-color', `#${color}`);
             document.documentElement.style.setProperty('--neon-green', `#${color}`);
             
-            // Apply to all border colors
+            // Player ball colors (different from UI and each other)
+            const playerColors = [
+                { player1: '#ff0080', player2: '#00ffff' }, // Pink/Cyan
+                { player1: '#ff8000', player2: '#0080ff' }, // Orange/Blue
+                { player1: '#00ff80', player2: '#ff4000' }, // Green/Red
+                { player1: '#8000ff', player2: '#ff8000' }, // Purple/Orange
+                { player1: '#ff0080', player2: '#00ff80' }  // Pink/Green
+            ];
+            const selectedColors = playerColors[Math.floor(Math.random() * playerColors.length)];
+            
+            window.player1BorderColor = selectedColors.player1;
+            window.player2BorderColor = selectedColors.player2;
+            
+            // Apply to all border colors EXCEPT scoreboard avatars
             const style = document.createElement('style');
             style.textContent = `
                 .game-mode-selection,
@@ -2416,7 +2429,6 @@
                 #leaderboardBtn,
                 .scoreboard-rectangle,
                 .timer-display,
-                .player-avatar,
                 .last-game-avatar,
                 .mini-avatar,
                 .leaderboard-item img,
@@ -2438,6 +2450,28 @@
                 .mode-btn:hover {
                     background: #${color} !important;
                     box-shadow: 0 0 20px rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.8) !important;
+                }
+                
+                /* Scoreboard avatars use specific player colors */
+                #player1Avatar.player1 {
+                    border-color: ${selectedColors.player1} !important;
+                    box-shadow: 0 0 10px ${selectedColors.player1}50 !important;
+                }
+                
+                #player2Avatar.player2 {
+                    border-color: ${selectedColors.player2} !important;
+                    box-shadow: 0 0 10px ${selectedColors.player2}50 !important;
+                }
+                
+                /* Game over avatars use specific player colors */
+                #finalPlayer1Avatar.player1 {
+                    border-color: ${selectedColors.player1} !important;
+                    box-shadow: 0 0 10px ${selectedColors.player1}50 !important;
+                }
+                
+                #finalPlayer2Avatar.player2 {
+                    border-color: ${selectedColors.player2} !important;
+                    box-shadow: 0 0 10px ${selectedColors.player2}50 !important;
                 }
             `;
             document.head.appendChild(style);
@@ -2881,13 +2915,13 @@
                     x: 150, y: 200, vx: 3, vy: -2, radius: 20, 
                     team: 'juventus', color: '#ffffff',
                     user: player1,
-                    ballColor: player1BallColor // Player 1's unique ball color
+                    ballColor: window.player1BorderColor || player1BallColor // Player 1's unique ball color
                 },
                 {
                     x: 250, y: 200, vx: -3, vy: 2, radius: 20, 
                     team: 'atalanta', color: '#0066cc',
                     user: player2,
-                    ballColor: player2BallColor // Player 2's unique ball color
+                    ballColor: window.player2BorderColor || player2BallColor // Player 2's unique ball color
                 }
             ];
         }
