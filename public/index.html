@@ -2449,7 +2449,14 @@
                 
                 .mode-btn:hover {
                     background: #${color} !important;
+                    color: #000 !important;
                     box-shadow: 0 0 20px rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.8) !important;
+                }
+                
+                .mode-btn:hover .mode-icon,
+                .mode-btn:hover .mode-title,
+                .mode-btn:hover .mode-desc {
+                    color: #000 !important;
                 }
                 
                 /* Scoreboard avatars use specific player colors */
