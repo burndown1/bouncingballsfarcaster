@@ -1,6 +1,8 @@
 {
   "accountAssociation": {
-    "header": "farcaster-verify"
+    "header": "eyJmaWQiOjI4MjUwMywidHlwZSI6ImF1dGgiLCJrZXkiOiIweDI1RDA4NzcyRjI5MDc1MDY1NzBFRDRBY0ZlQkQ3OTIzYTQ5MUZjOUYifQ",
+    "payload": "eyJkb21haW4iOiJib3VuY2luZ2JhbGxzZmFyY2FzdGVyLnZlcmNlbC5hcHAifQ",
+    "signature": "atInxkPxb1uvg01NjEnqhNHIEinoPAoq9s9vftJ6MLBRgiWtwjHa6SLWdj/s/oxUPNKj0fXWDoGDVPt6ZGslrRs="
   },
   "appUrl": "https://bouncingballsfarcaster.vercel.app/index.html",
   "imageUrl": "https://bouncingballsfarcaster.vercel.app/app-icon-512.png",
