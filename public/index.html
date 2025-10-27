@@ -276,7 +276,7 @@
             color: #fff !important;
             font-family: 'Inter', monospace;
             font-weight: bold;
-            font-size: 28px;
+            font-size: 30px;
             min-width: 25px;
             text-align: center;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
@@ -2427,6 +2427,7 @@
                 .user-info-card,
                 .mode-btn,
                 #leaderboardBtn,
+                #gameCanvas,
                 .scoreboard-rectangle,
                 .timer-display,
                 .last-game-avatar,
@@ -2898,10 +2899,10 @@
             balls = createBalls();
             console.log('⚽ Balls created:', balls);
             
-            // Select new random neon color for circle
-            const newColor = getRandomNeonColor();
-            applyNeonColor(newColor);
-            console.log('🎨 New neon color:', newColor);
+            // Use the UI theme color for circle
+            const uiColor = '#' + getRandomColor();
+            applyNeonColor(uiColor);
+            console.log('🎨 Using UI theme color for circle:', uiColor);
             
             // Reset timer style
             document.getElementById('timer').style.color = currentNeonColor;
