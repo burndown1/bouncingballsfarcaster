@@ -3007,37 +3007,6 @@
         
         function drawCircle() {
             circleAngle += 0.015;
-            
-            // Create fire trail effect similar to the balls
-            const time = Date.now() * 0.003;
-            const numFlames = 40;
-            
-            for (let i = 0; i < numFlames; i++) {
-                const angle = (i / numFlames) * Math.PI * 2 + circleAngle;
-                const baseRadius = circle.radius;
-                
-                // Create fire-like appearance with multiple flame points
-                for (let j = 0; j < 3; j++) {
-                    const flameOffset = Math.sin(time + i + j) * 2;
-                    const radius = baseRadius + flameOffset;
-                    const x = circle.x + Math.cos(angle) * radius;
-                    const y = circle.y + Math.sin(angle) * radius;
-                    
-                    const gradient = ctx.createRadialGradient(x, y, 0, x, y, 8);
-                    const intensity = 0.4 + Math.sin(time * 2 + i + j) * 0.2;
-                    
-                    gradient.addColorStop(0, `rgba(255, 100, 0, ${intensity})`);
-                    gradient.addColorStop(0.5, `rgba(255, 50, 0, ${intensity * 0.6})`);
-                    gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 8, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-            
-            // Main circle outline with glow
             ctx.strokeStyle = currentNeonColor;
             ctx.lineWidth = 3;
             ctx.shadowColor = currentNeonColor;
