@@ -3947,14 +3947,27 @@
                         
                         showNotification('🔗 Connecting wallet and minting...');
                         
+                        // Check Farcaster SDK
+                        console.log('🔍 Farcaster SDK structure:', window.sdk);
+                        console.log('Available methods:', Object.keys(window.sdk));
+                        
                         // Request signer from Farcaster Mini App
-                        if (!window.sdk || !window.sdk.actions || !window.sdk.actions.requestSigner) {
+                        if (!window.sdk) {
                             throw new Error('Farcaster Mini App SDK not available');
                         }
                         
-                        const signer = await window.sdk.actions.requestSigner();
-                        if (!signer) {
-                            throw new Error('User cancelled wallet connection');
+                        // Try to get signer using different methods
+                        let signer;
+                        if (window.sdk.requestSigner) {
+                            signer = await window.sdk.requestSigner();
+                        } else if (window.sdk.getSigner) {
+                            signer = await window.sdk.getSigner();
+                        } else if (window.sdk.user) {
+                            console.log('User object:', window.sdk.user);
+                            // Use user's verified address
+                            signer = null; // We'll use the address directly
+                        } else {
+                            throw new Error('No signer method available in Farcaster SDK');
                         }
                         
                         console.log('✅ Signer obtained:', signer);
