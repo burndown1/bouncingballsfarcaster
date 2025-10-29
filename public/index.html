@@ -3881,27 +3881,20 @@
                     logging: false
                 });
                 
-                // Convert to blob
+                // Convert to blob and upload to IPFS using Thirdweb SDK
                 screenshot.toBlob(async (blob) => {
                     try {
-                        // Upload to IPFS using Thirdweb Storage
-                        const formData = new FormData();
-                        formData.append('file', blob, 'game-result.png');
-                        
-                        const uploadResponse = await fetch('https://upload.nftlabs.co/', {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Client-Id': CLIENT_ID
-                            }
+                        // Use Thirdweb SDK to upload to IPFS (client-side)
+                        const { ThirdwebStorage } = window.ThirdwebSDK;
+                        const storage = new ThirdwebStorage({
+                            clientId: CLIENT_ID
                         });
                         
-                        if (!uploadResponse.ok) {
-                            throw new Error('Failed to upload to IPFS');
-                        }
+                        // Upload image to IPFS
+                        const uploadImage = await storage.upload(blob);
+                        const imageUrl = uploadImage.replace('ipfs://', 'https://ipfs.io/ipfs/');
                         
-                        const uploadData = await uploadResponse.json();
-                        const imageUrl = uploadData.data.ipfsHash ? `https://ipfs.io/ipfs/${uploadData.data.ipfsHash}` : uploadData.url;
+                        console.log('✅ Image uploaded to IPFS:', imageUrl);
                         
                         // Create metadata
                         const finalScore1 = parseInt(document.getElementById('finalScore1').textContent);
@@ -3930,24 +3923,10 @@
                         };
                         
                         // Upload metadata to IPFS
-                        const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-                        const metadataFormData = new FormData();
-                        metadataFormData.append('file', metadataBlob, 'metadata.json');
+                        const uploadMetadata = await storage.upload(metadata);
+                        const metadataUrl = uploadMetadata.replace('ipfs://', 'https://ipfs.io/ipfs/');
                         
-                        const metadataResponse = await fetch('https://upload.nftlabs.co/', {
-                            method: 'POST',
-                            body: metadataFormData,
-                            headers: {
-                                'X-Client-Id': CLIENT_ID
-                            }
-                        });
-                        
-                        if (!metadataResponse.ok) {
-                            throw new Error('Failed to upload metadata');
-                        }
-                        
-                        const metadataData = await metadataResponse.json();
-                        const metadataUrl = metadataData.data.ipfsHash ? `https://ipfs.io/ipfs/${metadataData.data.ipfsHash}` : metadataData.url;
+                        console.log('✅ Metadata uploaded to IPFS:', metadataUrl);
                         
                         // Mint NFT using Thirdweb SDK
                         const thirdweb = window.ThirdwebSDK;
