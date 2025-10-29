@@ -3884,17 +3884,18 @@
                 // Convert to blob and upload to IPFS using Thirdweb SDK
                 screenshot.toBlob(async (blob) => {
                     try {
-                        // Use Thirdweb SDK to upload to IPFS (client-side)
-                        const { ThirdwebStorage } = window.ThirdwebSDK;
-                        const storage = new ThirdwebStorage({
-                            clientId: CLIENT_ID
+                        // Alternative: Use base64 data URL instead of IPFS upload for now
+                        // Convert blob to base64
+                        const reader = new FileReader();
+                        reader.readAsDataURL(blob);
+                        const base64Image = await new Promise((resolve) => {
+                            reader.onloadend = () => resolve(reader.result);
                         });
                         
-                        // Upload image to IPFS
-                        const uploadImage = await storage.upload(blob);
-                        const imageUrl = uploadImage.replace('ipfs://', 'https://ipfs.io/ipfs/');
+                        // For now, use base64 data URL (not ideal but works without IPFS issues)
+                        const imageUrl = base64Image;
                         
-                        console.log('✅ Image uploaded to IPFS:', imageUrl);
+                        console.log('✅ Image converted to base64');
                         
                         // Create metadata
                         const finalScore1 = parseInt(document.getElementById('finalScore1').textContent);
@@ -3922,11 +3923,10 @@
                             ]
                         };
                         
-                        // Upload metadata to IPFS
-                        const uploadMetadata = await storage.upload(metadata);
-                        const metadataUrl = uploadMetadata.replace('ipfs://', 'https://ipfs.io/ipfs/');
+                        // Use inline metadata for now (since IPFS upload has issues)
+                        const metadataUrl = '';
                         
-                        console.log('✅ Metadata uploaded to IPFS:', metadataUrl);
+                        console.log('✅ Using inline metadata');
                         
                         // Mint NFT using Thirdweb SDK
                         const thirdweb = window.ThirdwebSDK;
