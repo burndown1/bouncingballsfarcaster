@@ -3241,25 +3241,28 @@
             ctx.translate(canvas.width/2 + shakeX, canvas.height/2 - 100 + shakeY);
             ctx.scale(scale, scale);
             
-            // Cool font and colors - use random UI theme color
-            ctx.fillStyle = currentNeonColor;
+            // Cool font and colors - white text with random UI theme color glow
+            ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 64px Impact, Arial Black, sans-serif';
             ctx.textAlign = 'center';
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 4;
+            ctx.strokeStyle = currentNeonColor;
+            ctx.lineWidth = 6;
             ctx.shadowColor = currentNeonColor;
             ctx.shadowBlur = 30;
             
-            // Draw text
+            // Draw text outline
             ctx.strokeText(goalText, 0, 0);
+            
+            // Draw white fill
+            ctx.shadowBlur = 0;
             ctx.fillText(goalText, 0, 0);
             
-            // Glow effect - use random UI theme color
+            // Outer glow effect - use random UI theme color
             ctx.shadowBlur = 50;
             ctx.shadowColor = currentNeonColor;
-            ctx.fillStyle = currentNeonColor;
-            ctx.font = 'bold 72px Impact, Arial Black, sans-serif';
-            ctx.fillText(goalText, 0, 0);
+            ctx.strokeStyle = currentNeonColor;
+            ctx.lineWidth = 2;
+            ctx.strokeText(goalText, 0, 0);
             
             ctx.restore();
         }
