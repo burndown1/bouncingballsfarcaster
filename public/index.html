@@ -3952,12 +3952,14 @@
                             throw new Error('Farcaster Mini App SDK wallet not available');
                         }
                         
-                        const provider = window.sdk.wallet.getEthereumProvider();
+                        const provider = await window.sdk.wallet.getEthereumProvider();
                         if (!provider) {
                             throw new Error('Failed to get Ethereum provider');
                         }
                         
                         console.log('✅ Ethereum provider obtained:', provider);
+                        console.log('Provider type:', typeof provider);
+                        console.log('Provider methods:', Object.keys(provider));
                         
                         // Get user's address
                         const addresses = await provider.request({ method: 'eth_accounts' });
