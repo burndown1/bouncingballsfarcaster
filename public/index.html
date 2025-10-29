@@ -3957,23 +3957,46 @@
                         
                         showNotification('🔗 Connecting wallet and minting...');
                         
-                        // Initialize SDK for client-side minting
-                        const sdk = await thirdweb.ThirdwebSDK.fromChain(CHAIN_ID, {
+                        // Request signer from Farcaster Mini App
+                        if (!window.sdk || !window.sdk.actions || !window.sdk.actions.requestSigner) {
+                            throw new Error('Farcaster Mini App SDK not available');
+                        }
+                        
+                        const signer = await window.sdk.actions.requestSigner();
+                        if (!signer) {
+                            throw new Error('User cancelled wallet connection');
+                        }
+                        
+                        console.log('✅ Signer obtained:', signer);
+                        
+                        // Initialize SDK with signer
+                        const { ThirdwebSDK } = window.ThirdwebSDK;
+                        const sdk = await ThirdwebSDK.fromSigner(signer, CHAIN_ID, {
                             clientId: CLIENT_ID
                         });
                         
                         const contract = await sdk.getContract(CONTRACT_ADDRESS);
                         
-                        // Get user's wallet address from Farcaster
-                        // Note: In a Mini App, we need to prompt for signature
-                        // For now, we'll use a simpler approach with wallet connect
+                        // Mint NFT
+                        let tx;
+                        const address = await signer.getAddress();
                         
-                        // For Base chain, we need user to approve transaction through their Farcaster wallet
-                        // This requires integration with Farcaster's embedded wallet
-                        alert('⚠️ NFT minting requires Farcaster wallet integration. Please use the Farcaster app to complete the transaction.');
+                        if (recipientType === 'opponent' && window.opponentUser?.verifiedAddresses?.[0]) {
+                            tx = await contract.mintTo(window.opponentUser.verifiedAddresses[0], {
+                                name: metadata.name,
+                                description: metadata.description,
+                                image: metadata.image
+                            });
+                        } else {
+                            tx = await contract.mintTo(address, {
+                                name: metadata.name,
+                                description: metadata.description,
+                                image: metadata.image
+                            });
+                        }
                         
-                        // TODO: Integrate with Farcaster embedded wallet for actual minting
-                        showNotification('⚠️ Minting requires Farcaster wallet app');
+                        showNotification('✅ NFT minted successfully! Check your wallet.');
+                        console.log('✅ NFT minted:', tx.id);
                         
                     } catch (error) {
                         console.error('❌ NFT minting failed:', error);
