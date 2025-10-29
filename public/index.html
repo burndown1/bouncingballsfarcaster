@@ -297,6 +297,10 @@
         
         .timer-container {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
         
         .timer-text {
@@ -310,6 +314,21 @@
             border: 1px solid var(--neon-color);
             box-shadow: 0 0 10px var(--neon-color);
             display: inline-block;
+        }
+        
+        .extra-time-label {
+            color: #ff6600;
+            font-family: 'Inter', monospace;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         .score-display {
             color: var(--neon-color);
@@ -1191,6 +1210,7 @@
                 </div>
                 <div class="timer-container">
                     <span id="timer" class="timer-text">1:00</span>
+                    <span id="extraTimeLabel" class="extra-time-label" style="display: none;">EXTRA TIME</span>
                 </div>
             </div>
         </div>
@@ -3609,6 +3629,9 @@
                 timerElement.style.fontSize = '20px';
                 timerElement.style.fontWeight = 'bold';
                 
+                // Show EXTRA TIME label
+                document.getElementById('extraTimeLabel').style.display = 'block';
+                
                 // Restart timer
                 setTimeout(updateTimer, 1000);
                 return;
@@ -3675,6 +3698,9 @@
                 document.getElementById('timer').style.color = currentNeonColor;
                 document.getElementById('timer').style.fontSize = '18px';
                 document.getElementById('timer').style.fontWeight = 'normal';
+                
+                // Hide EXTRA TIME label
+                document.getElementById('extraTimeLabel').style.display = 'none';
                 
                 // Play referee whistle when game ends
                 playRefereeWhistle();
