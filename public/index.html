@@ -57,8 +57,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Thirdweb SDK -->
-    <script src="https://unpkg.com/thirdweb@6/dist/thirdweb.min.js" onload="console.log('✅ Thirdweb SDK loaded:', window.ThirdwebSDK)"></script>
-    <script src="https://unpkg.com/thirdweb@6/dist/connectors/iframe.min.js"></script>
+    <script src="https://unpkg.com/@thirdweb-dev/sdk@5/dist/index.js"></script>
     <script>
         // Check if Thirdweb SDK is loaded
         window.addEventListener('load', () => {
@@ -3940,18 +3939,11 @@
                         
                         console.log('✅ Using inline metadata');
                         
-                        // Mint NFT using Thirdweb SDK
-                        console.log('🔍 Checking Thirdweb SDK availability...');
+                        // Mint NFT
+                        console.log('🔍 Checking available SDKs...');
+                        console.log('window.sdk:', window.sdk);
                         console.log('window.ThirdwebSDK:', window.ThirdwebSDK);
-                        
-                        // Check if SDK is loaded
-                        if (!window.ThirdwebSDK) {
-                            console.error('❌ Thirdweb SDK not found on window object');
-                            throw new Error('Thirdweb SDK not loaded. Please refresh the page.');
-                        }
-                        
-                        const thirdweb = window.ThirdwebSDK;
-                        console.log('✅ Thirdweb SDK found:', thirdweb);
+                        console.log('All window properties:', Object.keys(window).filter(k => k.toLowerCase().includes('third')));
                         
                         showNotification('🔗 Connecting wallet and minting...');
                         
@@ -3967,34 +3959,16 @@
                         
                         console.log('✅ Signer obtained:', signer);
                         
-                        // Initialize SDK with signer
-                        const { ThirdwebSDK } = window.ThirdwebSDK;
-                        const sdk = await ThirdwebSDK.fromSigner(signer, CHAIN_ID, {
-                            clientId: CLIENT_ID
+                        // For now, just log the signature request
+                        // TODO: Complete minting integration with proper Thirdweb SDK
+                        showNotification('⚠️ Minting requires proper SDK integration. Check console for details.');
+                        console.log('📝 Minting details:', {
+                            contractAddress: CONTRACT_ADDRESS,
+                            chainId: CHAIN_ID,
+                            metadata,
+                            recipientType,
+                            signer
                         });
-                        
-                        const contract = await sdk.getContract(CONTRACT_ADDRESS);
-                        
-                        // Mint NFT
-                        let tx;
-                        const address = await signer.getAddress();
-                        
-                        if (recipientType === 'opponent' && window.opponentUser?.verifiedAddresses?.[0]) {
-                            tx = await contract.mintTo(window.opponentUser.verifiedAddresses[0], {
-                                name: metadata.name,
-                                description: metadata.description,
-                                image: metadata.image
-                            });
-                        } else {
-                            tx = await contract.mintTo(address, {
-                                name: metadata.name,
-                                description: metadata.description,
-                                image: metadata.image
-                            });
-                        }
-                        
-                        showNotification('✅ NFT minted successfully! Check your wallet.');
-                        console.log('✅ NFT minted:', tx.id);
                         
                     } catch (error) {
                         console.error('❌ NFT minting failed:', error);
