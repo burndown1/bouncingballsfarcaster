@@ -52,6 +52,13 @@
     <!-- Farcaster Mini App SDK -->
     <script src="https://unpkg.com/@farcaster/miniapps@latest/dist/index.js"></script>
     <script src="https://unpkg.com/@farcaster/frame-sdk@latest/dist/frame-sdk.js"></script>
+    
+    <!-- html2canvas for screenshot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Thirdweb SDK -->
+    <script src="https://unpkg.com/thirdweb@6/dist/thirdweb.min.js"></script>
+    <script src="https://unpkg.com/thirdweb@6/dist/connectors/iframe.min.js"></script>
     <script>
         // Debug: Check if SDKs are loading
         window.addEventListener('load', () => {
@@ -512,6 +519,36 @@
             box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
             text-transform: uppercase;
         }
+        .mint-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-direction: column;
+        }
+        
+        .mint-btn {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'SF Pro Display', 'Helvetica Neue', 'Arial', sans-serif;
+            letter-spacing: 0.8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 0, 255, 0.4);
+            text-transform: uppercase;
+        }
+        
+        .mint-btn:hover {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 255, 0.6);
+        }
+        
         .restart-btn:hover {
             background: linear-gradient(135deg, #00cc00, var(--neon-color));
             transform: translateY(-3px);
@@ -1326,6 +1363,10 @@
             <div class="game-over-buttons">
                 <button class="restart-btn" onclick="restartGame()">🔄 Play Again</button>
                 <button class="restart-btn" onclick="shareToFarcaster()">📤 Share Result</button>
+            </div>
+            <div class="mint-buttons" id="mintButtons" style="display: none;">
+                <button class="mint-btn" onclick="mintGameScore('self')">🎨 Mint as NFT</button>
+                <button class="mint-btn" onclick="mintGameScore('opponent')">🎁 Mint & Send to Opponent</button>
             </div>
         </div>
     </div>
@@ -3698,6 +3739,9 @@
                 
                 document.getElementById('gameOver').style.display = 'block';
                 
+                // Show mint buttons
+                document.getElementById('mintButtons').style.display = 'block';
+                
                 // Reset timer color to normal (for next game)
                 document.getElementById('timer').style.color = currentNeonColor;
                 document.getElementById('timer').style.fontSize = '18px';
@@ -3716,6 +3760,7 @@
             document.querySelector('.game-container').classList.remove('game-started');
             document.getElementById('gameModeSelection').style.display = 'block';
             document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('mintButtons').style.display = 'none';
             const canvas = document.getElementById('gameCanvas');
             canvas.classList.remove('hide', 'game-over-hidden');
             canvas.style.display = '';
@@ -3814,6 +3859,131 @@
                 const fallbackText = `I just played Bouncing Balls! Final score: ${finalScore1}-${finalScore2}. Can you beat me? 🎮⚽`;
                 navigator.clipboard.writeText(fallbackText);
                 alert('Game result copied to clipboard! Share it on Farcaster!');
+            }
+        }
+        
+        // NFT Minting Functions
+        const CONTRACT_ADDRESS = '0x321573da9DabA53824F09b480ff9c068AFb89371';
+        const CHAIN_ID = 8453; // Base Mainnet
+        const CLIENT_ID = '08e2734f8ba7310b0619f773b8152773';
+        
+        async function mintGameScore(recipientType) {
+            console.log('🎨 Minting game score as NFT, recipient:', recipientType);
+            
+            try {
+                showNotification('🎨 Creating NFT from your game result...');
+                
+                // Capture game over screen
+                const gameOverElement = document.getElementById('gameOver');
+                const screenshot = await html2canvas(gameOverElement, {
+                    backgroundColor: '#001100',
+                    scale: 2,
+                    logging: false
+                });
+                
+                // Convert to blob
+                screenshot.toBlob(async (blob) => {
+                    try {
+                        // Upload to IPFS using Thirdweb Storage
+                        const formData = new FormData();
+                        formData.append('file', blob, 'game-result.png');
+                        
+                        const uploadResponse = await fetch('https://upload.nftlabs.co/', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Client-Id': CLIENT_ID
+                            }
+                        });
+                        
+                        if (!uploadResponse.ok) {
+                            throw new Error('Failed to upload to IPFS');
+                        }
+                        
+                        const uploadData = await uploadResponse.json();
+                        const imageUrl = uploadData.data.ipfsHash ? `https://ipfs.io/ipfs/${uploadData.data.ipfsHash}` : uploadData.url;
+                        
+                        // Create metadata
+                        const finalScore1 = parseInt(document.getElementById('finalScore1').textContent);
+                        const finalScore2 = parseInt(document.getElementById('finalScore2').textContent);
+                        const player1Name = document.getElementById('finalPlayer1Name').textContent;
+                        const player2Name = document.getElementById('finalPlayer2Name').textContent;
+                        
+                        let winnerText = 'Draw';
+                        if (finalScore1 > finalScore2) {
+                            winnerText = player1Name;
+                        } else if (finalScore2 > finalScore1) {
+                            winnerText = player2Name;
+                        }
+                        
+                        const metadata = {
+                            name: `Bouncing Balls: ${player1Name} vs ${player2Name}`,
+                            description: `Game result: ${player1Name} ${finalScore1} - ${finalScore2} ${player2Name}. Winner: ${winnerText}`,
+                            image: imageUrl,
+                            attributes: [
+                                { trait_type: 'Player 1', value: player1Name },
+                                { trait_type: 'Player 2', value: player2Name },
+                                { trait_type: 'Score', value: `${finalScore1}-${finalScore2}` },
+                                { trait_type: 'Winner', value: winnerText },
+                                { trait_type: 'Date', value: new Date().toISOString() }
+                            ]
+                        };
+                        
+                        // Upload metadata to IPFS
+                        const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+                        const metadataFormData = new FormData();
+                        metadataFormData.append('file', metadataBlob, 'metadata.json');
+                        
+                        const metadataResponse = await fetch('https://upload.nftlabs.co/', {
+                            method: 'POST',
+                            body: metadataFormData,
+                            headers: {
+                                'X-Client-Id': CLIENT_ID
+                            }
+                        });
+                        
+                        if (!metadataResponse.ok) {
+                            throw new Error('Failed to upload metadata');
+                        }
+                        
+                        const metadataData = await metadataResponse.json();
+                        const metadataUrl = metadataData.data.ipfsHash ? `https://ipfs.io/ipfs/${metadataData.data.ipfsHash}` : metadataData.url;
+                        
+                        // Mint NFT using Thirdweb SDK
+                        const thirdweb = window.ThirdwebSDK;
+                        if (!thirdweb) {
+                            throw new Error('Thirdweb SDK not loaded');
+                        }
+                        
+                        showNotification('🔗 Connecting wallet and minting...');
+                        
+                        // Initialize SDK for client-side minting
+                        const sdk = await thirdweb.ThirdwebSDK.fromChain(CHAIN_ID, {
+                            clientId: CLIENT_ID
+                        });
+                        
+                        const contract = await sdk.getContract(CONTRACT_ADDRESS);
+                        
+                        // Get user's wallet address from Farcaster
+                        // Note: In a Mini App, we need to prompt for signature
+                        // For now, we'll use a simpler approach with wallet connect
+                        
+                        // For Base chain, we need user to approve transaction through their Farcaster wallet
+                        // This requires integration with Farcaster's embedded wallet
+                        alert('⚠️ NFT minting requires Farcaster wallet integration. Please use the Farcaster app to complete the transaction.');
+                        
+                        // TODO: Integrate with Farcaster embedded wallet for actual minting
+                        showNotification('⚠️ Minting requires Farcaster wallet app');
+                        
+                    } catch (error) {
+                        console.error('❌ NFT minting failed:', error);
+                        showNotification('❌ Failed to mint NFT: ' + error.message);
+                    }
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('❌ Screenshot capture failed:', error);
+                showNotification('❌ Failed to create screenshot');
             }
         }
         
