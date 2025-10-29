@@ -3575,14 +3575,16 @@
         }
         
         function updateTimer() {
-            if (!gameRunning) return;
+            if (!gameRunning && timeLeft > 0) return; // Stop if game already ended
             timeLeft--;
             if (timeLeft <= 0) {
                 document.getElementById('timer').textContent = 'TIME UP!';
                 document.getElementById('timer').style.color = '#ff0000';
                 document.getElementById('timer').style.fontSize = '20px';
                 document.getElementById('timer').style.fontWeight = 'bold';
+                // Call endGame but keep gameRunning true for now
                 endGame();
+                // Don't call setTimeout here, let endGame handle the delay
             } else {
                 const minutes = Math.floor(timeLeft / 60);
                 const seconds = timeLeft % 60;
@@ -3612,8 +3614,7 @@
                 return;
             }
             
-            // Normal game end
-            gameRunning = false;
+            // Normal game end - DON'T set gameRunning = false yet, let balls keep moving for 3 seconds
             
             // Show "TIME UP!" message for 3 seconds before showing game over screen
             document.getElementById('timer').textContent = 'TIME UP!';
@@ -3623,6 +3624,9 @@
             
             // Wait 3 seconds before showing game over screen
             setTimeout(() => {
+                // NOW stop the game
+                gameRunning = false;
+                
                 // Save game result to leaderboard
                 saveGameResult();
                 
