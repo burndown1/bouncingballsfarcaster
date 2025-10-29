@@ -57,8 +57,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Thirdweb SDK -->
-    <script src="https://unpkg.com/thirdweb@6/dist/thirdweb.min.js"></script>
+    <script src="https://unpkg.com/thirdweb@6/dist/thirdweb.min.js" onload="console.log('✅ Thirdweb SDK loaded:', window.ThirdwebSDK)"></script>
     <script src="https://unpkg.com/thirdweb@6/dist/connectors/iframe.min.js"></script>
+    <script>
+        // Check if Thirdweb SDK is loaded
+        window.addEventListener('load', () => {
+            console.log('🔍 Checking Thirdweb SDK...');
+            console.log('Window.ThirdwebSDK:', window.ThirdwebSDK);
+            if (!window.ThirdwebSDK) {
+                console.error('❌ Thirdweb SDK not loaded!');
+            } else {
+                console.log('✅ Thirdweb SDK is available');
+            }
+        });
+    </script>
     <script>
         // Debug: Check if SDKs are loading
         window.addEventListener('load', () => {
@@ -3929,10 +3941,17 @@
                         console.log('✅ Using inline metadata');
                         
                         // Mint NFT using Thirdweb SDK
-                        const thirdweb = window.ThirdwebSDK;
-                        if (!thirdweb) {
-                            throw new Error('Thirdweb SDK not loaded');
+                        console.log('🔍 Checking Thirdweb SDK availability...');
+                        console.log('window.ThirdwebSDK:', window.ThirdwebSDK);
+                        
+                        // Check if SDK is loaded
+                        if (!window.ThirdwebSDK) {
+                            console.error('❌ Thirdweb SDK not found on window object');
+                            throw new Error('Thirdweb SDK not loaded. Please refresh the page.');
                         }
+                        
+                        const thirdweb = window.ThirdwebSDK;
+                        console.log('✅ Thirdweb SDK found:', thirdweb);
                         
                         showNotification('🔗 Connecting wallet and minting...');
                         
