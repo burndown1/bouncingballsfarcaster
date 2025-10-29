@@ -3537,6 +3537,9 @@
         }
         
         function checkGoals() {
+            // Don't count goals if game has ended (even if balls are still moving)
+            if (!gameRunning) return;
+            
             // Goal on circle - goal rotates with circle
             const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // On circle
             const goalY = circle.y + Math.sin(circleAngle) * circle.radius; // On circle
