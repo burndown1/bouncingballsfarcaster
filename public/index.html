@@ -3947,41 +3947,67 @@
                         
                         showNotification('🔗 Connecting wallet and minting...');
                         
-                        // Check Farcaster SDK
-                        console.log('🔍 Farcaster SDK structure:', window.sdk);
-                        console.log('Available methods:', Object.keys(window.sdk));
-                        
-                        // Request signer from Farcaster Mini App
-                        if (!window.sdk) {
-                            throw new Error('Farcaster Mini App SDK not available');
+                        // Get Ethereum provider from Farcaster SDK
+                        if (!window.sdk || !window.sdk.wallet || !window.sdk.wallet.getEthereumProvider) {
+                            throw new Error('Farcaster Mini App SDK wallet not available');
                         }
                         
-                        // Try to get signer using different methods
-                        let signer;
-                        if (window.sdk.requestSigner) {
-                            signer = await window.sdk.requestSigner();
-                        } else if (window.sdk.getSigner) {
-                            signer = await window.sdk.getSigner();
-                        } else if (window.sdk.user) {
-                            console.log('User object:', window.sdk.user);
-                            // Use user's verified address
-                            signer = null; // We'll use the address directly
-                        } else {
-                            throw new Error('No signer method available in Farcaster SDK');
+                        const provider = window.sdk.wallet.getEthereumProvider();
+                        if (!provider) {
+                            throw new Error('Failed to get Ethereum provider');
                         }
                         
-                        console.log('✅ Signer obtained:', signer);
+                        console.log('✅ Ethereum provider obtained:', provider);
                         
-                        // For now, just log the signature request
-                        // TODO: Complete minting integration with proper Thirdweb SDK
-                        showNotification('⚠️ Minting requires proper SDK integration. Check console for details.');
-                        console.log('📝 Minting details:', {
+                        // Get user's address
+                        const addresses = await provider.request({ method: 'eth_accounts' });
+                        if (!addresses || addresses.length === 0) {
+                            throw new Error('No connected wallet found');
+                        }
+                        
+                        const userAddress = addresses[0];
+                        console.log('✅ User address:', userAddress);
+                        
+                        // Determine recipient address
+                        let recipientAddress = userAddress;
+                        if (recipientType === 'opponent' && window.opponentUser?.verified_addresses?.ethereum?.[0]) {
+                            recipientAddress = window.opponentUser.verified_addresses.ethereum[0];
+                        }
+                        
+                        // Mint NFT using direct contract call
+                        const contract = new provider.eth.Contract([
+                            {
+                                "inputs": [
+                                    {"name": "to", "type": "address"},
+                                    {"name": "uri", "type": "string"}
+                                ],
+                                "name": "mintTo",
+                                "outputs": [{"name": "", "type": "uint256"}],
+                                "stateMutability": "nonpayable",
+                                "type": "function"
+                            }
+                        ], CONTRACT_ADDRESS);
+                        
+                        // For now, create a data URL for the NFT image since IPFS isn't working
+                        const nftName = metadata.name;
+                        const nftDescription = metadata.description;
+                        
+                        showNotification('✅ Preparing to mint NFT...');
+                        
+                        // Note: Since we're using base64 image, the actual mint will need to happen via the contract
+                        // For now, we'll just log the details
+                        console.log('📝 Ready to mint:', {
                             contractAddress: CONTRACT_ADDRESS,
                             chainId: CHAIN_ID,
-                            metadata,
-                            recipientType,
-                            signer
+                            recipient: recipientAddress,
+                            metadata: {
+                                name: nftName,
+                                description: nftDescription,
+                                image: 'base64://...' // Base64 data URL
+                            }
                         });
+                        
+                        showNotification('⚠️ NFT minting is ready but needs contract integration');
                         
                     } catch (error) {
                         console.error('❌ NFT minting failed:', error);
