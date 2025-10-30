@@ -4065,19 +4065,22 @@
                         // Mint NFT with metadata URI
                         showNotification('⏳ Minting NFT...');
                         
-                        // Try to send transaction directly using eth_sendTransaction
-                        console.log('🔍 Trying eth_sendTransaction...');
+                        // Try personal_sign (works!) - we'll use backend to mint
+                        console.log('🔍 Trying personal_sign for backend mint...');
                         try {
-                            // Prepare transaction data
-                            const tx = await signer.sendTransaction({
-                                to: CONTRACT_ADDRESS,
-                                data: contract.interface.encodeFunctionData('mintTo', [recipientAddress, 'ipfs://placeholder'])
+                            const message = `Mint NFT - Score: ${finalScore1}-${finalScore2}`;
+                            const signature = await provider.request({
+                                method: 'personal_sign',
+                                params: [message, userAddress]
                             });
-                            console.log('✅ Transaction sent! Hash:', tx.hash);
-                            showNotification('✅ NFT minted! Check your wallet.');
-                        } catch (txError) {
-                            console.log('❌ eth_sendTransaction failed:', txError);
-                            showNotification('⚠️ Transaction not supported. Try mobile app!');
+                            console.log('✅ personal_sign works! Signature:', signature);
+                            showNotification('✅ Signature obtained! Backend mint feature coming soon...');
+                            
+                            // TODO: Send to backend API for minting
+                            // POST /api/mint-nft with { address, signature, message, metadata }
+                        } catch (signError) {
+                            console.log('❌ personal_sign failed:', signError);
+                            showNotification('⚠️ Minting not available in this environment.');
                         }
                         
                     } catch (error) {
