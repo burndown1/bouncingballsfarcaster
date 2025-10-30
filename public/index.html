@@ -4020,10 +4020,21 @@
                         const ethersProvider = new window.ethers.providers.Web3Provider(provider);
                         const signer = ethersProvider.getSigner();
                         
+                        // Debug: Log user object
+                        console.log('🔍 Current user:', window.currentUser);
+                        console.log('🔍 Current user keys:', window.currentUser ? Object.keys(window.currentUser) : 'null');
+                        
                         // Get user's address from window.currentUser
-                        const userAddress = window.currentUser?.verified_addresses?.ethereum?.[0];
+                        // Try multiple possible paths
+                        const userAddress = window.currentUser?.verified_addresses?.ethereum?.[0] ||
+                                          window.currentUser?.verified_addresses?.eth_addresses?.[0] ||
+                                          window.currentUser?.custody_address ||
+                                          window.currentUser?.walletAddress;
+                        
+                        console.log('🔍 User address attempt:', userAddress);
+                        
                         if (!userAddress) {
-                            throw new Error('No wallet address found in user profile');
+                            throw new Error('No wallet address found in user profile. User object: ' + JSON.stringify(window.currentUser));
                         }
                         console.log('✅ User address:', userAddress);
                         
