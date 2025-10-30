@@ -57,16 +57,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Ethers.js for contract interactions -->
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script>
-        // Check if Thirdweb SDK is loaded
+        // Check if Ethers.js is loaded
         window.addEventListener('load', () => {
             setTimeout(() => {
-                console.log('🔍 Checking Thirdweb SDK after delay...');
-                console.log('All window keys:', Object.keys(window));
-                console.log('Window.ThirdwebSDK:', window.ThirdwebSDK);
-                console.log('Window.Thirdweb:', window.Thirdweb);
-                console.log('Window.thirdweb:', window.thirdweb);
+                console.log('🔍 Checking Ethers.js after delay...');
+                console.log('window.ethers:', window.ethers);
+                console.log('window.ethers.ethers:', window.ethers?.ethers);
+                console.log('ethers.providers:', window.ethers?.providers);
             }, 1000);
         });
     </script>
@@ -3614,7 +3613,8 @@
         
         function checkGoals() {
             // Don't count goals if game has ended (even if balls are still moving)
-            if (!gameRunning) return;
+            // Also don't count if time is up
+            if (!gameRunning || timeLeft <= 0) return;
             
             // Goal on circle - goal rotates with circle
             const goalX = circle.x + Math.cos(circleAngle) * circle.radius; // On circle
