@@ -4065,19 +4065,19 @@
                         // Mint NFT with metadata URI
                         showNotification('⏳ Minting NFT...');
                         
-                        // Try to use personal_sign to get a signature (test if supported)
-                        console.log('🔍 Testing if personal_sign is supported...');
+                        // Try to send transaction directly using eth_sendTransaction
+                        console.log('🔍 Trying eth_sendTransaction...');
                         try {
-                            const message = `Mint NFT for game score`;
-                            const signature = await provider.request({
-                                method: 'personal_sign',
-                                params: [message, userAddress]
+                            // Prepare transaction data
+                            const tx = await signer.sendTransaction({
+                                to: CONTRACT_ADDRESS,
+                                data: contract.interface.encodeFunctionData('mintTo', [recipientAddress, 'ipfs://placeholder'])
                             });
-                            console.log('✅ personal_sign works! Signature:', signature);
-                            showNotification('✅ personal_sign supported! Backend mint ready to implement.');
-                        } catch (signError) {
-                            console.log('❌ personal_sign not supported:', signError);
-                            showNotification('⚠️ Minting not supported in web. Try mobile app!');
+                            console.log('✅ Transaction sent! Hash:', tx.hash);
+                            showNotification('✅ NFT minted! Check your wallet.');
+                        } catch (txError) {
+                            console.log('❌ eth_sendTransaction failed:', txError);
+                            showNotification('⚠️ Transaction not supported. Try mobile app!');
                         }
                         
                     } catch (error) {
