@@ -56,8 +56,8 @@
     <!-- html2canvas for screenshot -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
-    <!-- Thirdweb SDK -->
-    <script src="https://unpkg.com/@thirdweb-dev/sdk@latest/dist/browser.umd.js" onload="console.log('✅ Thirdweb SDK script loaded'); console.log('Available properties:', Object.keys(window).filter(k => k.toLowerCase().includes('third')));"></script>
+    <!-- Ethers.js for contract interactions -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
     <script>
         // Check if Thirdweb SDK is loaded
         window.addEventListener('load', () => {
@@ -3976,27 +3976,45 @@
                             recipientAddress = window.opponentUser.verified_addresses.ethereum[0];
                         }
                         
-                        // Initialize Thirdweb SDK
-                        if (!window.ThirdwebSDK) {
-                            throw new Error('Thirdweb SDK not loaded');
+                        // Initialize Ethers.js with Farcaster provider
+                        if (!window.ethers) {
+                            throw new Error('Ethers.js not loaded');
                         }
                         
-                        console.log('✅ Thirdweb SDK found, initializing...');
-                        const sdk = new window.ThirdwebSDK(provider);
-                        const contract = await sdk.getContract(CONTRACT_ADDRESS);
+                        console.log('✅ Ethers.js found, connecting to provider...');
+                        const ethersProvider = new window.ethers.providers.Web3Provider(provider);
+                        const signer = ethersProvider.getSigner();
                         
+                        // NFT Collection ABI (just the mintTo function we need)
+                        const contractABI = [
+                            {
+                                "inputs": [
+                                    {"name": "to", "type": "address"},
+                                    {"name": "uri", "type": "string"}
+                                ],
+                                "name": "mintTo",
+                                "outputs": [{"name": "tokenId", "type": "uint256"}],
+                                "stateMutability": "nonpayable",
+                                "type": "function"
+                            }
+                        ];
+                        
+                        const contract = new window.ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
                         console.log('✅ Contract loaded:', contract);
                         
-                        // Mint NFT
+                        // Mint NFT with metadata URI
                         showNotification('⏳ Minting NFT...');
                         
-                        const mintResult = await contract.erc721.mintTo(recipientAddress, {
-                            name: metadata.name,
-                            description: metadata.description,
-                            image: metadata.image
-                        });
+                        // Note: For now, we'll use a placeholder URI since IPFS upload is blocked
+                        const tokenUri = 'ipfs://placeholder'; // In production, upload metadata to IPFS first
                         
-                        console.log('✅ NFT minted:', mintResult);
+                        const mintTx = await contract.mintTo(recipientAddress, tokenUri);
+                        console.log('⏳ Transaction sent:', mintTx.hash);
+                        
+                        showNotification('⏳ Waiting for confirmation...');
+                        const receipt = await mintTx.wait();
+                        
+                        console.log('✅ NFT minted successfully:', receipt);
                         showNotification('✅ NFT minted successfully! Check your wallet.');
                         
                     } catch (error) {
