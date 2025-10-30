@@ -4024,17 +4024,18 @@
                         console.log('🔍 Current user:', window.currentUser);
                         console.log('🔍 Current user keys:', window.currentUser ? Object.keys(window.currentUser) : 'null');
                         
-                        // Get user's address from window.currentUser
-                        // Try multiple possible paths
-                        const userAddress = window.currentUser?.verified_addresses?.ethereum?.[0] ||
-                                          window.currentUser?.verified_addresses?.eth_addresses?.[0] ||
-                                          window.currentUser?.custody_address ||
-                                          window.currentUser?.walletAddress;
+                        // Try to get address from signer using provider.listAccounts()
+                        console.log('🔍 Trying to get accounts from provider...');
+                        const accounts = await ethersProvider.listAccounts();
+                        console.log('🔍 Provider accounts:', accounts);
+                        
+                        // Get user's address
+                        const userAddress = accounts && accounts.length > 0 ? accounts[0] : null;
                         
                         console.log('🔍 User address attempt:', userAddress);
                         
                         if (!userAddress) {
-                            throw new Error('No wallet address found in user profile. User object: ' + JSON.stringify(window.currentUser));
+                            throw new Error('No wallet address found. Tried provider.listAccounts()');
                         }
                         console.log('✅ User address:', userAddress);
                         
