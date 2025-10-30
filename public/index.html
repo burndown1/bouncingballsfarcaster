@@ -3751,8 +3751,7 @@
                 document.getElementById('gameOver').style.display = 'block';
                 
                 // Show mint buttons
-                // Note: Minting disabled due to Farcaster provider limitations
-                // document.getElementById('mintButtons').style.display = 'block';
+                document.getElementById('mintButtons').style.display = 'block';
                 
                 // Reset timer color to normal (for next game)
                 document.getElementById('timer').style.color = currentNeonColor;
@@ -4066,13 +4065,20 @@
                         // Mint NFT with metadata URI
                         showNotification('⏳ Minting NFT...');
                         
-                        // Note: Farcaster provider doesn't support sendTransaction
-                        // We need to use the Farcaster SDK's wallet API instead
-                        // For now, show an error message explaining the limitation
-                        showNotification('⚠️ Minting is not supported in Farcaster Mini App. Please use Warpcast mobile app or mint from your wallet directly.');
-                        console.log('⚠️ Minting not supported: Farcaster provider lacks sendTransaction support');
-                        
-                        // TODO: Implement minting via Farcaster SDK wallet API or backend service
+                        // Try to use personal_sign to get a signature (test if supported)
+                        console.log('🔍 Testing if personal_sign is supported...');
+                        try {
+                            const message = `Mint NFT for game score`;
+                            const signature = await provider.request({
+                                method: 'personal_sign',
+                                params: [message, userAddress]
+                            });
+                            console.log('✅ personal_sign works! Signature:', signature);
+                            showNotification('✅ personal_sign supported! Backend mint ready to implement.');
+                        } catch (signError) {
+                            console.log('❌ personal_sign not supported:', signError);
+                            showNotification('⚠️ Minting not supported in web. Try mobile app!');
+                        }
                         
                     } catch (error) {
                         console.error('❌ NFT minting failed:', error);
