@@ -6,10 +6,19 @@
     <title>Mint Your Game Result NFT</title>
     
     <!-- Ethers.js -->
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     
     <!-- Thirdweb SDK -->
     <script src="https://unpkg.com/@thirdweb-dev/sdk@latest/dist/browser.umd.js"></script>
+    
+    <script>
+        // Debug: Check SDK loading
+        window.addEventListener('load', () => {
+            console.log('🔍 Checking SDKs...');
+            console.log('ethers:', window.ethers);
+            console.log('ThirdwebSDK:', window.ThirdwebSDK);
+        });
+    </script>
     
     <style>
         body {
