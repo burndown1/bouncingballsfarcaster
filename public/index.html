@@ -57,7 +57,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Thirdweb SDK -->
-    <script src="https://unpkg.com/@thirdweb-dev/sdk@5/dist/index.js"></script>
+    <script src="https://unpkg.com/@thirdweb-dev/sdk@latest/dist/browser.umd.js"></script>
     <script>
         // Check if Thirdweb SDK is loaded
         window.addEventListener('load', () => {
@@ -3976,15 +3976,28 @@
                             recipientAddress = window.opponentUser.verified_addresses.ethereum[0];
                         }
                         
-                        // For now, just show success message and log details
-                        console.log('📝 NFT Minting Details:', {
-                            contractAddress: CONTRACT_ADDRESS,
-                            chainId: CHAIN_ID,
-                            recipient: recipientAddress,
-                            metadata
+                        // Initialize Thirdweb SDK
+                        if (!window.ThirdwebSDK) {
+                            throw new Error('Thirdweb SDK not loaded');
+                        }
+                        
+                        console.log('✅ Thirdweb SDK found, initializing...');
+                        const sdk = new window.ThirdwebSDK(provider);
+                        const contract = await sdk.getContract(CONTRACT_ADDRESS);
+                        
+                        console.log('✅ Contract loaded:', contract);
+                        
+                        // Mint NFT
+                        showNotification('⏳ Minting NFT...');
+                        
+                        const mintResult = await contract.erc721.mintTo(recipientAddress, {
+                            name: metadata.name,
+                            description: metadata.description,
+                            image: metadata.image
                         });
                         
-                        showNotification('✅ Wallet connected! NFT minting feature coming soon.');
+                        console.log('✅ NFT minted:', mintResult);
+                        showNotification('✅ NFT minted successfully! Check your wallet.');
                         
                     } catch (error) {
                         console.error('❌ NFT minting failed:', error);
