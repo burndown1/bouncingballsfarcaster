@@ -4065,17 +4065,13 @@
                         // Mint NFT with metadata URI
                         showNotification('⏳ Minting NFT...');
                         
-                        // Note: For now, we'll use a placeholder URI since IPFS upload is blocked
-                        const tokenUri = 'ipfs://placeholder'; // In production, upload metadata to IPFS first
+                        // Note: Farcaster provider doesn't support sendTransaction
+                        // We need to use the Farcaster SDK's wallet API instead
+                        // For now, show an error message explaining the limitation
+                        showNotification('⚠️ Minting is not supported in Farcaster Mini App. Please use Warpcast mobile app or mint from your wallet directly.');
+                        console.log('⚠️ Minting not supported: Farcaster provider lacks sendTransaction support');
                         
-                        const mintTx = await contract.mintTo(recipientAddress, tokenUri);
-                        console.log('⏳ Transaction sent:', mintTx.hash);
-                        
-                        showNotification('⏳ Waiting for confirmation...');
-                        const receipt = await mintTx.wait();
-                        
-                        console.log('✅ NFT minted successfully:', receipt);
-                        showNotification('✅ NFT minted successfully! Check your wallet.');
+                        // TODO: Implement minting via Farcaster SDK wallet API or backend service
                         
                     } catch (error) {
                         console.error('❌ NFT minting failed:', error);
