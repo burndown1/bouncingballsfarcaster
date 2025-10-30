@@ -4011,22 +4011,7 @@
                         console.log('Provider type:', typeof provider);
                         console.log('Provider methods:', Object.keys(provider));
                         
-                        // Get user's address
-                        const addresses = await provider.request({ method: 'eth_accounts' });
-                        if (!addresses || addresses.length === 0) {
-                            throw new Error('No connected wallet found');
-                        }
-                        
-                        const userAddress = addresses[0];
-                        console.log('✅ User address:', userAddress);
-                        
-                        // Determine recipient address
-                        let recipientAddress = userAddress;
-                        if (recipientType === 'opponent' && window.opponentUser?.verified_addresses?.ethereum?.[0]) {
-                            recipientAddress = window.opponentUser.verified_addresses.ethereum[0];
-                        }
-                        
-                        // Initialize Ethers.js with Farcaster provider
+                        // Initialize Ethers.js with Farcaster provider first
                         if (!window.ethers) {
                             throw new Error('Ethers.js not loaded');
                         }
@@ -4034,6 +4019,19 @@
                         console.log('✅ Ethers.js found, connecting to provider...');
                         const ethersProvider = new window.ethers.providers.Web3Provider(provider);
                         const signer = ethersProvider.getSigner();
+                        
+                        // Get user's address from window.currentUser
+                        const userAddress = window.currentUser?.verified_addresses?.ethereum?.[0];
+                        if (!userAddress) {
+                            throw new Error('No wallet address found in user profile');
+                        }
+                        console.log('✅ User address:', userAddress);
+                        
+                        // Determine recipient address
+                        let recipientAddress = userAddress;
+                        if (recipientType === 'opponent' && window.opponentUser?.verified_addresses?.ethereum?.[0]) {
+                            recipientAddress = window.opponentUser.verified_addresses.ethereum[0];
+                        }
                         
                         // NFT Collection ABI (just the mintTo function we need)
                         const contractABI = [
