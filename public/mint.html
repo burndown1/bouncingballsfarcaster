@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mint Your Game Result NFT</title>
+    
+    <!-- Ethers.js -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    
+    <!-- Thirdweb SDK -->
+    <script src="https://unpkg.com/@thirdweb-dev/sdk@latest/dist/browser.umd.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(0, 255, 0, 0.05);
+            border-radius: 20px;
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #00ff00;
+            margin-bottom: 30px;
+        }
+        
+        .nft-preview {
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .info {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info p {
+            margin: 10px 0;
+        }
+        
+        .mint-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mint-btn:hover {
+            background: linear-gradient(135deg, #00cc00, #00ff00);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.4);
+        }
+        
+        .mint-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid #0096ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Mint Your Game Result NFT</h1>
+        
+        <img id="nftImage" class="nft-preview" src="" alt="NFT Preview">
+        
+        <div class="info" id="nftInfo"></div>
+        
+        <button class="mint-btn" id="mintBtn" onclick="mintNFT()">🚀 Mint NFT on Base</button>
+        
+        <div class="status" id="status" style="display: none;"></div>
+    </div>
+    
+    <script>
+        const CONTRACT_ADDRESS = '0x321573da9DabA53824F09b480ff9c068AFb89371';
+        const CHAIN_ID = 8453; // Base Mainnet
+        
+        let mintData = null;
+        
+        // Parse URL data
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get('data');
+            
+            if (dataParam) {
+                mintData = JSON.parse(decodeURIComponent(dataParam));
+                displayNFT(mintData);
+            } else {
+                showError('No game data provided');
+            }
+        });
+        
+        function displayNFT(data) {
+            document.getElementById('nftImage').src = data.metadata.image;
+            document.getElementById('nftInfo').innerHTML = `
+                <p><strong>Name:</strong> ${data.metadata.name}</p>
+                <p><strong>Description:</strong> ${data.metadata.description}</p>
+                <p><strong>Score:</strong> ${data.metadata.attributes.score}</p>
+                <p><strong>Winner:</strong> ${data.metadata.attributes.winner}</p>
+            `;
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+        }
+        
+        function showError(message) {
+            showStatus('❌ ' + message, 'error');
+            document.getElementById('mintBtn').disabled = true;
+        }
+        
+        async function mintNFT() {
+            if (!mintData) {
+                showError('No game data available');
+                return;
+            }
+            
+            const mintBtn = document.getElementById('mintBtn');
+            mintBtn.disabled = true;
+            mintBtn.textContent = '⏳ Connecting Wallet...';
+            
+            try {
+                // Check if user has a wallet
+                if (!window.ethereum) {
+                    throw new Error('No Ethereum wallet found. Please install MetaMask or connect a wallet.');
+                }
+                
+                showStatus('🔗 Connecting to wallet...', 'info');
+                
+                // Request account access
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                // Get provider and signer
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const userAddress = await signer.getAddress();
+                
+                showStatus(`✅ Connected: ${userAddress}`, 'info');
+                mintBtn.textContent = '⏳ Minting NFT...';
+                
+                // Initialize Thirdweb SDK
+                if (!window.ThirdwebSDK) {
+                    throw new Error('Thirdweb SDK not loaded');
+                }
+                
+                const sdk = new window.ThirdwebSDK(provider);
+                const contract = await sdk.getContract(CONTRACT_ADDRESS);
+                
+                // Determine recipient
+                let recipientAddress = userAddress;
+                if (mintData.recipientType === 'opponent' && mintData.opponentAddress) {
+                    recipientAddress = mintData.opponentAddress;
+                }
+                
+                // For now, mint with placeholder image since IPFS upload is complex
+                // In production, upload to IPFS first
+                const tokenMetadata = {
+                    name: mintData.metadata.name,
+                    description: mintData.metadata.description,
+                    image: mintData.metadata.image // Base64 image
+                };
+                
+                // Mint NFT
+                const mintResult = await contract.erc721.mintTo(recipientAddress, tokenMetadata);
+                
+                showStatus('✅ NFT Minted Successfully! Check your wallet.', 'success');
+                mintBtn.textContent = '✅ Complete!';
+                
+                console.log('✅ Mint result:', mintResult);
+                
+            } catch (error) {
+                console.error('❌ Minting failed:', error);
+                showError(error.message || 'Failed to mint NFT');
+                mintBtn.disabled = false;
+                mintBtn.textContent = '🚀 Mint NFT on Base';
+            }
+        }
+    </script>
+</body>
+</html>
+

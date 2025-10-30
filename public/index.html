@@ -1376,8 +1376,8 @@
                 <button class="restart-btn" onclick="shareToFarcaster()">📤 Share Result</button>
             </div>
             <div class="mint-buttons" id="mintButtons" style="display: none;">
-                <button class="mint-btn" onclick="mintGameScore('self')">🎨 Mint as NFT</button>
-                <button class="mint-btn" onclick="mintGameScore('opponent')">🎁 Mint & Send to Opponent</button>
+                <button class="mint-btn" onclick="openMintPage('self')">🎨 Mint as NFT</button>
+                <button class="mint-btn" onclick="openMintPage('opponent')">🎁 Mint & Send to Opponent</button>
             </div>
         </div>
     </div>
@@ -3877,6 +3877,56 @@
         const CONTRACT_ADDRESS = '0x321573da9DabA53824F09b480ff9c068AFb89371';
         const CHAIN_ID = 8453; // Base Mainnet
         const CLIENT_ID = '08e2734f8ba7310b0619f773b8152773';
+        
+        function openMintPage(recipientType) {
+            // Capture game over screen
+            html2canvas(document.getElementById('gameOver'), {
+                backgroundColor: '#001100',
+                scale: 2,
+                logging: false
+            }).then(canvas => {
+                // Convert to base64
+                const base64Image = canvas.toDataURL('image/png');
+                
+                // Get game data
+                const finalScore1 = parseInt(document.getElementById('finalScore1').textContent);
+                const finalScore2 = parseInt(document.getElementById('finalScore2').textContent);
+                const player1Name = document.getElementById('finalPlayer1Name').textContent;
+                const player2Name = document.getElementById('finalPlayer2Name').textContent;
+                
+                let winnerText = 'Draw';
+                if (finalScore1 > finalScore2) {
+                    winnerText = player1Name;
+                } else if (finalScore2 > finalScore1) {
+                    winnerText = player2Name;
+                }
+                
+                // Create mint URL with data
+                const mintData = {
+                    contractAddress: CONTRACT_ADDRESS,
+                    chainId: CHAIN_ID,
+                    clientId: CLIENT_ID,
+                    recipientType: recipientType,
+                    opponentAddress: window.opponentUser?.verified_addresses?.ethereum?.[0] || null,
+                    metadata: {
+                        name: `Bouncing Balls: ${player1Name} vs ${player2Name}`,
+                        description: `Game result: ${player1Name} ${finalScore1} - ${finalScore2} ${player2Name}. Winner: ${winnerText}`,
+                        image: base64Image,
+                        attributes: {
+                            player1: player1Name,
+                            player2: player2Name,
+                            score: `${finalScore1}-${finalScore2}`,
+                            winner: winnerText,
+                            date: new Date().toISOString()
+                        }
+                    }
+                };
+                
+                // Open mint page in new tab
+                const mintUrl = `https://bouncingballsfarcaster.vercel.app/mint.html?data=${encodeURIComponent(JSON.stringify(mintData))}`;
+                window.open(mintUrl, '_blank');
+            });
+        }
         
         async function mintGameScore(recipientType) {
             console.log('🎨 Minting game score as NFT, recipient:', recipientType);
