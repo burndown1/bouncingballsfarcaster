@@ -3976,40 +3976,15 @@
                             recipientAddress = window.opponentUser.verified_addresses.ethereum[0];
                         }
                         
-                        // Mint NFT using direct contract call
-                        const contract = new provider.eth.Contract([
-                            {
-                                "inputs": [
-                                    {"name": "to", "type": "address"},
-                                    {"name": "uri", "type": "string"}
-                                ],
-                                "name": "mintTo",
-                                "outputs": [{"name": "", "type": "uint256"}],
-                                "stateMutability": "nonpayable",
-                                "type": "function"
-                            }
-                        ], CONTRACT_ADDRESS);
-                        
-                        // For now, create a data URL for the NFT image since IPFS isn't working
-                        const nftName = metadata.name;
-                        const nftDescription = metadata.description;
-                        
-                        showNotification('✅ Preparing to mint NFT...');
-                        
-                        // Note: Since we're using base64 image, the actual mint will need to happen via the contract
-                        // For now, we'll just log the details
-                        console.log('📝 Ready to mint:', {
+                        // For now, just show success message and log details
+                        console.log('📝 NFT Minting Details:', {
                             contractAddress: CONTRACT_ADDRESS,
                             chainId: CHAIN_ID,
                             recipient: recipientAddress,
-                            metadata: {
-                                name: nftName,
-                                description: nftDescription,
-                                image: 'base64://...' // Base64 data URL
-                            }
+                            metadata
                         });
                         
-                        showNotification('⚠️ NFT minting is ready but needs contract integration');
+                        showNotification('✅ Wallet connected! NFT minting feature coming soon.');
                         
                     } catch (error) {
                         console.error('❌ NFT minting failed:', error);
